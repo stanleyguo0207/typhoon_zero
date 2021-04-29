@@ -1,0 +1,16 @@
+# root
+root = true
+
+# All files
+[*]
+charset = utf-8
+indent_size = 2
+indent_style = space
+# tab_width = 2
+# end_of_line = lf
+# guidelines = 40 1px dotted white, 80 10px solid 30B0ED4C, 132
+guidelines = 80 2px solid 33FFFF
+
+# markdown
+#[*.{md}]
+#guidelines = 80, 120

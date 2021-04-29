@@ -1,0 +1,359 @@
+# 格式基于
+BasedOnStyle: Google
+
+# 列限制
+ColumnLimit: 80
+
+# 缩进宽度
+IndentWidth: 2
+
+# tab宽度
+TabWidth: 2
+
+# 是否使用tab
+UseTab: Never
+
+# 访问说明符(public、private等)的偏移
+AccessModifierOffset: -1
+
+# 括号后水平参数补齐
+AlignAfterOpenBracket: Align
+
+# 参数连续对齐
+AlignConsecutiveAssignments: true
+
+# 位域成员对齐
+#AlignConsecutiveBitFields: true
+
+# 声明连续对齐
+AlignConsecutiveDeclarations: false
+
+# 宏定义连续对齐
+AlignConsecutiveMacros: true
+
+# 在转义的换行符中反斜杠对齐的选项。
+AlignEscapedNewlines: Right
+
+# 水平对齐二元和三元操作符
+AlignOperands: false
+
+# 尾随注释对齐
+AlignTrailingComments: true
+
+# 如果函数调用或初始初始化列表不适合一行，则即使BinPackArguments为false，也可以将所有参数放在下一行。
+AllowAllArgumentsOnNextLine: false
+
+# 如果带有成员初始值设定项列表的构造函数定义不适合一行，
+# 并且如果`ConstructorInitializerAllOnOneLineOrOnePerLine`为true，
+# 则允许将所有成员初始值设定项放在下一行。
+# 请注意，如果`ConstructorInitializerAllOnOneLineOrOnePerLine`为false，则此参数无效。
+AllowAllConstructorInitializersOnNextLine: false
+
+# 如果函数声明不适合一行，即使BinPackParameters为false，也允许将函数声明的所有参数放到下一行。
+AllowAllParametersOfDeclarationOnNextLine: false
+
+# 根据值决定是否将 while (true) { continue; } 放到一行
+AllowShortBlocksOnASingleLine: Empty
+
+# switch 缩写 不缩写成一行
+AllowShortCaseLabelsOnASingleLine: false
+
+# enum 不缩写成一行
+#AllowShortEnumsOnASingleLine: false
+
+# 根据值决定是否将 函数放到一行
+AllowShortFunctionsOnASingleLine: Inline
+
+# 根据值决定 if是否放到一行
+AllowShortIfStatementsOnASingleLine: Never
+
+# 根据值决定是否将lambda表达式放到一行
+AllowShortLambdasOnASingleLine: Inline
+
+# 循环是否放到一行
+AllowShortLoopsOnASingleLine: false
+
+# 返回类型是否中断
+AlwaysBreakAfterReturnType: None
+
+# 多行字符串前是否需要中断
+AlwaysBreakBeforeMultilineStrings: true
+
+# 模板声明中断样式
+AlwaysBreakTemplateDeclarations: Yes
+
+# 函数调用参数是否一行
+BinPackArguments: false
+
+# 函数声明和实现参数是否一行
+BinPackParameters: false
+
+# 位域
+#BitFieldColonSpacing: Both
+
+# 包装
+BraceWrapping:
+  # case 花括号
+  AfterCaseLabel: true
+  # 类后花括号
+  AfterClass: false
+  # 控制语句后
+  AfterControlStatement: false
+  # 枚举后
+  AfterEnum: false
+  # 函数后
+  AfterFunction: false
+  # 命名空间后
+  AfterNamespace: false
+  # 对象定义后
+  AfterObjCDeclaration: false
+  # struct结构后
+  AfterStruct: false
+  # 联合体后
+  AfterUnion: false
+  # extern后
+  AfterExternBlock: false
+  # catch前
+  BeforeCatch: false
+  # else前
+  BeforeElse: false
+  # lambda 函数体前
+  #  BeforeLambdaBody: true
+  # while前
+  #  BeforeWhile: false
+  # 缩进大括号
+  IndentBraces: false
+  # 分割空函数
+  SplitEmptyFunction: true
+  # 分割空记录
+  SplitEmptyRecord: true
+  # 分割空命名空间
+  SplitEmptyNamespace: true
+
+# 包装二进制操作
+BreakBeforeBinaryOperators: None
+
+# 大括号样式 使用BraceWrapping
+BreakBeforeBraces: Custom
+
+# 换行符后方式三目运算符
+BreakBeforeTernaryOperators: true
+
+# 构造函数参数列构造格式
+BreakConstructorInitializers: BeforeComma
+
+# 继承列表格式
+BreakInheritanceList: BeforeComma
+
+# 是否允许中断字符串
+BreakStringLiterals: false
+
+# 注释中包含"" 不做格式处理
+#CommentPragmas: ""
+
+# 命名空间是否一行
+CompactNamespaces: false
+
+# 构造函数实现参数列是否一行
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+
+# 用于缩进构造函数初始值设定项列表和继承列表的字符数。
+ConstructorInitializerIndentWidth: 2
+
+# 缩进线宽度
+ContinuationIndentWidth: 4
+
+# c11 参数列格式
+Cpp11BracedListStyle: false
+
+# 分析行结尾符
+#DeriveLineEnding: false
+
+# *与&格式 通过PointerAlignment设置
+DerivePointerAlignment: false
+
+# 完全禁用格式化
+DisableFormat: false
+
+# bin打包时处理 实验性特性 慎用
+#ExperimentalAutoDetectBinPacking: false
+
+# 添加缺省的命名空间注释
+FixNamespaceComments: true
+
+# 被视为foreach的宏定义 而非函数调用
+#ForEachMacros:
+#  - foreach
+
+# 头文件包含自动划分格式
+#IncludeBlocks: Regroup
+
+# 定义包含顺序优先级
+#IncludeCategories:
+#  - Regex:           '^"(llvm|llvm-c|clang|clang-c)/'
+#    Priority:        2
+#    SortPriority:    2
+#  - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
+#    Priority:        3
+#  - Regex:           '<[[:alnum:].]+>'
+#    Priority:        4
+#  - Regex:           '.*'
+#    Priority:        1
+#    SortPriority:    0
+
+# main函数正则判断
+#IncludeIsMainRegex: '([-_](test|unittest))?$'
+
+#
+#IncludeIsMainSourceRegex: ''
+
+# case 内容缩进
+IndentCaseBlocks: true
+
+# case 标签缩进
+IndentCaseLabels: false
+
+# extern 缩进控制
+#IndentExternBlock: Indent
+
+# goto标志缩进
+IndentGotoLabels: false
+
+# 预处理指令样式
+IndentPPDirectives: AfterHash
+
+# 函数返回换行时是否缩进
+IndentWrappedFunctionNames: false
+
+# 是否保持块开始空行
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# 语言
+Language: Cpp
+
+# 宏块定义
+#MacroBlockBegin: ""
+#MacroBlockEnd: ""
+
+# 最大连续空行
+MaxEmptyLinesToKeep: 1
+
+# 命名空间缩进
+NamespaceIndentation: None
+
+# 命名空间宏
+#NamespaceMacros:
+
+# *与&符号对齐
+PointerAlignment: Right
+
+# 原始字符格式
+RawStringFormats:
+  - Language:        Cpp
+    Delimiters:
+      - 'cc'
+      - 'CC'
+      - 'cpp'
+      - 'Cpp'
+      - 'CPP'
+      - 'c++'
+      - 'C++'
+    CanonicalDelimiter: ''
+    BasedOnStyle:    google
+  - Language:        TextProto
+    Delimiters:
+      - 'pb'
+      - 'PB'
+      - 'proto'
+      - 'PROTO'
+    EnclosingFunctions:
+      - 'EqualsProto'
+      - 'EquivToProto'
+      - 'PARSE_PARTIAL_TEXT_PROTO'
+      - 'PARSE_TEST_PROTO'
+      - 'PARSE_TEXT_PROTO'
+      - 'ParseTextOrDie'
+      - 'ParseTextProtoOrDie'
+    CanonicalDelimiter: ''
+    BasedOnStyle:    google
+
+# 允许重新排版注释
+ReflowComments: true
+
+# 允许排序include
+SortIncludes: false
+
+# 前置声明排序
+SortUsingDeclarations: false
+
+# c风格转换后 添加空格
+SpaceAfterCStyleCast: false
+
+# 逻辑运算符后加空格
+SpaceAfterLogicalNot: false
+
+# 模板template关键字后加空格
+SpaceAfterTemplateKeyword: true
+
+# 赋值操作加空格
+SpaceBeforeAssignmentOperators: true
+
+# c11参数列加空格
+SpaceBeforeCpp11BracedList: true
+
+# 构造函数参数列添加空格
+SpaceBeforeCtorInitializerColon: true
+
+# 继承前加空格
+SpaceBeforeInheritanceColon: true
+
+# 括号前空格
+SpaceBeforeParens: ControlStatements
+
+# 范围for循环 : 前空格
+SpaceBeforeRangeBasedForLoopColon: true
+
+# 方括号 空格
+SpaceBeforeSquareBrackets: false
+
+# 空块作用域加空格
+SpaceInEmptyBlock: false
+
+# 空参数加空格
+SpaceInEmptyParentheses: false
+
+# 在尾随的评论前添加的空格数(只适用于//)
+SpacesBeforeTrailingComments: 1
+
+# 尖括号后空格
+SpacesInAngles: false
+
+# c风格强制类型转换中空格
+SpacesInCStyleCastParentheses: false
+
+# 条件表达式中的空格
+SpacesInConditionalStatement: true
+
+# 容器中空格
+SpacesInContainerLiterals: true
+
+# 参数中空格
+SpacesInParentheses: false
+
+# 方括号空格
+SpacesInSquareBrackets: false
+
+# 标准
+Standard: Latest
+
+#
+#StatementMacros:
+
+#
+#TypenameMacros：
+
+# 是否使用CRLF结尾
+#UseCRLF: false
+
+# 空格敏感宏
+#WhitespaceSensitiveMacros:

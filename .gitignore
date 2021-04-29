@@ -1,0 +1,10 @@
+# build directory
+out/
+build/
+
+# vs
+.vs/
+CMakeSettings.json
+
+# idea
+.idea/

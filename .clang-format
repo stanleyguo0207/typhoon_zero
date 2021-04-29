@@ -1,0 +1,15 @@
+BasedOnStyle: Google
+ColumnLimit: 80
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Right
+SortIncludes: false
+IndentPPDirectives: AfterHash
+AlignTrailingComments: true
+AlignConsecutiveAssignments: true
+ReflowComments: false
