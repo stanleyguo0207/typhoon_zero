@@ -1,29 +1,27 @@
-################################################################################
-#     ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
-#      │ └┬┘├─┘├─┤│ ││ ││││
-#      ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
 #
-## @license
-#     This file is part of the typhoon Project.
-#     Copyright (C) 2021 - 2021 stanley0207@163.com
+#           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
+#            │ └┬┘├─┘├─┤│ ││ ││││
+#            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
 #
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
+# This file is part of the typhoon Project.
+# Copyright (C) 2021 stanley0207@163.com
 #
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#     You should have received a copy of the GNU General Public License
-#     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-################################################################################
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 
 # make最低要求
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16.0)
 
 # 禁用源内构建
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
