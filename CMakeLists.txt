@@ -20,17 +20,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# make最低要求
 cmake_minimum_required(VERSION 3.16.0)
 
-# 禁用源内构建
+# disable in-source build
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-# 工程名
+# project typhoon_zero
 project(typhoon_zero C CXX)
 
-# 设置cmake兼容方案
+# cmake compatibility
 cmake_policy(SET CMP0005 NEW)
 if(CMAKE_VERSION VERSION_LESS "3.16.0")
   # Disable 'Ignore COMPILE_DEFINITIONS_<Config> properties'
@@ -47,14 +46,19 @@ if(POLICY CMP0074)
   cmake_policy(SET CMP0074 NEW)
 endif()
 
-# c标准
+# c standard
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
-# c++标准
+# c++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# typhoon项目
+# install path
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE PATH "default install path" FORCE)
+endif()
+
+# project directory
 add_subdirectory(tpn)
