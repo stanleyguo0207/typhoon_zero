@@ -1,0 +1,10 @@
+{cmake}
+[project-init]
+command=mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .. && ln -s compile_commands.json ..
+cwd=<root>
+errorformat=
+
+[project-build]
+command=cmake --build build
+cwd=<root>
+errorformat=%f:%l:%m

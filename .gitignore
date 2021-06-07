@@ -2,9 +2,10 @@
 out/
 build/
 
+# lsp
+compile_commands.json
+
 # vs
 .vs/
 CMakeSettings.json
 
-# idea
-.idea/
