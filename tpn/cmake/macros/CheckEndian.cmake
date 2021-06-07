@@ -20,12 +20,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" BUILDING_IN_SOURCE)
-
-if(BUILDING_IN_SOURCE)
-	message(FATAL_ERROR "
-		This project requires an out of source build. Remove the file 'CMakeCache.txt'
-		found in this directory before continuing, create a separate build directory
-		and run 'cmake path_to_project [options]' from there.
-		")
+if(${CMAKE_CXX_BYTE_ORDER} MATCHES BIG_ENDIAN)
+	set(PLATFORM_USE_BIG_ENDIAN ON)
+else()
+	set(PLATFORM_USE_BIG_ENDIAN OFF)
 endif()
+
+message(STATUS "byte order ${CMAKE_CXX_BYTE_ORDER}")

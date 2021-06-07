@@ -20,12 +20,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" BUILDING_IN_SOURCE)
-
-if(BUILDING_IN_SOURCE)
-	message(FATAL_ERROR "
-		This project requires an out of source build. Remove the file 'CMakeCache.txt'
-		found in this directory before continuing, create a separate build directory
-		and run 'cmake path_to_project [options]' from there.
+if(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
+  MESSAGE(FATAL_ERROR "
+		Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"
 		")
 endif()
+
+file(READ "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt" files)
+string(REGEX REPLACE "\n" ";" files "${files}")
+foreach(file ${files})
+	message(STATUS "Uninstalling \"${file}\"")
+	if(EXISTS "${file}")
+		exec_program("@CMAKE_COMMAND@"
+			ARGS "-E remove \"${file}\""
+      OUTPUT_VARIABLE rm_out
+      RETURN_VALUE rm_retval
+			)
+		if(${rm_retval} STREQUAL 0)
+		else()
+			message(FATAL_ERROR "Problem when removing \"${file}\"")
+		endif()
+	else()
+		message(STATUS "File \"${file}\" does not exist.")
+	endif()
+endforeach()

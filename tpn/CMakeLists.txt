@@ -20,4 +20,42 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tpn/cmake/macros")
 
+include(CheckCXXSourceRuns)
+include(CheckIncludeFiles)
+
+include(ConfigureScripts)
+include(FuncAutoCollect)
+
+include(CheckEndian)
+
+include(${CMAKE_SOURCE_DIR}/tpn/cmake/banner.cmake)
+
+include(${CMAKE_SOURCE_DIR}/tpn/cmake/options.cmake)
+
+include(ConfigureBaseTargets)
+
+include(CheckPlatform)
+
+include(CheckBuildDir)
+
+include(FuncGroupSources)
+
+if(NOT WITHOUT_GIT)
+	find_package(Git)
+endif()
+
+include(${CMAKE_SOURCE_DIR}/tpn/cmake/showoptions.cmake)
+
+if(BUILD_TESTS)
+	enable_testing()
+endif()
+
+add_subdirectory(third_party)
+
+add_subdirectory(src)
+
+if(BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

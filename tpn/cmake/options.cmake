@@ -49,22 +49,48 @@ endif()
 
 # exception
 if(NOEXCEPTION)
-	opetion(USE_EXCEPTION "Use exception not abort" OFF)
+	option(USE_EXCEPTION "Use exception not abort" OFF)
 else()
-	opetion(USE_EXCEPTION "Use exception not abort" ON)
+	option(USE_EXCEPTION "Use exception not abort" ON)
 endif()
 if(NOT USE_EXCEPTION)
 	add_definitions(-DTPN_NO_EXCEPTION)
 endif()
 
+# endian
+if(PLATFORM_USE_BIG_ENDIAN)
+	add_definitions(-DTPN_USE_BIG_ENDIAN)
+endif()
+
 # dynamic library
 option(WITH_DYNAMIC_LINKING "Enable dynamic library linking" OFF)
+IsDynamicLinkingRequired(WITH_DYNAMIC_LINKING_FORCED)
+if(WITH_DYNAMIC_LINKING AND WITH_DYNAMIC_LINKING_FORCED)
+	set(WITH_DYNAMIC_LINKING_FORCED OFF)
+endif()
+if(WITH_DYNAMIC_LINKING OR WITH_DYNAMIC_LINKING_FORCED)
+	set(BUILD_SHARED_LIBS ON)
+else()
+	set(BUILD_SHARED_LIBS OFF)
+endif()
+if(BUILD_SHARED_LIBS)
+	add_definitions(-DTPN_API_USE_DYNAMIC_LINKING)
+endif()
+
+# tests
+option(BUILD_TESTS "BUild tests")
 
 # warnings
-option(WITH_WARNINGS "Show all warings during complie" OFF)
+option(WITH_WARNINGS "Show all warings during compile" OFF)
 
 # debug
 option(WITH_COREDEBUG "Include additional debug-code in core" ON)
+
+# openssl
+option(WITH_SSL "Enable openssl" OFF)
+if(WITH_SSL)
+	add_definitions(-DTPN_USE_SSL)
+endif()
 
 # srouce tree
 set(WITH_SOURCE_TREE "hierarchical" CACHE STRING "Build the source tree for IDE's")

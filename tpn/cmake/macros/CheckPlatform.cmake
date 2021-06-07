@@ -20,12 +20,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" BUILDING_IN_SOURCE)
+# check platform bit size
+if(CMAKE_SIZEOF_VOID_P MATCHES 8)
+	message(STATUS "Detected that the current platform is 64-bit")
+	set(PLATFORM 64)
+else()
+	message(STATUS "Detected that the current platform is 32-bit")
+	set(PLATFORM 32)
+endif()
 
-if(BUILDING_IN_SOURCE)
-	message(FATAL_ERROR "
-		This project requires an out of source build. Remove the file 'CMakeCache.txt'
-		found in this directory before continuing, create a separate build directory
-		and run 'cmake path_to_project [options]' from there.
-		")
+if(WIN32)
+	message(STATUS "Start loading Windows platform configuration")
+	include("${CMAKE_SOURCE_DIR}/tpn/cmake/platform/win/settings.cmake")
+elseif(UNIX)
+	message(STATUS "Start loading Unix platform configuration")
+	include("${CMAKE_SOURCE_DIR}/tpn/cmake/platform/unix/settings.cmake")
 endif()
