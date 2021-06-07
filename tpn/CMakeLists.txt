@@ -20,42 +20,59 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# append typhoon module path to cmake path
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tpn/cmake/macros")
 
 include(CheckCXXSourceRuns)
 include(CheckIncludeFiles)
 
+# scripts
 include(ConfigureScripts)
 include(FuncAutoCollect)
 
+# endian
 include(CheckEndian)
 
+# banner
 include(${CMAKE_SOURCE_DIR}/tpn/cmake/banner.cmake)
 
+# options
 include(${CMAKE_SOURCE_DIR}/tpn/cmake/options.cmake)
 
+# base targets
 include(ConfigureBaseTargets)
 
+# platform
 include(CheckPlatform)
 
+# in-build check
 include(CheckBuildDir)
 
+# source tree
 include(FuncGroupSources)
 
+# git
 if(NOT WITHOUT_GIT)
 	find_package(Git)
 endif()
 
+# revision
+include(${CMAKE_SOURCE_DIR}/tpn/cmake/genrev.cmake)
+
+# showoptions
 include(${CMAKE_SOURCE_DIR}/tpn/cmake/showoptions.cmake)
 
 if(BUILD_TESTS)
 	enable_testing()
 endif()
 
+# third_party
 add_subdirectory(third_party)
 
+# typhoon src
 add_subdirectory(src)
 
+# tests
 if(BUILD_TESTS)
 	add_subdirectory(tests)
 endif()

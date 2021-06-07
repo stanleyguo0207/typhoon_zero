@@ -25,5 +25,3 @@ if(${CMAKE_CXX_BYTE_ORDER} MATCHES BIG_ENDIAN)
 else()
 	set(PLATFORM_USE_BIG_ENDIAN OFF)
 endif()
-
-message(STATUS "byte order ${CMAKE_CXX_BYTE_ORDER}")

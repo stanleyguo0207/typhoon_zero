@@ -22,6 +22,8 @@
 
 message(STATUS "All options info.")
 message(STATUS "--------------------------------------------------------------------------")
+message(STATUS "typhoon revision                                   : ${rev_hash} ${rev_date} (${rev_branch} branch)")
+message(STATUS "CMAKE_BUILD_TYPE                                   : ${CMAKE_BUILD_TYPE}")
 
 # c standard
 message(STATUS "CMAKE_C_STANDARD                                   : ${CMAKE_C_STANDARD}")
@@ -37,8 +39,7 @@ message(STATUS "CMAKE_CXX_EXTENSIONS                               : ${CMAKE_CXX
 message(STATUS "CXXFLAGS                                           : $ENV{CXXFLAGS}")
 message(STATUS "CMAKE_CXX_FLAGS                                    : ${CMAKE_CXX_FLAGS}")
 
-# build type
-message(STATUS "CMAKE_BUILD_TYPE                                   : ${CMAKE_BUILD_TYPE}")
+# configure dir
 message(STATUS "CMAKE_SOURCE_DIR                                   : ${CMAKE_SOURCE_DIR}")
 message(STATUS "CMAKE_BINARY_DIR                                   : ${CMAKE_BINARY_DIR}")
 message(STATUS "CMAKE_INSTALL_PREFIX                               : ${CMAKE_INSTALL_PREFIX}")
@@ -101,6 +102,13 @@ if(USE_EXCEPTION)
   message(STATUS "Use exception not abort                            : ON  (default)")
 else()
   message(STATUS "Use exception not abort                            : OFF")
+endif()
+
+# endian
+if(PLATFORM_USE_BIG_ENDIAN)
+  message(STATUS "Platform use big endian                            : ON")
+else()
+	message(STATUS "Platform use big endian                            : OFF")
 endif()
 
 # dynamic links

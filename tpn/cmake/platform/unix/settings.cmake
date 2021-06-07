@@ -25,9 +25,9 @@ if(NOT CONF_DIR)
   message(STATUS "UNIX: Using default configuration directory ${CONF_DIR}")
 endif()
 
-if(NOT LIB_DIR)
-	set(LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
-  message(STATUS "UNIX: Using default library directory ${LIB_DIR}")
+if(NOT LIBS_DIR)
+	set(LIBS_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+	message(STATUS "UNIX: Using default library directory ${LIBS_DIR}")
 endif()
 
 configure_file(
