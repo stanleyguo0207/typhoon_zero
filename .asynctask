@@ -1,10 +1,11 @@
 {cmake}
-[project-init]
-command=mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 .. && ln -s compile_commands.json ..
-cwd=<root>
-errorformat=
-
 [project-build]
-command=cmake --build build
+command/linux=task/linux_build_task.sh
 cwd=<root>
 errorformat=%f:%l:%m
+
+[project-clean]
+command/linux=task/linux_clean_task.sh
+cwd=<root>
+errorformat=%f:%l:%m
+
