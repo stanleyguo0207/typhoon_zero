@@ -3,3 +3,11 @@ typhoon use under open source libray:
 Catch2 (Catch2 is a multi-paradigm test framework for C++.)
 	https://github.com/catchorg/Catch2
 	Version: v2.13.6 5c88067bd339465513af4aec606bd2292f1b594a
+
+SFMT (SIMD-oriented Fast Mersenne Twister)
+  http://agner.org/random/
+  Version: 2014-Jun-14
+
+fmt (a small, safe and fast formatting library)
+  https://github.com/fmtlib/fmt
+  Version: 7.1.3 7bdf0628b1276379886c7f6dda2cef2b3b374f0b

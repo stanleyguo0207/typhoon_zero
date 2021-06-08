@@ -21,4 +21,7 @@
 #
 
 if(SERVERS)
+	add_subdirectory(fmt)
+	add_subdirectory(sfmt)
+	add_subdirectory(threads)
 endif()

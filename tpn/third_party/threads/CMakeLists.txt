@@ -20,5 +20,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(catch2)
-add_subdirectory(fmt)
+find_package(Threads REQUIRED)
+
+# library
+add_library(threads
+	INTERFACE
+	)
+
+# link
+target_link_libraries(threads
+	INTERFACE
+		${CMAKE_THREAD_LIBS_INIT}
+	)
