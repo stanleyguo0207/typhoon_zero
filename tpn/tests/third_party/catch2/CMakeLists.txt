@@ -20,5 +20,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if(SERVERS)
-endif()
+cmake_minimum_required(VERSION 3.20.0)
+
+project(test_catch2 CXX)
+
+add_executable(test_catch2
+	"../../test_include.h"
+	"../../test_main.cpp"
+	"test_catch2.cpp"
+)
+target_link_libraries(test_catch2
+	Catch2::Catch2
+)
+install(TARGETS test_catch2 DESTINATION ${BIN_DIR}/tests)
+include(CTest)
+include(Catch)
+catch_discover_tests(test_catch2)

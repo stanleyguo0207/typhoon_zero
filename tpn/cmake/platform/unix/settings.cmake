@@ -20,6 +20,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+if(NOT BIN_DIR)
+	set(BIN_DIR ${CMAKE_INSTALL_PREFIX}/bin)
+  message(STATUS "UNIX: Using default binary directory ${BIN_DIR}")
+endif()
+
 if(NOT CONF_DIR)
 	set(CONF_DIR ${CMAKE_INSTALL_PREFIX}/config)
   message(STATUS "UNIX: Using default configuration directory ${CONF_DIR}")

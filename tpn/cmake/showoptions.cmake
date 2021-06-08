@@ -44,6 +44,7 @@ message(STATUS "CMAKE_SOURCE_DIR                                   : ${CMAKE_SOU
 message(STATUS "CMAKE_BINARY_DIR                                   : ${CMAKE_BINARY_DIR}")
 message(STATUS "CMAKE_INSTALL_PREFIX                               : ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "CMAKE_INSTALL_RPATH                                : ${CMAKE_INSTALL_RPATH}")
+message(STATUS "BIN_DIR                                            : ${BIN_DIR}")
 message(STATUS "CONF_DIR                                           : ${CONF_DIR}")
 message(STATUS "LIBS_DIR                                           : ${LIBS_DIR}")
 

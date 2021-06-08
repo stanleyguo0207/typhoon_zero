@@ -10,7 +10,7 @@ if [ ! -d $build_path ];then
 		&& cd $build_path\
 		&& cmake $project_path\
 			-DCMAKE_BUILD_TYPE=Debug\
-		&& ln -s compile_commands.json $project_path
+		&& ln -s $build_path/compile_commands.json $project_path
 else
 	cd $project_path\
 		&& cmake --build $build_path

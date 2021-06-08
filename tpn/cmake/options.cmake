@@ -78,7 +78,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 # tests
-option(BUILD_TESTS "BUild tests")
+option(BUILD_TESTS "BUild tests" ON)
 
 # warnings
 option(WITH_WARNINGS "Show all warings during compile" OFF)

@@ -1,6 +1,7 @@
 # build directory
 out/
 build/
+install/
 
 # lsp
 compile_commands.json
