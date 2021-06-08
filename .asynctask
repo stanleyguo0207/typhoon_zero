@@ -1,17 +1,48 @@
 {cmake}
+[project-generate:debug]
+command=python3 task/task.py "Generate" "Debug" "-DCMAKE_INSTALL_PREFIX=install/Debug"
+cwd=<root>
+
+[project-generate:release]
+command=python3 task/task.py "Generate" "Release" "-DCMAKE_INSTALL_PREFIX=install/Release"
+cwd=<root>
+
+[project-generate:relwithdebinfo]
+command=python3 task/task.py "Generate" "RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=install/RelWithDebInfo"
+cwd=<root>
+
 [project-build:debug]
-command/linux=task/linux_build_debug_task.sh
+command=python3 task/task.py "Build" "Debug" "-j8"
 cwd=<root>
 
 [project-build:release]
-command/linux=task/linux_build_release_task.sh
+command=python3 task/task.py "Build" "Release" "-j8"
 cwd=<root>
 
 [project-build:relwithdebinfo]
-command/linux=task/linux_build_relwithdebinfo_task.sh
+command=python3 task/task.py "Build" "RelWithDebInfo" "-j8"
 cwd=<root>
 
-[project-clean]
-command/linux=task/linux_clean_task.sh
+[project-install:debug]
+command=python3 task/task.py "Install" "Debug" "-j8"
 cwd=<root>
-errorformat=%f:%l:%m
+
+[project-install:release]
+command=python3 task/task.py "Install" "Release" "-j8"
+cwd=<root>
+
+[project-insatll:relwithdebinfo]
+command=python3 task/task.py "Install" "RelWithDebInfo" "-j8"
+cwd=<root>
+
+[project-clean:debug]
+command=python3 task/task.py "Clean" "Debug"
+cwd=<root>
+
+[project-clean:release]
+command=python3 task/task.py "Clean" "Release"
+cwd=<root>
+
+[project-clean:relwithdebinfo]
+command=python3 task/task.py "Clean" "RelWithDebInfo"
+cwd=<root>
