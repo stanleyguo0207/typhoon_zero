@@ -1,11 +1,17 @@
 {cmake}
-[project-build]
-command/linux=task/linux_build_task.sh
+[project-build:debug]
+command/linux=task/linux_build_debug_task.sh
 cwd=<root>
-errorformat=%f:%l:%m
+
+[project-build:release]
+command/linux=task/linux_build_release_task.sh
+cwd=<root>
+
+[project-build:relwithdebinfo]
+command/linux=task/linux_build_relwithdebinfo_task.sh
+cwd=<root>
 
 [project-clean]
 command/linux=task/linux_clean_task.sh
 cwd=<root>
 errorformat=%f:%l:%m
-
