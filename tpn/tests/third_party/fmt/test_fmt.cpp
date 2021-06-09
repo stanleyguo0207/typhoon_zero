@@ -26,13 +26,13 @@
 #include <fmt/chrono.h>
 #include <fmt/color.h>
 
-TEST_CASE("Test fmt", "[fmt]") {
+TEST_CASE("fmt", "[fmt]") {
   using namespace std::literals::chrono_literals;
   fmt::print("Default format: {} {}\n", 42s, 100ms);
   fmt::print("strftime-like format: {:%H:%M:%S}\n", 3h + 15min + 30s);
 }
 
-TEST_CASE("Test fmt color", "[fmt]") {
+TEST_CASE("color", "[fmt]") {
   fmt::print(fmt::emphasis::bold | fg(fmt::color::red),
              "Elapsed time: {0:.2f} seconds", 1.23);
 }
