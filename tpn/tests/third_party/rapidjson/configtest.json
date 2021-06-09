@@ -1,0 +1,39 @@
+{
+	// 日志级别
+	// 0  offk
+	// 1  trace
+	// 2  debug
+	// 3  info
+	// 4  warning
+	// 5  error
+	// 6  fatal
+	"loglevel": 2,
+	// host地址
+	"host": "192.168.66.200",
+	// 端口号
+	"port": 2070,
+	"mapInfo": {
+		"gridWidth": 1000, // 栅格地图宽度
+		"gridHeight": 1000, // 栅格地图大小
+		"originX": -41.273852042959405, // 坐标系原点x
+		"originY": -39.639522665878005, // 坐标系原点y
+		"resolution": 0.05 // 栅格化比例即1:20
+	},
+	//栅格化后的激光位置
+	"gridPhits": [
+		{
+			"x": 111,
+			"y": 111
+		},
+		{
+			"x": 222,
+			"y": 222
+		},
+		{
+			"x": 333,
+			"y": 333
+		}
+	],
+	"testdouble": 543543553434e20
+}
+// vim: ft=jsonc
