@@ -20,14 +20,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if(NOT Catch2)
-	set(Catch2_DIR "${CMAKE_SOURCE_DIR}/tpn/third_party/catch2/lib/cmake/Catch2")
-	find_package(Catch2 REQUIRED)
-	if(Catch2_FOUND)
-		message(STATUS "TEST: found Catch2: ${Catch2_VERSION}")
-		list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tpn/third_party/catch2/lib/cmake")
-	endif()
-endif()
-
-add_subdirectory(third_party)
-add_subdirectory(lib)
+add_subdirectory(common)

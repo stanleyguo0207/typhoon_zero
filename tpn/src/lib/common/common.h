@@ -25,17 +25,22 @@
 
 #include "define.h"
 
+namespace tpn {
+
 /// 源文件定位信息
 struct SrcLocInfo {
   constexpr SrcLocInfo() = default;
-  constexpr SrcLocInfo(std::string_view filename_in, int line_in,
-                       std::string_view funcname_in) {}
+  constexpr SrcLocInfo(const char *filename_in, int line_in,
+                       const char *funcname_in)
+      : filename(filename_in), line(line_in), funcname(funcname_in) {}
 
   [[nodiscard]] constexpr bool Empty() const noexcept { return (0 == line); }
 
-  std::string_view filename;
+  const char *filename{nullptr};
   int line{0};
-  std::string_view funcname;
+  const char *funcname{nullptr};
 };
+
+}  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_COMMON_H_

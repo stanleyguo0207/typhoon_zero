@@ -24,17 +24,29 @@
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEBUG_DEBUG_HUB_H_
 
 #include "common.h"
+#include "fmt_wrap.h"
 
 namespace tpn {
+
+void DBGLog(const char *tag, SrcLocInfo src_loc, const char *cond,
+            fmt::string_view fmt, fmt::format_args args) {
+  fmt::print(stderr, "\n{}:{} in {} {}:\ncond:{}\n", src_loc.filename,
+             src_loc.line, src_loc.funcname, tag, cond);
+  fmt::vprint(stderr, fmt, args);
+  fmt::print(stderr, "\n");
+}
 
 /// 警告信息不会触发crash
 ///  @param[in]		src_loc	触发警告定位信息
 ///  @param[in]		cond		触发警告条件
 ///  @param[in]		format	额外携带信息格式
 ///  @param[in]		...			额外携带信息参数
-TPN_COMMON_API void DBGWarning(SrcLocInfo src_loc, const char *cond,
-                               const char *format, ...)
-    TPN_FORMAT_CHECK_F_V(3, 4);
+template <typename FormatString, typename... Args>
+TPN_INLINE void DBGWarning(SrcLocInfo src_loc, const char *cond,
+                           const FormatString &fmt, Args &&...args) {
+  DBGLog("WARNING", src_loc, cond, fmt,
+         fmt::make_args_checked<Args...>(fmt, args...));
+}
 
 /// 断言信息会触发crash
 /// 此函数一旦出发就不会返回
@@ -42,9 +54,15 @@ TPN_COMMON_API void DBGWarning(SrcLocInfo src_loc, const char *cond,
 ///  @param[in]		cond		触发断言条件
 ///  @param[in]		format	额外携带信息格式
 ///  @param[in]		...			额外携带信息参数
-[[noreturn]] TPN_COMMON_API void DBGAssert(SrcLocInfo src_info, const char *msg,
-                                           const char *format, ...)
-    TPN_FORMAT_CHECK_F_V(3, 4);
+template <typename FormatString, typename... Args>
+[[noreturn]] TPN_INLINE void DBGAssert(SrcLocInfo src_loc, const char *cond,
+                                       const FormatString &fmt,
+                                       Args &&...args) {
+  DBGLog("ASSERTION FAILED", src_loc, cond, fmt,
+         fmt::make_args_checked<Args...>(fmt, args...));
+  *((volatile int *)nullptr) = 0;
+  exit(1);
+}
 
 /// 信号中止处理函数
 /// 此函数一旦出发就不会返回
@@ -61,22 +79,30 @@ TPN_COMMON_API void DBGWarning(SrcLocInfo src_loc, const char *cond,
 #  define ASSERT_END
 #endif
 
-#define TPN_WARNING(cond, ...)                                             \
-  ASSERT_BEGIN do {                                                        \
-    if (!(cond)) {                                                         \
-      tpn::DBGWarning(SrcLocInfo(__FILE__, __LINE__, __FUNCTION__), #cond, \
-                      ##__VA_ARGS__);                                      \
-    }                                                                      \
-  }                                                                        \
+#define TPN_WARNING(cond, format, ...)                                   \
+  ASSERT_BEGIN do {                                                      \
+    if (!(cond)) {                                                       \
+      tpn::DBGWarning(tpn::SrcLocInfo{__FILE__, __LINE__, __FUNCTION__}, \
+                      #cond, FMT_STRING(format), __VA_ARGS__);           \
+    }                                                                    \
+  }                                                                      \
   while (0) ASSERT_END
 
-#define TPN_ASSERT(cond, ...)                                             \
-  ASSERT_BEGIN do {                                                       \
-    if (!(cond)) {                                                        \
-      tpn::DBGAssert(SrcLocInfo(__FILE__, __LINE__, __FUNCTION__), #cond, \
-                     ##__VA_ARGS__);                                      \
-    }                                                                     \
-  }                                                                       \
+#define TPN_ASSERT(cond, format, ...)                                          \
+  ASSERT_BEGIN do {                                                            \
+    if (!(cond)) {                                                             \
+      tpn::DBGAssert(tpn::SrcLocInfo{__FILE__, __LINE__, __FUNCTION__}, #cond, \
+                     FMT_STRING(format), __VA_ARGS__);                         \
+    }                                                                          \
+  }                                                                            \
   while (0) ASSERT_END
+
+template <typename T>
+inline decltype(auto) ASSERT_NOTNULL_IMPL(T *ptr, std::string_view expr) {
+  TPN_ASSERT(ptr, "{}", expr);
+  return ptr;
+}
+
+#define TPN_ASSERT_NOTNULL(ptr) ASSERT_NOTNULL_IMPL(ptr, #ptr)
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEBUG_DEBUG_HUB_H_

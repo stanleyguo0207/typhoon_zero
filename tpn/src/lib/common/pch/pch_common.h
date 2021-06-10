@@ -65,6 +65,7 @@
 
 // fmt
 #include <fmt/chrono.h>
+#include <fmt/color.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
@@ -77,5 +78,6 @@
 #include <utfcpp/utf8.h>
 
 #include "define.h"
+#include "common.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_PCH_PCH_COMMON_H_

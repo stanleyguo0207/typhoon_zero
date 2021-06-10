@@ -94,8 +94,7 @@
 
 // format f v
 #if (TPN_COMPILER == TPN_COMPILER_GNU)
-#  define TPN_FORMAT_CHECK_F_V(F, V) \
-    __attribute__((__format__(__printf__, F, V)))
+#  define TPN_FORMAT_CHECK_F_V(F, V) __attribute__((format(printf, F, V)))
 #else
 #  define TPN_FORMAT_CHECK_F_V(F, V)
 #endif

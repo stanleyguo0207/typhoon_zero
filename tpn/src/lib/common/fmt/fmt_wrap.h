@@ -20,13 +20,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "debug_hub.h"
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
+
+#include <fmt/chrono.h>
+#include <fmt/color.h>
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+#include <fmt/printf.h>
 
 namespace tpn {
 
-void AbortHandler(int signal) {
-  *((volatile int *)nullptr) = 0;
-  exit(1);
-}
+using FmtStringView  = fmt::basic_string_view<char>;
+using FmtWStringView = fmt::basic_string_view<wchar_t>;
+using FmtMemoryBuf   = fmt::basic_memory_buffer<char, 250>;
+using FmtWMemoryBuf  = fmt::basic_memory_buffer<wchar_t, 250>;
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_

@@ -20,13 +20,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include "../../test_include.h"
+
+using namespace std;
+
+// debug_hub
+#include "common.h"
 #include "debug_hub.h"
 
-namespace tpn {
-
-void AbortHandler(int signal) {
-  *((volatile int *)nullptr) = 0;
-  exit(1);
+TEST_CASE("debug_hub", "[common]") {
+  TPN_ASSERT(3 < 5, "assert 3 < 5 {}", true);
+  TPN_ASSERT(3 > 5, "assert 3 > 5 {}", false);
 }
-
-}  // namespace tpn
