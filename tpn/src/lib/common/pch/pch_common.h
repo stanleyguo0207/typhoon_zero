@@ -23,23 +23,16 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_PCH_PCH_COMMON_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_PCH_PCH_COMMON_H_
 
-// rapidjson
-#include <rapidjson/rapidjson.h>
-#include <rapidjson/document.h>
-#include <rapidjson/filereadstream.h>
-
-// fmt
-#include <fmt/chrono.h>
-#include <fmt/core.h>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
-#include <fmt/printf.h>
-
-// sfmt
-#include <sfmt/sfmt.h>
-
-// utfcpp
-#include <utfcpp/utf8.h>
+#include <ctime>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cstring>
+#include <cstdarg>
+#include <climits>
+#include <cstddef>
+#include <cinttypes>
 
 #include <set>
 #include <list>
@@ -65,12 +58,24 @@
 #include <unordered_map>
 #include <condition_variable>
 
-#include <ctime>
-#include <cmath>
-#include <cstdio>
-#include <cstdlib>
-#include <cstdint>
-#include <cstring>
-#include <cstdarg>
+// rapidjson
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/filereadstream.h>
+
+// fmt
+#include <fmt/chrono.h>
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+#include <fmt/printf.h>
+
+// sfmt
+#include <sfmt/sfmt.h>
+
+// utfcpp
+#include <utfcpp/utf8.h>
+
+#include "define.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_PCH_PCH_COMMON_H_

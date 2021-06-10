@@ -20,22 +20,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_COMMON_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_COMMON_H_
+#include "config.h"
 
-#include "define.h"
+namespace tpn {
 
-/// 源文件定位信息
-struct SrcLocInfo {
-  constexpr SrcLocInfo() = default;
-  constexpr SrcLocInfo(std::string_view filename_in, int line_in,
-                       std::string_view funcname_in) {}
-
-  [[nodiscard]] constexpr bool Empty() const noexcept { return (0 == line); }
-
-  std::string_view filename;
-  int line{0};
-  std::string_view funcname;
-};
-
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_COMMON_H_
+TPN_SINGLETON_IMPL(ConfigMgr)
+}  // namespace tpn

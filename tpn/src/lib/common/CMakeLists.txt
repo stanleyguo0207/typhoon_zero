@@ -39,9 +39,6 @@ CollectIncludeDirectories(
 # source tree
 GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
-# export
-add_definitions(-DTPN_API_EXPORT_COMMON)
-
 # library common
 add_library(common
 	${PRIVATE_SOURCES}
@@ -66,6 +63,9 @@ target_link_libraries(common
 		rapidjson
 		utfcpp
 	)
+
+# export
+add_definitions(-DTPN_API_EXPORT_COMMON)
 
 # ide folder
 set_target_properties(common

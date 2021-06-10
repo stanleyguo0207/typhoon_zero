@@ -85,6 +85,9 @@ option(WITH_WARNINGS "Show all warings during compile" OFF)
 
 # debug
 option(WITH_COREDEBUG "Include additional debug-code in core" ON)
+if(WITH_COREDEBUG)
+	add_definitions(-DTPN_COREDEBUG)
+endif()
 
 # openssl
 option(WITH_SSL "Enable openssl" OFF)
