@@ -31,7 +31,7 @@ add_executable(test_common
 )
 
 set_property(TARGET
-	test_rapidjson
+	test_common
 	APPEND
 	PROPERTY
 		COMPILE_DEFINITIONS

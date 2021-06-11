@@ -24,7 +24,10 @@
 
 #include <ctime>
 
+#include "fmt_wrap.h"
+
 using namespace std;
+using namespace tpn;
 
 // debug_hub
 #include "common.h"
@@ -73,4 +76,73 @@ TEST_CASE("config", "[common]") {
 
   auto double_1 = g_config->GetDoubleDefault("double_1", -1.0);
   cout << "double_1: " << double_1 << endl;
+}
+
+// random_hub
+#include "random_hub.h"
+
+TEST_CASE("random base", "[common]") {
+  fmt::print("Rand32          {}\n", Rand32());
+  fmt::print("RandI32         {}\n", RandI32());
+  fmt::print("RandU32         {}\n", RandU32());
+  fmt::print("RandFloat       {}\n", RandFloat());
+  fmt::print("RandDouble      {}\n", RandDouble());
+  fmt::print("RandMS          {}\n", RandMS());
+  fmt::print("RandTime        {}\n",
+             static_cast<uint32_t>(
+                 RandTime(MilliSeconds(300), MilliSeconds(500)).count()));
+  fmt::print("RandNorm        {}\n", RandNorm());
+  fmt::print("RandChance      {}\n", RandChance());
+  fmt::print("RollRhanceFloat {}\n", RollChanceFloat(80.5));
+  fmt::print("RollChanceI32   {}\n", RollChanceI32(30));
+}
+
+TEST_CASE("random weight", "[common]") {
+  const int kThousand10  = 10000;
+  const int kThousand100 = 100000;
+
+  std::vector<double> weights{1000.0, 1500.0, 2000.0, 1500.0, 4000.0, 3000.0};
+  std::unordered_map<uint32_t, uint32_t> result_map;
+
+  for (int i = 0; i < kThousand10; ++i) {
+    auto n = RandU32Weighted(weights);
+    ++result_map[n];
+  }
+
+  for (auto &&[n, count] : result_map) {
+    fmt::print("{}:    {}\t{}\n", n, count,
+               std::string(static_cast<int>(count * 100.0 / kThousand10), '*')
+                   .c_str());
+  }
+}
+
+TEST_CASE("random weight func", "[common]") {
+  struct Item {
+    Item() = default;
+    Item(int id_in, double weight_in) : id(id_in), weight(weight_in) {}
+
+    int id{0};
+    double weight{0.0f};
+  };
+
+  std::vector<Item> bag;
+
+  for (int i = 0; i < 10; ++i) {
+    bag.emplace_back(i + 1, RandDouble());
+  }
+
+  for (auto &&item : bag) {
+    fmt::print("bag item id:{} weight:{}\n", item.id, item.weight);
+  }
+
+  fmt::print("\n");
+
+  for (int i = 0; i < 5; ++i) {
+    // auto rand_iter =
+    //     RandContainerWeighted(bag, [](const auto &_la) { return _la.weight; });
+    // if (rand_iter != bag.end()) {
+    //   fmt::print("rand item id:{} weight:{}\n", rand_iter->id,
+    //              rand_iter->weight);
+    // }
+  }
 }
