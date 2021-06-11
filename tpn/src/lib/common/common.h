@@ -60,13 +60,11 @@ struct SrcLocInfo {
 
   /// 获取行号
   ///  @return 行号
-  constexpr const std::uint_least32_t line() const noexcept { return line_; }
+  constexpr std::uint_least32_t line() const noexcept { return line_; }
 
   /// 获取列号
   ///  @return 列号
-  constexpr const std::uint_least32_t column() const noexcept {
-    return column_;
-  }
+  constexpr std::uint_least32_t column() const noexcept { return column_; }
 
  private:
   const char *file_name_{nullptr};      ///< 文件名
