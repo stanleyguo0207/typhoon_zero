@@ -29,10 +29,20 @@ add_executable(test_common
 	"../../test_main.cpp"
 	"test_common.cpp"
 )
+
+set_property(TARGET
+	test_rapidjson
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+		_TPN_COMMON_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_common_test.json"
+	)
+
 target_link_libraries(test_common
 	Catch2::Catch2
 	common
 )
+
 install(TARGETS test_common DESTINATION ${BIN_DIR}/tests)
 include(CTest)
 include(Catch)
