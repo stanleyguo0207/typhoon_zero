@@ -31,7 +31,7 @@ add_library(typhoon-feature-interface INTERFACE)
 
 target_compile_features(typhoon-feature-interface
 	INTERFACE
-		cxx_std_17
+		cxx_std_20
 		cxx_alias_templates
 		cxx_auto_type
 		cxx_constexpr

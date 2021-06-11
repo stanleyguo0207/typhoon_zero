@@ -81,7 +81,7 @@ endif()
 option(BUILD_TESTS "BUild tests" ON)
 
 # warnings
-option(WITH_WARNINGS "Show all warings during compile" OFF)
+option(WITH_WARNINGS "Show all warings during compile" ON)
 
 # debug
 option(WITH_COREDEBUG "Include additional debug-code in core" ON)

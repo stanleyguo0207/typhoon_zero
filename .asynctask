@@ -24,15 +24,15 @@ command=python3 .task/task.py "Build" "RelWithDebInfo" "-j8"
 cwd=<root>
 
 [project-install:debug]
-command=python3 .task/task.py "Install" "Debug" "-j8"
+command=python3 .task/task.py "Install" "Debug"
 cwd=<root>
 
 [project-install:release]
-command=python3 .task/task.py "Install" "Release" "-j8"
+command=python3 .task/task.py "Install" "Release"
 cwd=<root>
 
 [project-insatll:relwithdebinfo]
-command=python3 .task/task.py "Install" "RelWithDebInfo" "-j8"
+command=python3 .task/task.py "Install" "RelWithDebInfo"
 cwd=<root>
 
 [project-clean:debug]

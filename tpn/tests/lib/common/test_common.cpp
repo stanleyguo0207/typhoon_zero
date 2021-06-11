@@ -22,6 +22,8 @@
 
 #include "../../test_include.h"
 
+#include <ctime>
+
 using namespace std;
 
 // debug_hub
@@ -29,6 +31,6 @@ using namespace std;
 #include "debug_hub.h"
 
 TEST_CASE("debug_hub", "[common]") {
-  TPN_ASSERT(3 < 5, "assert 3 < 5 {}", true);
-  TPN_ASSERT(3 > 5, "assert 3 > 5 {}", false);
+  TPN_ASSERT(3 < 5, "assert 3 < 5");
+  TPN_ASSERT(3 > 5, "assert 3 > 5 maybe error : time{}", time(nullptr));
 }

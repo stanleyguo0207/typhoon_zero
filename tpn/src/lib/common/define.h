@@ -23,6 +23,8 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_
 
+#include <cstdint>
+
 // only windows or linux
 #define TPN_PLATFORM_WIN 0
 #define TPN_PLATFORM_UNIX 1

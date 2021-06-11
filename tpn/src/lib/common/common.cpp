@@ -21,3 +21,5 @@
 //
 
 #include "common.h"
+
+namespace tpn {}  // namespace tpn

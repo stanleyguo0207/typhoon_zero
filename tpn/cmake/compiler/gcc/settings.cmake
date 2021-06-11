@@ -52,6 +52,8 @@ if(WITH_WARNINGS)
 			-Winvalid-pch
 			-Wfatal-errors
 			-Woverloaded-virtual
+			-Wformat=2
+			-pedantic
 		)
 	message(STATUS "GCC: All warings enabled")
 endif()
