@@ -96,8 +96,8 @@ double RandNorm() { return GetRandomGenerator()->Random(); }
 
 double RandChance() { return RandNorm() * 100.0; }
 
-uint32_t RandU32Weighted(const std::vector<double> &weights) {
-  std::discrete_distribution<uint32_t> dd{weights.begin(), weights.end()};
+uint32_t RandU32Weighted(const double *weights, size_t count) {
+  std::discrete_distribution<uint32_t> dd{weights, weights + count};
   return dd(*(RandomEngine::Instance()));
 }
 

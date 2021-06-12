@@ -99,14 +99,18 @@ TPN_COMMON_API double RandNorm();
 TPN_COMMON_API double RandChance();
 
 /// 权重随机
+///  @param[in]		weights		权重
+///  @param[in]		count			权重个数
 ///  @return [0, count)
-TPN_COMMON_API uint32_t RandU32Weighted(const std::vector<double> &weights);
+TPN_COMMON_API uint32_t RandU32Weighted(const double *weights, size_t count);
 
 /// 浮点型机会随机
+///  @param[in]		chance		roll的概率下限
 ///  @return roll 中返回true
 inline bool RollChanceFloat(float chance) { return chance > RandChance(); }
 
 /// int32_t机会随机
+///  @param[in]		chance		roll的概率下限
 ///  @return roll 中返回true
 inline bool RollChanceI32(int32_t chance) { return chance > RandI32(0, 99); }
 

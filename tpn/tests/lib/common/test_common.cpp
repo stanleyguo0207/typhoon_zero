@@ -101,11 +101,11 @@ TEST_CASE("random weight", "[common]") {
   const int kThousand10  = 10000;
   const int kThousand100 = 100000;
 
-  std::vector<double> weights{1000.0, 1500.0, 2000.0, 1500.0, 4000.0, 3000.0};
+  double weights[] = {1000.0, 1500.0, 2000.0, 1500.0, 4000.0, 3000.0};
   std::unordered_map<uint32_t, uint32_t> result_map;
 
   for (int i = 0; i < kThousand10; ++i) {
-    auto n = RandU32Weighted(weights);
+    auto n = RandU32Weighted(weights, std::size(weights));
     ++result_map[n];
   }
 
@@ -116,7 +116,11 @@ TEST_CASE("random weight", "[common]") {
   }
 }
 
-TEST_CASE("random weight func", "[common]") {
+// containers
+#include "containers.h"
+using namespace tpn::containers;
+
+TEST_CASE("containers", "[common]") {
   struct Item {
     Item() = default;
     Item(int id_in, double weight_in) : id(id_in), weight(weight_in) {}
@@ -128,7 +132,7 @@ TEST_CASE("random weight func", "[common]") {
   std::vector<Item> bag;
 
   for (int i = 0; i < 10; ++i) {
-    bag.emplace_back(i + 1, RandDouble());
+    bag.emplace_back(i + 1, RandDouble(1000, 8000));
   }
 
   for (auto &&item : bag) {
@@ -137,12 +141,21 @@ TEST_CASE("random weight func", "[common]") {
 
   fmt::print("\n");
 
-  for (int i = 0; i < 5; ++i) {
-    // auto rand_iter =
-    //     RandContainerWeighted(bag, [](const auto &_la) { return _la.weight; });
-    // if (rand_iter != bag.end()) {
-    //   fmt::print("rand item id:{} weight:{}\n", rand_iter->id,
-    //              rand_iter->weight);
-    // }
+  auto rand_iter = SelectRandomWeightContainerElementIterator(
+      bag, [](const auto &_la) { return _la.weight; });
+  if (rand_iter != bag.end()) {
+    fmt::print("weight rand item id:{} weight:{}\n", rand_iter->id,
+               rand_iter->weight);
   }
+
+  RandomShuffe(bag);
+
+  for (auto &&item : bag) {
+    fmt::print("bag item id:{} weight:{}\n", item.id, item.weight);
+  }
+
+  fmt::print("\n");
+
+  auto &item = SelectRandomContainerElement(bag);
+  fmt::print("rand item id:{} weight:{}\n", item.id, item.weight);
 }
