@@ -159,3 +159,17 @@ TEST_CASE("containers", "[common]") {
   auto &item = SelectRandomContainerElement(bag);
   fmt::print("rand item id:{} weight:{}\n", item.id, item.weight);
 }
+
+// byte_converter
+#include "byte_converter.h"
+
+TEST_CASE("byte", "[common]") {
+  uint32_t data = 0x12345678;
+
+  fmt::print("{:#x}\n", data);
+  EndianRefMakeBig(data);
+  fmt::print("{:#x}\n", data);
+  EndianRefMakeBig(data);
+  EndianRefMakeLittle(data);
+  fmt::print("{:#x}\n", data);
+}
