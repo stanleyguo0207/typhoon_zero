@@ -35,7 +35,7 @@ using namespace tpn;
 
 TEST_CASE("debug_hub", "[common]") {
   TPN_ASSERT(3 < 5, "assert 3 < 5");
-  TPN_ASSERT(3 > 5, "assert 3 > 5 maybe error : time{}", time(nullptr));
+  // TPN_ASSERT(3 > 5, "assert 3 > 5 maybe error : time{}", time(nullptr));
 }
 
 // configmgr
@@ -172,4 +172,25 @@ TEST_CASE("byte", "[common]") {
   EndianRefMakeBig(data);
   EndianRefMakeLittle(data);
   fmt::print("{:#x}\n", data);
+}
+
+// utils
+#include "utils.h"
+
+TEST_CASE("utf8", "[common]") {
+  std::string str = "hello 世界";
+  fmt::print("str {}\n", str);
+
+  std::string str2;
+  std::wstring wstr = L"";
+  if (Utf8ToWstr(str, wstr)) {
+    WstrToUtf8(wstr, str2);
+    fmt::print("wstr {}\n", str2);
+  }
+
+  size_t len = Utf8Length(str2);
+  if (len > 1) {
+    Utf8Truncate(str2, len - 1);
+    fmt::print("str2 truncate 5 {}\n", str2);
+  }
 }

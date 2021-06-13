@@ -35,5 +35,6 @@
 #include <list>
 #include <algorithm>
 #include <mutex>
+#include <string_view>
 
 #endif  // TYPHOON_ZERO_TPN_TESTS_TEST_INCLUDE_H_
