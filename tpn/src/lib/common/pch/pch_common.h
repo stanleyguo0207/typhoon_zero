@@ -49,6 +49,8 @@
 #include <atomic>
 #include <utility>
 #include <optional>
+#include <exception>
+#include <stdexcept>
 #include <algorithm>
 #include <functional>
 #include <filesystem>

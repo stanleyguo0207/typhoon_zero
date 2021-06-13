@@ -37,7 +37,7 @@ bool ConfigMgr::Load(std::string_view path, std::vector<std::string> args,
   std::lock_guard<std::mutex> lock(load_mutex_);
 
   if (!reload) {
-    path_ = path;
+    path_ = {path.data(), path.size()};
     args_ = std::move(args);
   }
 

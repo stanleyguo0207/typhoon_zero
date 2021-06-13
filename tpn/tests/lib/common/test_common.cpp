@@ -194,3 +194,59 @@ TEST_CASE("utf8", "[common]") {
     fmt::print("str2 truncate 5 {}\n", str2);
   }
 }
+
+// filesystem
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+TEST_CASE("filesystem", "[common]") {
+  auto path_orgi = fs::path{"/project/typhoon_test/filesystem/nothing"};
+  path_orgi.make_preferred();
+  auto path_file = fs::absolute(path_orgi);
+
+  fmt::print("root_name: {}\n", path_file.root_name());
+  fmt::print("root_directory: {}\n", path_file.root_directory());
+  fmt::print("root_path: {}\n", path_file.root_path());
+  fmt::print("relative_path: {}\n", path_file.relative_path());
+  fmt::print("parent_path: {}\n", path_file.parent_path());
+  fmt::print("filename: {}\n", path_file.filename());
+  fmt::print("stem: {}\n", path_file.stem());
+  fmt::print("extension: {}\n", path_file.extension());
+}
+
+// file_helper
+#include "file_helper.h"
+
+TEST_CASE("file_helper", "[common]") {
+#ifndef _TPN_COMMON_CONFIG_TEST_FILE
+#  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
+#endif
+
+  std::string error;
+  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
+  if (!error.empty()) {
+    cout << error.c_str() << endl;
+    return;
+  }
+
+  std::string test_file = "file_helper/out/test_file.txt";
+  FileHelper helper;
+  try {
+    helper.Open(test_file);
+    fmt::print("open {} success.\n", helper.GetPath());
+    FmtMemoryBuf buf;
+    fmt::format_to(buf, "{}\n", "this is test file_helper.");
+    helper.Write(buf);
+    helper.Flush();
+    fmt::print("{} file size {}.\n", helper.GetPath(), helper.Size());
+    helper.Close();
+  } catch (const std::exception &ex) {
+    fmt::print("open file failed {}.\n", ex.what());
+  }
+
+  auto &&[parent, filename] = FileHelper::SplitByExtension(test_file);
+
+  fmt::print("file parent_path: {}.\n", parent);
+  fmt::print("file extension: {}.\n", filename);
+}

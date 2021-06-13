@@ -77,6 +77,15 @@ TPN_COMMON_API size_t Utf8Length(std::string &utf8str);
 ///  @param[in]		len				要截断的长度
 TPN_COMMON_API void Utf8Truncate(std::string &utf8str, size_t len);
 
+/// 枚举转换为底层类型
+///  @tparam			T				枚举类型
+///  @param[in]		value		枚举值
+///  @return 枚举值的底层类型数据
+template <typename T>
+inline constexpr decltype(auto) EnumToUnderlyType(const T &value) {
+  return static_cast<std::underlying_type_t<T>>(value);
+}
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_
