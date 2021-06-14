@@ -230,7 +230,7 @@ TEST_CASE("file_helper", "[common]") {
     return;
   }
 
-  std::string test_file = "file_helper/out/test_file.txt";
+  std::string test_file = "file_helper/out/test_file.log";
   FileHelper helper;
   try {
     helper.Open(test_file);
@@ -249,4 +249,12 @@ TEST_CASE("file_helper", "[common]") {
 
   fmt::print("file parent_path: {}.\n", parent);
   fmt::print("file extension: {}.\n", filename);
+
+  auto path_orgi = fs::path{test_file};
+  path_orgi.make_preferred();
+  auto path_file = fs::absolute(path_orgi);
+  fmt::print("parent_path: {}\n", path_file.parent_path());
+  fmt::print("filename: {}\n", path_file.filename());
+  fmt::print("stem: {}\n", path_file.stem());
+  fmt::print("extension: {}\n", path_file.extension());
 }

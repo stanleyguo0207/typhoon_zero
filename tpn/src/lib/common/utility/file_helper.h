@@ -30,34 +30,51 @@
 
 namespace tpn {
 
-///< 文件打开尝试最多次数
-constexpr int32_t kFileOpenTyrMaxTimes = 5;
-
-///< 文件打开间隔毫秒
-constexpr int32_t kFileOpenIntervalMill = 10;
-
 /// 文件辅助类
 class TPN_COMMON_API FileHelper {
  public:
   FileHelper() = default;
   ~FileHelper();
 
+  /// 打开文件
+  ///  @param[in]		path			文件路径
+  ///  @param[in]		truncate	是否截断文件 默认不追加
   void Open(std::string_view path, bool truncate = false);
 
+  /// 重新打开文件
+  ///  @param[in]		truncate
   void Reopen(bool truncate);
 
+  /// 刷新文件缓冲区
   void Flush();
 
+  /// 关闭文件
   void Close();
 
+  /// 写入文件
+  ///  @param[in]		buf			数据缓冲区
   void Write(const FmtMemoryBuf &buf);
 
+  /// 获取文件大小
+  ///  @return 文件大小
   size_t Size() const;
 
+  /// 获取文件原始路径
+  ///  @return 原始路径
   std::string_view GetPath() const;
 
+  /// 按照扩展分割路径
+  ///  @param[in]		path		要分割的路径
+  ///  @return pair<路径前缀, 后缀>
+  ///
+  /// in "sandbox/1/2/a/m.txt"
+  /// out <"sandbox/1/2/a/m", ".txt">
   static std::pair<std::string, std::string> SplitByExtension(
       std::string_view path);
+
+ public:
+  static constexpr int32_t kFileOpenTyrMaxTimes = 5;  ///< 文件打开尝试最多次数
+  static constexpr int32_t kFileOpenIntervalMill = 10;  ///< 文件打开间隔毫秒
 
  private:
   std::FILE *file_{nullptr};  ///< 关联文件

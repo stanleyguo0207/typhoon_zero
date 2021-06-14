@@ -24,6 +24,8 @@
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_
 
 #include <cstdint>
+#include <cstddef>
+#include <cinttypes>
 
 // only windows or linux
 #define TPN_PLATFORM_WIN 0
@@ -130,15 +132,6 @@
 #    define TPN_EOL "\r\n"
 #  else
 #    define TPN_EOL "\n"
-#  endif
-#endif
-
-// 文件路径分割符
-#if !defined(TPN_SEP)
-#  if (TPN_PLATFORM == TPN_PLATFORM_WIN)
-#    define TPN_SEP '\\'
-#  else
-#    define TPN_SEP '/'
 #  endif
 #endif
 

@@ -127,7 +127,7 @@ std::pair<std::string, std::string> FileHelper::SplitByExtension(
     return std::make_pair(std::string{path.data(), path.size()}, std::string());
   }
 
-  auto folder_index = path.rfind(TPN_SEP);
+  auto folder_index = path.rfind(fs::path::preferred_separator);
   if (folder_index != std::string_view::npos && folder_index >= exist - 1) {
     return std::make_pair(std::string{path.data(), path.size()}, std::string());
   }
