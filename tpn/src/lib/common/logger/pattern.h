@@ -49,7 +49,7 @@ class TPN_COMMON_API Pattern {
     }
 
     return fmt::format_to(ctx.out(),
-                          "[{:<5}] [{:%Y-%m-%d %H:%M:%S}] [{}] [{}] [{}] {}",
+                          "{} [{:%Y-%m-%d %H:%M:%S}] [{}] [{}] [{}] {}",
                           ToLogLevelStr(msg.level), cached_tm_, msg.logger_name,
                           msg.src_loc, msg.thread_id, msg.content);
   }

@@ -28,10 +28,10 @@ namespace tpn {
 namespace log {
 
 static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+    "OFF", "[TRACE]", "[DEBUG]", " [INFO]", " [WARN]", "[ERROR]", "[FATAL]"};
 
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
+static constexpr std::string_view s_log_level_short_names[]{
+    "[O]", "[T]", "[D]", "[I]", "[W]", "[E]", "[F]"};
 
 std::string_view ToLogLevelStr(LogLevel level) noexcept {
   return s_log_level_names[EnumToUnderlyType(level)];
