@@ -63,4 +63,34 @@ size_t GetCurrentThreadId() noexcept {
   return s_current_thread_id;
 }
 
+std::tm Localtime(const std::time_t &time_tt) noexcept {
+  std::tm tm{};
+#if defined(_WIN32)
+  ::localtime_s(&tm, &time_tt);
+#else
+  ::localtime_r(&time_tt, &tm);
+#endif
+  return tm;
+}
+
+std::tm Localtime() noexcept {
+  std::time_t now_t = ::time(nullptr);
+  return Localtime(now_t);
+}
+
+std::tm GmTime(const time_t &time_tt) noexcept {
+  std::tm tm{};
+#if defined(_WIN32)
+  ::gmtime_s(&tm, &time_tt);
+#else
+  ::gmtime_r(&time_tt, &tm);
+#endif
+  return tm;
+}
+
+std::tm GmTime() noexcept {
+  std::time_t now_t = ::time(nullptr);
+  return GmTime(now_t);
+}
+
 }  // namespace tpn

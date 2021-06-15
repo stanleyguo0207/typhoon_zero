@@ -20,38 +20,25 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "log_common.h"
-#include "utils.h"
+#include "pattern.h"
+
+#include "platform.h"
 
 namespace tpn {
 
 namespace log {
 
-static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+void Pattern::Init() {}
 
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
-
-std::string_view ToLogLevelStr(LogLevel level) noexcept {
-  return s_log_level_names[EnumToUnderlyType(level)];
-}
-
-std::string_view ToLogLevelShortStr(LogLevel level) noexcept {
-  return s_log_level_short_names[EnumToUnderlyType(level)];
-}
-
-LogLevel ToLogLevelEnum(std::string_view name) noexcept {
-  uint8_t level = 0;
-  for (auto &&level_str : s_log_level_names) {
-    if (level_str == name) {
-      return static_cast<LogLevel>(level);
-    }
-    ++level;
+std::tm Pattern::GetTime(const LogMsg &msg) const {
+  if (PatternTimeType::kPatternTimeTypeLocal == pattern_time_type_) {
+    return Localtime(LogClock::to_time_t(msg.time));
+  } else {
+    return GmTime(LogClock::to_time_t(msg.time));
   }
-
-  return LogLevel::kLogLevelOff;
 }
+
+TPN_SINGLETON_IMPL(Pattern)
 
 }  // namespace log
 

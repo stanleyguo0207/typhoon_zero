@@ -29,7 +29,7 @@ namespace tpn {
 namespace log {
 
 LogMsg::LogMsg(std::string_view logger_name_in, LogLevel level_in,
-               LogClock::time_point time_in, SrcLocInfo src_loc_in,
+               LogClock::time_point time_in, SourceLocation src_loc_in,
                std::string_view content_in)
     : logger_name(logger_name_in),
       level(level_in),
@@ -39,13 +39,13 @@ LogMsg::LogMsg(std::string_view logger_name_in, LogLevel level_in,
       thread_id(GetCurrentThreadId()) {}
 
 LogMsg::LogMsg(std::string_view logger_name_in, LogLevel level_in,
-               SrcLocInfo src_loc_in, std::string_view content_in)
+               SourceLocation src_loc_in, std::string_view content_in)
     : LogMsg(logger_name_in, level_in, LogClock::now(), src_loc_in,
              content_in) {}
 
 LogMsg::LogMsg(std::string_view logger_name_in, LogLevel level_in,
                std::string_view content_in)
-    : LogMsg(logger_name_in, level_in, LogClock::now(), SrcLocInfo{},
+    : LogMsg(logger_name_in, level_in, LogClock::now(), SourceLocation{},
              content_in) {}
 
 AsyncLogMsg::AsyncLogMsg(const LogMsg &msg) : LogMsg{msg} {

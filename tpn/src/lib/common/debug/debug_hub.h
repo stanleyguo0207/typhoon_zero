@@ -36,8 +36,8 @@ namespace {
 ///  @param[in]		cond			触发警告条件
 ///  @param[in]		msg				额外携带信息
 template <typename T>
-TPN_INLINE void DBGLog(const char *tag, SrcLocInfo src_loc, const char *cond,
-                       const T &msg) {
+TPN_INLINE void DBGLog(const char *tag, SourceLocation src_loc,
+                       const char *cond, const T &msg) {
   fmt::print(stderr, "\n{}:{} in {} {}:\ncond:{}\n", src_loc.file_name(),
              src_loc.line(), src_loc.function_name(), tag, cond);
   fmt::print(stderr, "{}", msg);
@@ -50,8 +50,9 @@ TPN_INLINE void DBGLog(const char *tag, SrcLocInfo src_loc, const char *cond,
 ///  @param[in]		cond			触发警告条件
 ///  @param[in]		fmt_strv	额外携带信息格式
 ///  @param[in]		args			额外携带信息参数
-TPN_INLINE void DBGLog(const char *tag, SrcLocInfo src_loc, const char *cond,
-                       fmt::string_view fmt_strv, fmt::format_args args) {
+TPN_INLINE void DBGLog(const char *tag, SourceLocation src_loc,
+                       const char *cond, fmt::string_view fmt_strv,
+                       fmt::format_args args) {
   fmt::print(stderr, "\n{}:{} in {} {}:\ncond:{}\n", src_loc.file_name(),
              src_loc.line(), src_loc.function_name(), tag, cond);
   FmtMemoryBuf buf;
@@ -66,7 +67,8 @@ TPN_INLINE void DBGLog(const char *tag, SrcLocInfo src_loc, const char *cond,
 ///  @param[in]		cond		触发警告条件
 ///  @param[in]		msg			额外携带信息
 template <typename T>
-TPN_INLINE void DBGWarning(SrcLocInfo src_loc, const char *cond, const T &msg) {
+TPN_INLINE void DBGWarning(SourceLocation src_loc, const char *cond,
+                           const T &msg) {
   DBGLog("WARNING", src_loc, cond, msg);
 }
 
@@ -76,7 +78,7 @@ TPN_INLINE void DBGWarning(SrcLocInfo src_loc, const char *cond, const T &msg) {
 ///  @param[in]		format	额外携带信息格式
 ///  @param[in]		...			额外携带信息参数
 template <typename FormatString, typename... Args>
-TPN_INLINE void DBGWarning(SrcLocInfo src_loc, const char *cond,
+TPN_INLINE void DBGWarning(SourceLocation src_loc, const char *cond,
                            const FormatString &format, Args &&...args) {
   fmt::string_view fmt_strv = fmt::to_string_view(format);
   DBGLog("WARNING", src_loc, cond, fmt_strv,
@@ -89,7 +91,8 @@ TPN_INLINE void DBGWarning(SrcLocInfo src_loc, const char *cond,
 ///  @param[in]		cond		触发断言条件
 ///  @param[in]		msg			额外携带信息
 template <typename T>
-TPN_INLINE void DBGAssert(SrcLocInfo src_loc, const char *cond, const T &msg) {
+TPN_INLINE void DBGAssert(SourceLocation src_loc, const char *cond,
+                          const T &msg) {
   DBGLog("ASSERTION FAILED", src_loc, cond, msg);
   *((volatile int *)nullptr) = 0;
   exit(1);
@@ -102,7 +105,7 @@ TPN_INLINE void DBGAssert(SrcLocInfo src_loc, const char *cond, const T &msg) {
 ///  @param[in]		format	额外携带信息格式
 ///  @param[in]		...			额外携带信息参数
 template <typename FormatString, typename... Args>
-[[noreturn]] TPN_INLINE void DBGAssert(SrcLocInfo src_loc, const char *cond,
+[[noreturn]] TPN_INLINE void DBGAssert(SourceLocation src_loc, const char *cond,
                                        const FormatString &format,
                                        Args &&...args) {
   fmt::string_view fmt_strv = fmt::to_string_view(format);

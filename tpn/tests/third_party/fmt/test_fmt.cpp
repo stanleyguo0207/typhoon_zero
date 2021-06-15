@@ -36,3 +36,5 @@ TEST_CASE("color", "[fmt]") {
   fmt::print(fmt::emphasis::bold | fg(fmt::color::red),
              "Elapsed time: {0:.2f} seconds", 1.23);
 }
+
+TEST_CASE("print", "[fmt]") { fmt::print("%d : {:d}\n", 300, 200); }

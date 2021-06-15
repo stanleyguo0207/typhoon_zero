@@ -31,7 +31,27 @@
 
 namespace tpn {
 
+/// 获取当前线程id
+///  @return 当前线程id
 TPN_COMMON_API size_t GetCurrentThreadId() noexcept;
+
+/// 获取指定时间当地时间
+///  @param[in]		time_tt			指定时间
+///  @return 时间信息
+TPN_COMMON_API std::tm Localtime(const std::time_t &time_tt) noexcept;
+
+/// 获取当前时间当地时间
+///  @return 时间信息
+TPN_COMMON_API std::tm Localtime() noexcept;
+
+/// 获取指定时间UTC时间
+///  @param[in]		time_tt			指定时间
+///  @return 时间信息
+TPN_COMMON_API std::tm GmTime(const std::time_t &time_tt) noexcept;
+
+/// 获取当前时间UTC时间
+///  @return 时间信息
+TPN_COMMON_API std::tm GmTime() noexcept;
 
 }  // namespace tpn
 

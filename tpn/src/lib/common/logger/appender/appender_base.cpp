@@ -20,37 +20,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "log_common.h"
-#include "utils.h"
+#include "appender_base.h"
 
 namespace tpn {
 
 namespace log {
 
-static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
-
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
-
-std::string_view ToLogLevelStr(LogLevel level) noexcept {
-  return s_log_level_names[EnumToUnderlyType(level)];
+void AppenderBase::Log(const LogMsg &msg) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  DoLog(msg);
 }
 
-std::string_view ToLogLevelShortStr(LogLevel level) noexcept {
-  return s_log_level_short_names[EnumToUnderlyType(level)];
-}
-
-LogLevel ToLogLevelEnum(std::string_view name) noexcept {
-  uint8_t level = 0;
-  for (auto &&level_str : s_log_level_names) {
-    if (level_str == name) {
-      return static_cast<LogLevel>(level);
-    }
-    ++level;
-  }
-
-  return LogLevel::kLogLevelOff;
+void AppenderBase::Flush() {
+  std::lock_guard<std::mutex> lock(mutex_);
+  DoFlush();
 }
 
 }  // namespace log

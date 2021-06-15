@@ -20,39 +20,46 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "log_common.h"
-#include "utils.h"
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_APPENDER_APPENDER_BASE_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_APPENDER_APPENDER_BASE_H_
+
+#include <mutex>
+
+#include "appender.h"
 
 namespace tpn {
 
 namespace log {
 
-static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+/// 附加器基类
+class TPN_COMMON_API AppenderBase : public Appender {
+ public:
+  AppenderBase() = default;
 
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
+  /// 记录日志接口
+  ///  @param[in]		msg			日志信息
+  virtual void Log(const LogMsg &msg) final;
 
-std::string_view ToLogLevelStr(LogLevel level) noexcept {
-  return s_log_level_names[EnumToUnderlyType(level)];
-}
+  /// 日志刷新接口
+  virtual void Flush() final;
 
-std::string_view ToLogLevelShortStr(LogLevel level) noexcept {
-  return s_log_level_short_names[EnumToUnderlyType(level)];
-}
+ protected:
+  /// 记录日志实现接口
+  ///  @param[in]		msg			日志信息
+  virtual void DoLog(const LogMsg &msg) = 0;
 
-LogLevel ToLogLevelEnum(std::string_view name) noexcept {
-  uint8_t level = 0;
-  for (auto &&level_str : s_log_level_names) {
-    if (level_str == name) {
-      return static_cast<LogLevel>(level);
-    }
-    ++level;
-  }
+  /// 日志刷新实现接口
+  virtual void DoFlush() = 0;
 
-  return LogLevel::kLogLevelOff;
-}
+ private:
+  std::mutex mutex_;  ///< 操作锁
+
+  TPN_NO_COPYABLE(AppenderBase)
+  TPN_NO_MOVEABLE(AppenderBase)
+};
 
 }  // namespace log
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_APPENDER_APPENDER_BASE_H_

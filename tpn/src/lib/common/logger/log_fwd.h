@@ -23,6 +23,9 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_LOG_FWD_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_LOG_FWD_H_
 
+#include <memory>
+#include <vector>
+
 #include "define.h"
 #include "fmt_wrap.h"
 #include "chrono_wrap.h"
@@ -31,9 +34,18 @@ namespace tpn {
 
 namespace log {
 
+enum class LogLevel : uint8_t;
+
 struct LogMsg;
 
 using LogClock = SystemClock;
+
+class Appender;
+using AppenderSptr     = std::shared_ptr<Appender>;
+using AppenderInitList = std::initializer_list<AppenderSptr>;
+using AppenderSptrVec  = std::vector<AppenderSptr>;
+
+using ErrHandler = std::function<void(std::string_view err_msg)>;
 
 }  // namespace log
 

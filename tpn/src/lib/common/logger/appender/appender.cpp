@@ -20,37 +20,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "log_common.h"
-#include "utils.h"
+#include "appender.h"
 
 namespace tpn {
 
 namespace log {
 
-static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
-
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
-
-std::string_view ToLogLevelStr(LogLevel level) noexcept {
-  return s_log_level_names[EnumToUnderlyType(level)];
+void Appender::SetLevel(LogLevel level) {
+  level_.store(level, std::memory_order_relaxed);
 }
 
-std::string_view ToLogLevelShortStr(LogLevel level) noexcept {
-  return s_log_level_short_names[EnumToUnderlyType(level)];
+LogLevel Appender::GetLevel() const {
+  return static_cast<LogLevel>(level_.load(std::memory_order_relaxed));
 }
 
-LogLevel ToLogLevelEnum(std::string_view name) noexcept {
-  uint8_t level = 0;
-  for (auto &&level_str : s_log_level_names) {
-    if (level_str == name) {
-      return static_cast<LogLevel>(level);
-    }
-    ++level;
-  }
-
-  return LogLevel::kLogLevelOff;
+bool Appender::ShouldLog(LogLevel level) const {
+  auto level_need = level_.load(std::memory_order_relaxed);
+  return (LogLevel::kLogLevelOff != level_need) && (level >= level_need);
 }
 
 }  // namespace log

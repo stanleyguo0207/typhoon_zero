@@ -20,39 +20,48 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_APPENDER_APPENDER_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_APPENDER_APPENDER_H_
+
+#include <atomic>
+
 #include "log_common.h"
-#include "utils.h"
 
 namespace tpn {
 
 namespace log {
 
-static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+/// 追加器抽象类
+class TPN_COMMON_API Appender {
+ public:
+  virtual ~Appender() = default;
 
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
+  /// 记录日志接口
+  ///  @param[in]		msg			日志信息
+  virtual void Log(const LogMsg &msg) = 0;
 
-std::string_view ToLogLevelStr(LogLevel level) noexcept {
-  return s_log_level_names[EnumToUnderlyType(level)];
-}
+  /// 日志刷新接口
+  virtual void Flush() = 0;
 
-std::string_view ToLogLevelShortStr(LogLevel level) noexcept {
-  return s_log_level_short_names[EnumToUnderlyType(level)];
-}
+  /// 设置追加器志记级别
+  ///  @param[in]		level		日志级别
+  void SetLevel(LogLevel level);
 
-LogLevel ToLogLevelEnum(std::string_view name) noexcept {
-  uint8_t level = 0;
-  for (auto &&level_str : s_log_level_names) {
-    if (level_str == name) {
-      return static_cast<LogLevel>(level);
-    }
-    ++level;
-  }
+  /// 获取志记级别
+  ///  @return 志记级别
+  LogLevel GetLevel() const;
 
-  return LogLevel::kLogLevelOff;
-}
+  /// 检查传入级别是否满足志记要求
+  ///  @param[in]		level		日志级别
+  ///  @return true满足志记要求 false不满足
+  bool ShouldLog(LogLevel level) const;
+
+ protected:
+  std::atomic<LogLevel> level_{LogLevel::kLogLevelOff};  ///< 追加器志记级别
+};
 
 }  // namespace log
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_APPENDER_APPENDER_H_

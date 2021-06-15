@@ -42,6 +42,21 @@ enum class LogLevel : uint8_t {
   kLogLevelEnable,   ///<
 };
 
+/// 模式时间类型
+enum class PatternTimeType : uint8_t {
+  kPatternTimeTypeLocal,  ///< 当地时间
+  kPatternTimeTypeUtc,    ///< 世界协调时间
+};
+
+/// 日志级别转换为日志级别字符串
+TPN_COMMON_API std::string_view ToLogLevelStr(LogLevel level) noexcept;
+
+/// 日志级别转换为日志级别简写字符串
+TPN_COMMON_API std::string_view ToLogLevelShortStr(LogLevel level) noexcept;
+
+/// 日志级别字符串转为枚举值
+TPN_COMMON_API LogLevel ToLogLevelEnum(std::string_view name) noexcept;
+
 }  // namespace log
 
 }  // namespace tpn

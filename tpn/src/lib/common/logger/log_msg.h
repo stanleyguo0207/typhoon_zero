@@ -43,7 +43,7 @@ struct TPN_COMMON_API LogMsg {
   ///  @param[in]		src_loc_in				源文件定位信息
   ///  @param[in]		content_in				日志内容
   LogMsg(std::string_view logger_name_in, LogLevel level_in,
-         LogClock::time_point time_in, SrcLocInfo src_loc_in,
+         LogClock::time_point time_in, SourceLocation src_loc_in,
          std::string_view content_in);
 
   /// 构造函数
@@ -52,7 +52,7 @@ struct TPN_COMMON_API LogMsg {
   ///  @param[in]		src_loc_in				源文件定位信息
   ///  @param[in]		content_in				日志内容
   LogMsg(std::string_view logger_name_in, LogLevel level_in,
-         SrcLocInfo src_loc_in, std::string_view content_in);
+         SourceLocation src_loc_in, std::string_view content_in);
 
   /// 构造函数
   ///  @param[in]		logger_name_in		日志名称

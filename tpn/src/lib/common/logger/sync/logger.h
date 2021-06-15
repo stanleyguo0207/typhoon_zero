@@ -20,39 +20,34 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_SYNC_LOGGER_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_SYNC_LOGGER_H_
+
+#include <vector>
+#include <atomic>
+
 #include "log_common.h"
-#include "utils.h"
 
 namespace tpn {
 
 namespace log {
 
-static constexpr std::string_view s_log_level_names[]{
-    "OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
+/// 同步日志记录器
+class TPN_COMMON_API Logger {
+ public:
+ protected:
+  std::string name_{""};                                 ///< 记录器名称
+  std::atomic<LogLevel> level_{LogLevel::kLogLevelOff};  ///< 志记级别
+  std::atomic<LogLevel> flush_level_{LogLevel::kLogLevelOff};  ///< 刷新级别
+  AppenderSptrVec appenders_;                                  ///< 附加器
+  ErrHandler err_handler_{nullptr};                            ///< 错误处理
+};
 
-static constexpr std::string_view s_log_level_short_names[]{"O", "T", "D", "I",
-                                                            "W", "E", "F"};
-
-std::string_view ToLogLevelStr(LogLevel level) noexcept {
-  return s_log_level_names[EnumToUnderlyType(level)];
-}
-
-std::string_view ToLogLevelShortStr(LogLevel level) noexcept {
-  return s_log_level_short_names[EnumToUnderlyType(level)];
-}
-
-LogLevel ToLogLevelEnum(std::string_view name) noexcept {
-  uint8_t level = 0;
-  for (auto &&level_str : s_log_level_names) {
-    if (level_str == name) {
-      return static_cast<LogLevel>(level);
-    }
-    ++level;
-  }
-
-  return LogLevel::kLogLevelOff;
-}
+/// 交换两个记录器
+void Swap(Logger &a, Logger &b);
 
 }  // namespace log
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_SYNC_LOGGER_H_

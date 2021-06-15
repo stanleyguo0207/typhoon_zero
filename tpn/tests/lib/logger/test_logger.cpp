@@ -31,7 +31,21 @@ using namespace tpn;
 using namespace tpn::log;
 
 TEST_CASE("formatter", "[logger]") {
-  LogMsg msg("test", LogLevel::kLogLevelDebug, "This is test formatter.\n");
-  auto strv = fmt::format("{}", msg);
+  LogMsg msg("test", LogLevel::kLogLevelInfo,
+             SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             "This is test formatter.\n");
+  FmtMemoryBuf buf;
+  try {
+    fmt::format_to(buf, "msg: {}", msg);
+  } catch (const std::exception &ex) {
+    fmt::print("error {}\n", ex.what());
+  }
+  std::string_view strv(buf.data(), buf.size());
+  fmt::print("{}", strv);
+
+  AsyncLogMsg async_msg(msg);
+  buf.clear();
+  fmt::format_to(buf, "async msg: {}", msg);
+  strv = {buf.data(), buf.size()};
   fmt::print("{}", strv);
 }
