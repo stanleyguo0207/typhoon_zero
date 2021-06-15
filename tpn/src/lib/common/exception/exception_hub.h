@@ -59,6 +59,15 @@ class TPN_COMMON_API FileException final : public TpnException {
   ~FileException() noexcept final = default;
 };
 
+/// 日志异常
+class TPN_COMMON_API LogException final : public TpnException {
+ public:
+  /// 异常信息
+  ///  @param[in]		msg			异常信息
+  LogException(std::string_view msg);
+  ~LogException() noexcept final = default;
+};
+
 #if defined(TPN_NO_EXCEPTION)
 #  define TPN_THROW(ex)             \
     do {                            \

@@ -28,4 +28,8 @@ FileException::FileException(std::string_view msg) {
   Message() = {msg.data(), msg.size()};
 }
 
+LogException::LogException(std::string_view msg) {
+  Message() = {msg.data(), msg.size()};
+}
+
 }  // namespace tpn
