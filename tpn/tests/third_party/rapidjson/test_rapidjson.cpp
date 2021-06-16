@@ -356,5 +356,54 @@ TEST_CASE("file", "[rapidjson]") {
     printf("host %s\n", d["host"].GetString());
   }
 
+  if (d.HasMember("mapInfo")) {
+    printf("has mapInfo\n");
+
+    if (d["mapInfo"].IsObject()) {
+      printf("mapInfo is object\n");
+    }
+  }
+
+  fclose(fp);
+}
+
+// object
+TEST_CASE("object", "[rapidjson]") {
+  printf("\n");
+#ifndef _TPN_RAPIDJSON_TEST_FILE
+#  define _TPN_RAPIDJSON_TEST_FILE "configtest.json"
+#endif
+  namespace fs = std::filesystem;
+  // const auto json_path = fs::path(_TPN_RAPIDJSON_TEST_FILE);
+  // auto json_file       = fs::absolute(json_path);
+  auto json_file = fs::absolute(_TPN_RAPIDJSON_TEST_FILE);
+#ifdef _WIN32
+  FILE *fp = fopen(json_file.generic_string().c_str(), "rb");
+#else
+  FILE *fp = fopen(json_file.generic_string().c_str(), "r");
+#endif
+  char readBuffer[65536];
+  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+  Document d;
+  d.ParseStream<kParseCommentsFlag>(is);
+
+  if (d.HasParseError()) {
+    printf("file parse.");
+    return;
+  }
+
+  if (d.HasMember("mapInfo")) {
+    printf("has mapInfo\n");
+
+    if (d["mapInfo"].IsObject()) {
+      printf("mapInfo is object\n");
+    }
+
+    for (auto &&[name, value] : d["mapInfo"].GetObject()) {
+      printf("%s %lf\n", name.GetString(), value.GetDouble());
+    }
+  }
+
   fclose(fp);
 }

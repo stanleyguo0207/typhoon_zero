@@ -23,6 +23,7 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_
 
+#include <vector>
 #include <string>
 #include <string_view>
 
@@ -85,6 +86,62 @@ template <typename T>
 inline constexpr decltype(auto) EnumToUnderlyType(const T &value) {
   return static_cast<std::underlying_type_t<T>>(value);
 }
+
+/// 去除左边空格
+///  @param[out]	src			操作字符串
+///  @return 去除空格后的字符串
+TPN_COMMON_API std::string &TrimLeft(std::string &src);
+
+/// 去除左边空格
+///  @param[out]	src			操作字符串
+///  @return 去除空格后的字符串
+TPN_COMMON_API std::string &TrimRight(std::string &src);
+
+/// 去除左边空格
+///  @param[out]	src			操作字符串
+///  @return 去除空格后的字符串
+TPN_COMMON_API std::string &Trim(std::string &src);
+
+/// 分词
+///  @param[in]		input					模式串
+///  @param[in]		delimiters		分隔串
+TPN_COMMON_API std::vector<std::string> Tokenize(std::string_view input,
+                                                 std::string_view delimiters);
+
+/// 分词器
+class TPN_COMMON_API Tokenizer {
+ public:
+  using storage_type    = std::vector<const char *>;
+  using size_type       = storage_type::size_type;
+  using const_iterator  = storage_type::const_iterator;
+  using reference       = storage_type::reference;
+  using const_reference = storage_type::const_reference;
+
+  /// 构造函数
+  ///  @param[in]		src									模式串
+  ///  @param[in]		delimiter						分割符
+  ///  @param[in]		reserve							预留大小
+  ///  @param[in]		keep_empty_strings	是否保留空字符串
+  explicit Tokenizer(std::string_view src, char delimiter, uint32_t reserve = 0,
+                     bool keep_empty_strings = true);
+  ~Tokenizer() { delete[] str_; }
+
+  const_iterator begin() const { return storage_.begin(); }
+
+  const_iterator end() const { return storage_.end(); }
+
+  size_type size() const { return storage_.size(); }
+
+  reference operator[](size_type index) { return storage_[index]; }
+
+  const_reference operator[](size_type index) const { return storage_[index]; }
+
+ private:
+  char *str_{nullptr};    ///< 源字符串
+  storage_type storage_;  ///< 分词后存储器
+
+  TPN_NO_IMPLICITABLE(Tokenizer)
+};
 
 }  // namespace tpn
 

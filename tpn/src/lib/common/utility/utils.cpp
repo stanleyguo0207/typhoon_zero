@@ -22,6 +22,8 @@
 
 #include "utils.h"
 
+#include <cstring>
+
 #include <utfcpp/utf8.h>
 
 namespace tpn {
@@ -130,6 +132,82 @@ void Utf8Truncate(std::string &utf8str, size_t len) {
     utf8str.resize(oend - (&utf8str[0]));
   } catch (const std::exception &) {
     utf8str.clear();
+  }
+}
+
+std::string &TrimLeft(std::string &src) {
+  size_t pos = src.find_first_not_of(" \r\n\t");
+  if (pos != std::string::npos) {
+    src.erase(0, pos);
+  }
+  return src;
+}
+
+std::string &TrimRight(std::string &src) {
+  size_t pos = src.find_last_not_of(" \r\n\t");
+  if (pos != std::string::npos) {
+    src.erase(pos + 1);
+  }
+  return src;
+}
+
+std::string &Trim(std::string &src) {
+  if (src.empty()) {
+    return src;
+  }
+
+  return TrimRight(TrimLeft(src));
+}
+
+std::vector<std::string> Tokenize(std::string_view input,
+                                  std::string_view delimiters) {
+  std::vector<std::string> tokens;
+  size_t pos, last_pos = 0;
+
+  while (true) {
+    bool done = false;
+    pos       = input.find_first_of(delimiters, last_pos);
+    if (pos == std::string::npos) {
+      done = true;
+      pos  = input.length();
+    }
+
+    tokens.push_back(std::string{input.data() + last_pos, pos - last_pos});
+    if (done) {
+      return std::move(tokens);
+    }
+    last_pos = pos + 1;
+  }
+}
+
+Tokenizer::Tokenizer(std::string_view src, char delimiter,
+                     uint32_t reserve /* = 0 */,
+                     bool keep_empty_strings /* = true */) {
+  str_ = new char[src.length() + 1];
+  std::memcpy(str_, src.data(), src.length() + 1);
+
+  if (reserve) {
+    storage_.reserve(reserve);
+  }
+
+  char *pos_old = str_;
+  char *pos_new = str_;
+
+  while (true) {
+    if (*pos_new == delimiter) {  // 分隔符
+      if (keep_empty_strings || pos_old != pos_new) {
+        storage_.emplace_back(pos_old);
+      }
+      pos_old  = pos_new + 1;
+      *pos_new = '\0';
+    } else if ('\0' == *pos_new) {  // 结束符
+      if (pos_old != pos_new) {
+        storage_.emplace_back(pos_old);
+      }
+      break;
+    }
+
+    ++pos_new;
   }
 }
 

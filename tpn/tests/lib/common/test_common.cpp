@@ -195,6 +195,24 @@ TEST_CASE("utf8", "[common]") {
   }
 }
 
+TEST_CASE("tokenize", "[common]") {
+  std::string str = "1-100-200;2-200-300;3-400-200";
+  auto tk1        = Tokenize(str, ";");
+  for (auto &&s : tk1) {
+    auto tk2 = Tokenize(s, "-");
+    fmt::print("{}\n", tk2);
+  }
+}
+
+TEST_CASE("tokenizer", "[common]") {
+  std::string str = "1-100-200;2-200-300;3-400-200";
+  auto tk1        = Tokenizer(str, ';');
+  for (auto &&s : tk1) {
+    auto tk2 = Tokenizer(s, '-');
+    fmt::print("{}\n", tk2);
+  }
+}
+
 // filesystem
 #include <filesystem>
 

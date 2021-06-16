@@ -36,6 +36,7 @@ namespace log {
 /// 日志中枢
 class TPN_COMMON_API LogHub {
  public:
+  /// 初始化
   void Init();
 
   void RegisterLogger(LoggerSptr new_logger);
@@ -66,10 +67,18 @@ class TPN_COMMON_API LogHub {
 
   void SetAutomaticRegistration(bool automatic_registration);
 
+  PatternTimeType GetPatternTimeType() const;
+
  private:
-  std::mutex logger_map_mutex_;                          ///< 日志记录器锁
-  std::mutex flush_mutex_;                               ///< 刷新锁
-  std::unordered_map<std::string, LoggerSptr> loggers_;  ///< 注册的日志记录器
+  void ThrowIfExists(std::string_view logger_name);
+
+  void DoRegisterLogger(LoggerSptr new_logger);
+
+ private:
+  std::mutex logger_map_mutex_;  ///< 日志记录器锁
+  std::mutex flush_mutex_;       ///< 刷新锁
+  std::unordered_map<std::string_view, LoggerSptr>
+      loggers_;  ///< 注册的日志记录器
   std::unordered_map<std::string, LogLevel> levels_;  ///< 注册的日志级别
   LogLevel global_log_level_{LogLevel::kLogLevelDebug};  ///< 全局志记级别
   LogLevel global_flush_level_{LogLevel::kLogLevelDebug};  ///< 全局刷新级别
