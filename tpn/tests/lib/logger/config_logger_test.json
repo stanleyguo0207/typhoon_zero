@@ -1,0 +1,5 @@
+{
+	"file_open_try_times": 5,
+	"file_open_interval_milliseconds": 100
+}
+// vim: ft=jsonc

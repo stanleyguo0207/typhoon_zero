@@ -29,6 +29,15 @@ add_executable(test_logger
 	"../../test_main.cpp"
 	"test_logger.cpp"
 )
+
+set_property(TARGET
+	test_logger	
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+		_TPN_LOGGER_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_logger_test.json"
+	)
+
 target_link_libraries(test_logger
 	Catch2::Catch2
 	common

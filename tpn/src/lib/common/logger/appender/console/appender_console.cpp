@@ -72,6 +72,7 @@ void AppenderConsoleBase::SetColorMode(AppenderColorMode mode) {
 }
 
 void AppenderConsoleBase::DoLog(const LogMsg &msg) {
+  FmtMemoryBuf formatted;
   if (should_do_colors_) {
     fmt::print(file_, colors_[EnumToUnderlyType(msg.level)], "{}{}", msg,
                TPN_EOL);
