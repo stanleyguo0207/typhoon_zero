@@ -47,6 +47,9 @@ using AppenderSptrVec  = std::vector<AppenderSptr>;
 
 using ErrHandler = std::function<void(std::string_view err_msg)>;
 
+class Logger;
+using LoggerSptr = std::shared_ptr<Logger>;
+
 }  // namespace log
 
 }  // namespace tpn

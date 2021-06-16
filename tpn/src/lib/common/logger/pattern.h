@@ -71,6 +71,7 @@ class TPN_COMMON_API Pattern {
 
 }  // namespace tpn
 
+/// global log pattern instance
 #define g_log_pattern tpn::log::Pattern::Instance()
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_PATTERN_H_
