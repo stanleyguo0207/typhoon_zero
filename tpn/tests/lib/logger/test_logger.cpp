@@ -84,7 +84,7 @@ TEST_CASE("console", "[logger]") {
 // daily_file
 #include "appender_daily_file.h"
 
-TEST_CASE("daily", "[logger]") {
+TEST_CASE("file", "[logger]") {
 #ifndef _TPN_LOGGER_CONFIG_TEST_FILE
 #  define _TPN_LOGGER_CONFIG_TEST_FILE "config_logger_test.json"
 #endif
@@ -100,7 +100,7 @@ TEST_CASE("daily", "[logger]") {
   console_appender->SetLevel(LogLevel::kLogLevelTrace);
 
   auto daily_appender =
-      std::make_shared<AppenderDailyFile>("log/daily/test.log", 0, 0, false, 2);
+      std::make_shared<AppenderDailyFile>("log/file/test.log", 0, 0, false, 2);
   daily_appender->SetLevel(LogLevel::kLogLevelDebug);
 
   Logger logger("console", {console_appender, daily_appender});
@@ -120,4 +120,48 @@ TEST_CASE("daily", "[logger]") {
   logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
              LogLevel::kLogLevelFatal, "Test fatal. {}",
              std::vector<int>{1, 2, 3});
+}
+
+#include <thread>
+
+TEST_CASE("daily", "[logger]") {
+#ifndef _TPN_LOGGER_CONFIG_TEST_FILE
+#  define _TPN_LOGGER_CONFIG_TEST_FILE "config_logger_test.json"
+#endif
+
+  std::string error;
+  g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {}, error);
+  if (!error.empty()) {
+    cout << error.c_str() << endl;
+    return;
+  }
+
+  auto console_appender = std::make_shared<AppenderConsoleStdout>();
+  console_appender->SetLevel(LogLevel::kLogLevelTrace);
+
+  auto daily_appender =
+      std::make_shared<AppenderDailyFile>("log/daily/test.log", 0, 0, false, 4);
+  daily_appender->SetLevel(LogLevel::kLogLevelDebug);
+
+  Logger logger("console", {console_appender, daily_appender});
+  logger.SetLogLevel(LogLevel::kLogLevelTrace);
+  logger.SetFlushLevel(LogLevel::kLogLevelInfo);
+
+  for (int i = 0; i < 10; ++i) {
+    logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+               LogLevel::kLogLevelTrace, "Test trace. {}", 1);
+    logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+               LogLevel::kLogLevelDebug, "Test debug. {}", 2.0);
+    logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+               LogLevel::kLogLevelInfo, "Test info. {}", "3");
+    logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+               LogLevel::kLogLevelWarn, "Test warning. {}", "警告");
+    logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+               LogLevel::kLogLevelError, L"Test error. {}", L"error msg 错误");
+    logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+               LogLevel::kLogLevelFatal, "Test fatal. {}",
+               std::vector<int>{1, 2, 3});
+
+    std::this_thread::sleep_for(3s);
+  }
 }
