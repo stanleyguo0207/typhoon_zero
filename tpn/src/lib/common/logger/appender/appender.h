@@ -25,6 +25,7 @@
 
 #include <atomic>
 
+#include "formatter.h"
 #include "log_common.h"
 
 namespace tpn {

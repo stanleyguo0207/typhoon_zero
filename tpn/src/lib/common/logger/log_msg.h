@@ -67,8 +67,6 @@ struct TPN_COMMON_API LogMsg {
   SourceLocation src_loc;                  ///< 源文件定位信息
   std::string_view content;                ///< 日志内容
   size_t thread_id{0};                     ///< 线程id
-  mutable size_t color_range_start{0};     ///< 颜色范围开始位置
-  mutable size_t color_range_end{0};       ///< 颜色范围结束位置
 
   TPN_DEFAULT_COPY(LogMsg);
   TPN_DEFAULT_MOVE(LogMsg);

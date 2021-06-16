@@ -48,6 +48,13 @@ enum class PatternTimeType : uint8_t {
   kPatternTimeTypeUtc,    ///< 世界协调时间
 };
 
+/// 记录器颜色支持样式
+enum class AppenderColorMode : uint8_t {
+  kAppenderColorModeAlways,     ///< 一直
+  kAppenderColorModeAutomatic,  ///< 自动
+  kAppenderColorModeNever,      ///< 从不
+};
+
 /// 日志级别转换为日志级别字符串
 TPN_COMMON_API std::string_view ToLogLevelStr(LogLevel level) noexcept;
 

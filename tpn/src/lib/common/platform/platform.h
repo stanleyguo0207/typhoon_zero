@@ -53,6 +53,14 @@ TPN_COMMON_API std::tm GmTime(const std::time_t &time_tt) noexcept;
 ///  @return 时间信息
 TPN_COMMON_API std::tm GmTime() noexcept;
 
+/// 是否为带颜色的终端
+///  @return 是否为带颜色的终端
+TPN_COMMON_API bool IsColorTerminal() noexcept;
+
+/// 是否为终端
+///  @return 是否为终端
+TPN_COMMON_API bool InTerminal(FILE *file) noexcept;
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_PLATFORM_PLATFORM_H_

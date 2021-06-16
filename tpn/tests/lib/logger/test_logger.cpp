@@ -24,6 +24,8 @@
 
 using namespace std;
 
+#include "fmt_wrap.h"
+
 // formatter
 #include "formatter.h"
 
@@ -48,4 +50,32 @@ TEST_CASE("formatter", "[logger]") {
   fmt::format_to(buf, "async msg: {}", msg);
   strv = {buf.data(), buf.size()};
   fmt::print("{}", strv);
+}
+
+#include "logger.h"
+
+// console
+#include "appender_console.h"
+
+TEST_CASE("console", "[logger]") {
+  auto console_appender = std::make_shared<AppenderConsoleStdout>();
+  console_appender->SetLevel(LogLevel::kLogLevelTrace);
+
+  Logger logger("console", console_appender);
+  logger.SetLogLevel(LogLevel::kLogLevelTrace);
+  logger.SetFlushLevel(LogLevel::kLogLevelInfo);
+
+  logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             LogLevel::kLogLevelTrace, "Test trace. {}", 1);
+  logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             LogLevel::kLogLevelDebug, "Test debug. {}", 2.0);
+  logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             LogLevel::kLogLevelInfo, "Test info. {}", "3");
+  logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             LogLevel::kLogLevelWarn, "Test warning. {}", "警告");
+  logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             LogLevel::kLogLevelError, L"Test error. {}", L"error msg 错误");
+  logger.Log(SourceLocation(__FILE__, __FUNCTION__, __LINE__),
+             LogLevel::kLogLevelFatal, "Test fatal. {}",
+             std::vector<int>{1, 2, 3});
 }

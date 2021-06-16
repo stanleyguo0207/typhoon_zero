@@ -48,10 +48,10 @@ class TPN_COMMON_API Pattern {
       cached_tm_     = GetTime(msg);
     }
 
-    return fmt::format_to(ctx.out(),
-                          "{} [{:%Y-%m-%d %H:%M:%S}] [{}] [{}] [{}] {}",
-                          ToLogLevelStr(msg.level), cached_tm_, msg.logger_name,
-                          msg.src_loc, msg.thread_id, msg.content);
+    return fmt::format_to(
+        ctx.out(), "[{}] [{:%Y-%m-%d %H:%M:%S}] [{}] [{}] [{}] {}",
+        fmt::format("{:>5}", ToLogLevelStr(msg.level)), cached_tm_,
+        msg.logger_name, msg.src_loc, msg.thread_id, msg.content);
   }
 
  private:

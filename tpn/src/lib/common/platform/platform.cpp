@@ -22,6 +22,10 @@
 
 #include "platform.h"
 
+#include <cstring>
+
+#include <algorithm>
+
 #if defined(_WIN32)
 #  include <direct.h>
 #  include <io.h>
@@ -91,6 +95,34 @@ std::tm GmTime(const time_t &time_tt) noexcept {
 std::tm GmTime() noexcept {
   std::time_t now_t = ::time(nullptr);
   return GmTime(now_t);
+}
+
+bool IsColorTerminal() noexcept {
+#ifdef _WIN32
+  return true;
+#else
+  static constexpr std::array<const char *, 14> terms = {
+      {"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm",
+       "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"}};
+
+  const char *env_p = std::getenv("TERM");
+  if (env_p == nullptr) {
+    return false;
+  }
+
+  static const bool result = std::any_of(
+      terms.begin(), terms.end(),
+      [&](const char *term) { return std::strstr(env_p, term) != nullptr; });
+  return result;
+#endif
+}
+
+bool InTerminal(FILE *file) noexcept {
+#ifdef _WIN32
+  return 0 != ::_isatty(_fileno(file));
+#else
+  return 0 != ::isatty(fileno(file));
+#endif
 }
 
 }  // namespace tpn
