@@ -40,6 +40,8 @@ using FmtWStringView = fmt::basic_string_view<wchar_t>;
 using FmtMemoryBuf   = fmt::basic_memory_buffer<char, 250>;
 using FmtWMemoryBuf  = fmt::basic_memory_buffer<wchar_t, 250>;
 
+using namespace fmt::literals;
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_

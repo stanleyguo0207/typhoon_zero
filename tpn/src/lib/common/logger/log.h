@@ -117,10 +117,10 @@ void SetAutomaticRegistration(bool automatic_registration);
 #  define LOGGER_CALL_END
 #endif
 
-#define LOGGER_CALL(logger, level, ...)                                    \
+#define LOGGER_CALL(logger, level, format, ...)                            \
   LOGGER_CALL_BEGIN do {                                                   \
     (logger)->Log(SourceLocation{__FILE__, __FUNCTION__, __LINE__}, level, \
-                  __VA_ARGS__);                                            \
+                  FMT_STRING(format), ##__VA_ARGS__);                      \
   }                                                                        \
   while (0) LOGGER_CALL_END
 

@@ -178,9 +178,9 @@ TEST_CASE("log", "[logger]") {
                                    [](void *) { tpn::log::Shutdown(); });
 
   LOG_INFO("Test Logger start");
-  LOG_DEBUG(L"Test Logger wstr wring, {}", L"你好");
-  LOG_WARN("Test Logger wstr wring, {}", std::vector(12, 10));
-  LOG_INFO("Test Logger will shutdown in 5s");
+  // LOG_DEBUG(L"Test Logger wstr wring, {}", L"你好");
+  // LOG_WARN("Test Logger wstr wring, {}", std::vector(12, 10));
+  LOG_INFO("Test Logger will shutdown in {}", "5s");
 
   std::this_thread::sleep_for(5s);
 }

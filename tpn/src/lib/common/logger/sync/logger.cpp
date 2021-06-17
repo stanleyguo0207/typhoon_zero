@@ -71,17 +71,8 @@ void Logger::Swap(Logger &other) noexcept {
   err_handler_.swap(other.err_handler_);
 }
 
-void Logger::Log(LogClock::time_point log_time, SourceLocation src_loc,
-                 LogLevel level, std::string_view msg) {
-  bool log_enabled = ShouldLog(level);
-  if (!log_enabled) {
-    return;
-  }
-  LogMsg log_msg(name_, level, log_time, src_loc, msg);
-  AppenderDoLog(log_msg);
-}
-
-void Logger::Log(SourceLocation src_loc, LogLevel level, std::string_view msg) {
+void Logger::LogStrv(SourceLocation src_loc, LogLevel level,
+                     std::string_view msg) {
   bool log_enabled = ShouldLog(level);
   if (!log_enabled) {
     return;
@@ -90,8 +81,26 @@ void Logger::Log(SourceLocation src_loc, LogLevel level, std::string_view msg) {
   AppenderDoLog(log_msg);
 }
 
-void Logger::Log(LogLevel level, std::string_view msg) {
-  Log(SourceLocation{}, level, msg);
+void Logger::LogWStrv(SourceLocation src_loc, LogLevel level,
+                      std::wstring_view msg) {
+  bool log_enabled = ShouldLog(level);
+  if (!log_enabled) {
+    return;
+  }
+
+  try {
+    std::string utf8str;
+    if (!WstrToUtf8(msg, utf8str)) {
+      TPN_THROW(LogException("WstrToUtf8 exception in logger"));
+    }
+
+    LogMsg log_msg(name_, level, src_loc, utf8str);
+    AppenderDoLog(log_msg);
+  } catch (const std::exception &ex) {
+    DoErrhandler(ex.what());
+  } catch (...) {
+    DoErrhandler("Unkown exception in logger.");
+  }
 }
 
 void Logger::Flush() { AppenderDoFlush(); }
