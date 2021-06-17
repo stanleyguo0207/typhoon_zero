@@ -1,5 +1,16 @@
 {
 	"file_open_try_times": 5,
-	"file_open_interval_milliseconds": 100
+	"file_open_interval_milliseconds": 100,
+	"log_automatic_registration": true,
+	"log_global_level": "DEBUG",
+	"log_global_flush_level": "DEBUG",
+	"log_pattern_type_type": "local",
+	"log_logger_levels": "default-DEBUG;none-OFF",
+	"log_daily_file_base_path": "log/daily/daily.log",
+	"log_daily_file_rotation_hour": 0,
+	"log_daily_file_rotation_minute": 0,
+	"log_daily_file_truncate": false,
+	"log_daily_file_max": 7,
+	"log_default_logger_name": "default"
 }
 // vim: ft=jsonc
