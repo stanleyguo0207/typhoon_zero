@@ -51,7 +51,7 @@ void LogHub::Init() {
 
   // 解析levels
   auto levels_str = g_config->GetStringDefault("log_logger_levels", "");
-  if (levels_str.empty()) {
+  if (!levels_str.empty()) {
     auto tk1 = Tokenizer(levels_str, ';');
     for (auto &&level_pair_str : tk1) {
       auto tk2 = Tokenizer(level_pair_str, '-');

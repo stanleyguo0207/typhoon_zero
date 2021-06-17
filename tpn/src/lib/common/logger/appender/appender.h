@@ -58,7 +58,7 @@ class TPN_COMMON_API Appender {
   bool ShouldLog(LogLevel level) const;
 
  protected:
-  std::atomic<LogLevel> level_{LogLevel::kLogLevelOff};  ///< 追加器志记级别
+  std::atomic<LogLevel> level_{LogLevel::kLogLevelTrace};  ///< 追加器志记级别
 };
 
 }  // namespace log
