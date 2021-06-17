@@ -173,7 +173,10 @@ void LogHub::DropAll() {
   loggers_.clear();
 }
 
-void LogHub::Shutdown() { DropAll(); }
+void LogHub::Shutdown() {
+  FlushAll();
+  DropAll();
+}
 
 void LogHub::SetAutomaticRegistration(bool automatic_registration) {
   std::lock_guard<std::mutex> lock(logger_map_mutex_);
