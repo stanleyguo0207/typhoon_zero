@@ -163,4 +163,22 @@ void AppenderDailyFile::DeleteOld() {
 
 }  // namespace log
 
+using namespace log;
+
+template <typename Factory>
+LoggerSptr DailyFileLogger(std::string_view logger_name,
+                           std::string_view base_name,
+                           int rotation_hour /* = 0 */,
+                           int rotation_minute /* = 0 */,
+                           bool truncate /* = false */,
+                           uint16_t max_files /* = 7 */) {
+  return Factory::template Create<AppenderDailyFile>(
+      logger_name, base_name, rotation_hour, rotation_minute, truncate,
+      max_files);
+}
+
+template TPN_COMMON_API LoggerSptr DailyFileLogger(std::string_view,
+                                                   std::string_view, int, int,
+                                                   bool, uint16_t);
+
 }  // namespace tpn

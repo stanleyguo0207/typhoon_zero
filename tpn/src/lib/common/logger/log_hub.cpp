@@ -31,6 +31,7 @@
 #include "exception_hub.h"
 #include "appender_console.h"
 #include "appender_daily_file.h"
+#include "platform.h"
 
 namespace tpn {
 
@@ -43,6 +44,10 @@ void LogHub::Init() {
       ToLogLevelEnum(g_config->GetStringDefault("log_global_level", "DEBUG"));
   global_flush_level_ = ToLogLevelEnum(
       g_config->GetStringDefault("log_global_flush_level", "DEBUG"));
+  pattern_time_type_ =
+      "utc" == g_config->GetStringDefault("log_pattern_type_type", "local")
+          ? PatternTimeType::kPatternTimeTypeUtc
+          : PatternTimeType::kPatternTimeTypeLocal;
 
   // 解析levels
   auto levels_str = g_config->GetStringDefault("log_logger_levels", "");
@@ -141,7 +146,7 @@ void LogHub::FlushAll() {
 
 void LogHub::SetErrHandler(ErrHandler err_handler) {
   std::lock_guard<std::mutex> lock(logger_map_mutex_);
-  global_err_handler_ = err_handler;
+  global_err_handler_ = std::move(err_handler);
   for (auto &&[_, logger] : loggers_) {
     logger->SetErrHandler(global_err_handler_);
   }
@@ -179,6 +184,14 @@ PatternTimeType LogHub::GetPatternTimeType() const {
   return pattern_time_type_;
 }
 
+std::tm LogHub::GetTime(LogClock::time_point tp) const {
+  if (PatternTimeType::kPatternTimeTypeLocal == pattern_time_type_) {
+    return Localtime(LogClock::to_time_t(tp));
+  } else {
+    return GmTime(LogClock::to_time_t(tp));
+  }
+}
+
 void LogHub::ThrowIfExists(std::string_view logger_name) {
   if (loggers_.count(logger_name)) {
     TPN_THROW(LogException(fmt::format(
@@ -190,6 +203,8 @@ void LogHub::DoRegisterLogger(LoggerSptr new_logger) {
   ThrowIfExists(new_logger->GetName());
   loggers_[new_logger->GetName()] = std::move(new_logger);
 }
+
+TPN_SINGLETON_IMPL(LogHub)
 
 }  // namespace log
 

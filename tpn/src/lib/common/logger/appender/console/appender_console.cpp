@@ -96,4 +96,28 @@ AppenderConsoleStderr::AppenderConsoleStderr(
 
 }  // namespace log
 
+using namespace log;
+
+template <typename Factory>
+LoggerSptr ConsoleStdoutLogger(
+    std::string_view logger_name,
+    AppenderColorMode
+        mode /* = AppenderColorMode::kAppenderColorModeAutomatic */) {
+  return Factory::template Create<AppenderConsoleStdout>(logger_name, mode);
+}
+
+template <typename Factory>
+LoggerSptr ConsoleStderrLogger(
+    std::string_view logger_name,
+    AppenderColorMode
+        mode /* = AppenderColorMode::kAppenderColorModeAutomatic */) {
+  return Factory::template Create<AppenderConsoleStderr>(logger_name, mode);
+}
+
+template TPN_COMMON_API LoggerSptr ConsoleStdoutLogger(std::string_view,
+                                                       AppenderColorMode);
+
+template TPN_COMMON_API LoggerSptr ConsoleStderrLogger(std::string_view,
+                                                       AppenderColorMode);
+
 }  // namespace tpn

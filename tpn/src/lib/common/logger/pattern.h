@@ -25,6 +25,7 @@
 
 #include "log_common.h"
 #include "log_msg.h"
+#include "log_hub.h"
 
 namespace tpn {
 
@@ -34,9 +35,6 @@ namespace log {
 /// 常用格式只写了一种，如果要自定义的话 需要在 @formatter 里面 做parse重载
 class TPN_COMMON_API Pattern {
  public:
-  /// 初始化
-  void Init();
-
   /// 格式化日志信息
   /// 默认格式 [级别] [时间] [源文件定位信息] [线程id] 日志内容
   template <typename FormatContext>
@@ -45,7 +43,7 @@ class TPN_COMMON_API Pattern {
         std::chrono::duration_cast<Seconds>(msg.time.time_since_epoch());
     if (secs != last_log_secs_) {
       last_log_secs_ = secs;
-      cached_tm_     = GetTime(msg);
+      cached_tm_     = g_log_hub->GetTime(msg.time);
     }
 
     return fmt::format_to(ctx.out(), "[{}] [{:%Y-%m-%d %H:%M:%S}] [{}] [{}] {}",
@@ -54,14 +52,8 @@ class TPN_COMMON_API Pattern {
   }
 
  private:
-  /// 日志中提取模式时间
-  std::tm GetTime(const LogMsg &msg) const;
-
- private:
-  PatternTimeType pattern_time_type_{
-      PatternTimeType::kPatternTimeTypeLocal};  ///< 模式时间
-  std::tm cached_tm_{};                         ///< 缓存时间
-  Seconds last_log_secs_;                       ///< 上次志记时间
+  std::tm cached_tm_{};    ///< 缓存时间
+  Seconds last_log_secs_;  ///< 上次志记时间
 
   TPN_SINGLETON_DECL(Pattern)
 };

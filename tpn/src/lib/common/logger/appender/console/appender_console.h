@@ -29,6 +29,7 @@
 
 #include "fmt_wrap.h"
 #include "appender_base.h"
+#include "sync_factory.h"
 
 namespace tpn {
 
@@ -91,6 +92,20 @@ class TPN_COMMON_API AppenderConsoleStderr final : public AppenderConsoleBase {
 };
 
 }  // namespace log
+
+using namespace log;
+
+/// 标准输出控制台记录器工厂
+template <typename Factory = SynchronousFactory>
+LoggerSptr ConsoleStdoutLogger(
+    std::string_view logger_name,
+    AppenderColorMode mode = AppenderColorMode::kAppenderColorModeAutomatic);
+
+/// 标准cuowu控制台记录器工厂
+template <typename Factory = SynchronousFactory>
+LoggerSptr ConsoleStderrLogger(
+    std::string_view logger_name,
+    AppenderColorMode mode = AppenderColorMode::kAppenderColorModeAutomatic);
 
 }  // namespace tpn
 

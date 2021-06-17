@@ -39,39 +39,73 @@ class TPN_COMMON_API LogHub {
   /// 初始化
   void Init();
 
+  /// 注册记录器
+  ///  @param[in]		new_logger		新的记录器
   void RegisterLogger(LoggerSptr new_logger);
 
+  /// 初始化记录器
+  /// 如果开了自动注册 会注册到日志中枢
+  ///  @param[in]		new_logger		新的记录器
   void InitializeLogger(LoggerSptr new_logger);
 
+  /// 根据名称获取记录器
+  ///  @param[in]		logger_name		记录器名称
+  ///  @return 注册过的记录器或者为空
   LoggerSptr GetLoggerByName(std::string_view logger_name);
 
+  /// 获取默认记录器
+  ///  @return 默认记录器或者为空
   LoggerSptr GetDefaultLogger();
 
+  /// 设置默认记录器
+  ///  @param[in]		new_default_logger		新的默认记录器
   void SetDefaultLogger(LoggerSptr new_default_logger);
 
+  /// 设置日志中枢全局志记级别
   void SetGlobalLevel(LogLevel level);
 
+  /// 设置日志中枢全局刷新级别
   void SetGlobalFlushLevel(LogLevel level);
 
+  /// 刷新所有记录的记录器
   void FlushAll();
 
+  /// 设置日志中枢全局错误处理函数
+  ///  @param[in]		err_handler			错误处理函数
   void SetErrHandler(ErrHandler err_handler);
 
+  /// 操作所有记录器
+  ///  @param[in]		func		可调用函数
   void ApplyAll(const std::function<void(const LoggerSptr)> &func);
 
+  /// 通过名称移除记录器
   void Drop(std::string_view logger_name);
 
+  /// 移除所有记录器
   void DropAll();
 
+  /// 停止日志中枢
   void Shutdown();
 
+  /// 设置日志中枢自动注册标志
+  ///  @param[in]		automatic_registration		自动注册标志
   void SetAutomaticRegistration(bool automatic_registration);
 
+  /// 获取日志中枢时间格式
+  /// 只能从配置中修改 不支持全局修改
+  ///  @return 日志时间格式
   PatternTimeType GetPatternTimeType() const;
 
+  /// 根据模式时间返回时间结构
+  std::tm GetTime(LogClock::time_point tp) const;
+
  private:
+  /// 如果存在日志名称则抛出异常
+  ///  @param[in]		logger_name			要查询的日志名称
   void ThrowIfExists(std::string_view logger_name);
 
+  /// 注册记录器
+  ///  @param[in]		new_logger			新的日志记录器
   void DoRegisterLogger(LoggerSptr new_logger);
 
  private:

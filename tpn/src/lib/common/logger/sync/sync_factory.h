@@ -20,16 +20,38 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "pattern.h"
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_SYNC_SYNC_FACTORY_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_SYNC_SYNC_FACTORY_H_
 
-#include "platform.h"
+#include "log_hub.h"
+#include "logger.h"
 
 namespace tpn {
 
 namespace log {
 
-TPN_SINGLETON_IMPL(Pattern)
+/// 同步记录器工厂
+class SynchronousFactory {
+ public:
+  /// 生产记录器
+  ///  @tparam			Appender					追加器类型
+  ///  @tparam			AppenderArgs...		追加器所需参数
+  ///  @param[in]		logger_name				记录器名称
+  ///  @param[in]		args...						追加器构造所需参数
+  template <typename Apppender, typename... AppenderArgs>
+  static LoggerSptr Create(std::string_view logger_name,
+                           AppenderArgs &&...args) {
+    auto appender =
+        std::make_shared<Apppender>(std::forward<AppenderArgs>(args)...);
+    auto new_logger =
+        std::make_shared<Logger>(logger_name, std::move(appender));
+    g_log_hub->InitializeLogger(new_logger);
+    return new_logger;
+  }
+};
 
 }  // namespace log
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_SYNC_SYNC_FACTORY_H_

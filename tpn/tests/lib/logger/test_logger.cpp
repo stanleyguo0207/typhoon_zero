@@ -33,6 +33,10 @@ using namespace std;
 using namespace tpn;
 using namespace tpn::log;
 
+#ifndef _TPN_LOGGER_CONFIG_TEST_FILE
+#  define _TPN_LOGGER_CONFIG_TEST_FILE "config_logger_test.json"
+#endif
+
 TEST_CASE("formatter", "[logger]") {
   LogMsg msg("test", LogLevel::kLogLevelInfo,
              SourceLocation(__FILE__, __FUNCTION__, __LINE__),
@@ -125,10 +129,6 @@ TEST_CASE("file", "[logger]") {
 #include <thread>
 
 TEST_CASE("daily", "[logger]") {
-#ifndef _TPN_LOGGER_CONFIG_TEST_FILE
-#  define _TPN_LOGGER_CONFIG_TEST_FILE "config_logger_test.json"
-#endif
-
   std::string error;
   g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {}, error);
   if (!error.empty()) {
@@ -164,4 +164,23 @@ TEST_CASE("daily", "[logger]") {
 
     std::this_thread::sleep_for(3s);
   }
+}
+
+// log interface
+#include "log.h"
+
+TEST_CASE("log", "[logger]") {
+  string config_error;
+  if (!g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {}, config_error)) {
+    fmt::print(stderr, "Error in config file {}, error {}\n",
+               _TPN_LOGGER_CONFIG_TEST_FILE, config_error);
+    return;
+  }
+
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
+
+  LOG_INFO("Test Logger start");
+  LOG_DEBUG("Test Logger {}", 1);
 }

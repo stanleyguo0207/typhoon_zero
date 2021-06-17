@@ -28,6 +28,7 @@
 #include "appender_base.h"
 #include "file_helper.h"
 #include "circular_queue.h"
+#include "sync_factory.h"
 
 namespace tpn {
 
@@ -80,6 +81,15 @@ class TPN_COMMON_API AppenderDailyFile : public AppenderBase {
 };
 
 }  // namespace log
+
+using namespace log;
+
+/// 每日文件记录器工厂
+template <typename Factory = SynchronousFactory>
+LoggerSptr DailyFileLogger(std::string_view logger_name,
+                           std::string_view base_name, int rotation_hour = 0,
+                           int rotation_minute = 0, bool truncate = false,
+                           uint16_t max_files = 7);
 
 }  // namespace tpn
 

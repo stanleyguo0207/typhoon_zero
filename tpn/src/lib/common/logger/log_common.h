@@ -44,15 +44,15 @@ enum class LogLevel : uint8_t {
 
 /// 模式时间类型
 enum class PatternTimeType : uint8_t {
-  kPatternTimeTypeLocal,  ///< 当地时间
-  kPatternTimeTypeUtc,    ///< 世界协调时间
+  kPatternTimeTypeLocal = 0,  ///< 当地时间
+  kPatternTimeTypeUtc,        ///< 世界协调时间
 };
 
 /// 记录器颜色支持样式
 enum class AppenderColorMode : uint8_t {
-  kAppenderColorModeAlways,     ///< 一直
-  kAppenderColorModeAutomatic,  ///< 自动
-  kAppenderColorModeNever,      ///< 从不
+  kAppenderColorModeAlways = 0,  ///< 一直
+  kAppenderColorModeAutomatic,   ///< 自动
+  kAppenderColorModeNever,       ///< 从不
 };
 
 /// 日志级别转换为日志级别字符串
