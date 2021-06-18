@@ -178,9 +178,18 @@ TEST_CASE("log", "[logger]") {
                                    [](void *) { tpn::log::Shutdown(); });
 
   LOG_INFO("Test Logger start");
-  // LOG_DEBUG(L"Test Logger wstr wring, {}", L"你好");
-  // LOG_WARN("Test Logger wstr wring, {}", std::vector(12, 10));
-  LOG_INFO("Test Logger will shutdown in {}", "5s");
+
+  LOG_DEBUG(L"wstr chinese: {}", L"你好");
+  LOG_INFO("str args: {}", "I am 台风");
+  LOG_WARN("rangers: {}", std::vector(12, 10));
+  LOG_ERROR("num: {1:f}, {0:d}", 20, 300.0);
+  // 编译期间检查不了 自定义类型
+  // LOG_ERROR("num: {numi:d}, {numf:f}", "numi"_a = 20, "numf"_a = 300.0);
+  // LOG_DEBUG("num: {numi}, {numf}", fmt::arg("numi", 88), fmt::arg("numf", 888.0));
+  LOG_DEBUG("num: {}", "{0:10}"_format(1000));
+  LOG_FATAL("check format: {:>5d}", 99);
+
+  LOG_INFO("Test Logger will shutdown in 5s");
 
   std::this_thread::sleep_for(5s);
 }

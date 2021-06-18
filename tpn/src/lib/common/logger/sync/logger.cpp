@@ -71,26 +71,39 @@ void Logger::Swap(Logger &other) noexcept {
   err_handler_.swap(other.err_handler_);
 }
 
-void Logger::LogStrv(SourceLocation src_loc, LogLevel level,
-                     std::string_view msg) {
-  bool log_enabled = ShouldLog(level);
-  if (!log_enabled) {
-    return;
-  }
-  LogMsg log_msg(name_, level, src_loc, msg);
-  AppenderDoLog(log_msg);
-}
-
-void Logger::LogWStrv(SourceLocation src_loc, LogLevel level,
-                      std::wstring_view msg) {
+void Logger::LogStrv(SourceLocation src_loc, LogLevel level, FmtStringView fmt,
+                     FmtFormatArgs args) {
   bool log_enabled = ShouldLog(level);
   if (!log_enabled) {
     return;
   }
 
   try {
+    FmtMemoryBuf buf;
+    fmt::vformat_to(buf, fmt, args);
+    LogMsg log_msg(name_, level, src_loc,
+                   std::string_view(buf.data(), buf.size()));
+    AppenderDoLog(log_msg);
+  } catch (const std::exception &ex) {
+    DoErrhandler(ex.what());
+  } catch (...) {
+    DoErrhandler("Unkown exception in logger.");
+  }
+}
+
+void Logger::LogWStrv(SourceLocation src_loc, LogLevel level,
+                      FmtWStringView fmt, FmtWFormatArgs args) {
+  bool log_enabled = ShouldLog(level);
+  if (!log_enabled) {
+    return;
+  }
+
+  try {
+    FmtWMemoryBuf wbuf;
+    fmt::vformat_to(wbuf, fmt, args);
+
     std::string utf8str;
-    if (!WstrToUtf8(msg, utf8str)) {
+    if (!WstrToUtf8(wbuf.data(), wbuf.size(), utf8str)) {
       TPN_THROW(LogException("WstrToUtf8 exception in logger"));
     }
 

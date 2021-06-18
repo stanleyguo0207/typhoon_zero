@@ -30,6 +30,7 @@
 #include "log_msg.h"
 #include "utils.h"
 #include "exception_hub.h"
+#include "traits_hub.h"
 
 namespace tpn {
 
@@ -77,173 +78,97 @@ class TPN_COMMON_API Logger {
   void Swap(Logger &other) noexcept;
 
   /// 志记
-  /// 处理fmt::compile_string可以转化为std::string_view的字符串
-  ///  @tparam			FormatString		模式串类型
-  ///  @tparam			Args						模式串参数
+  /// 处理fmt::compile_string可转化为fmt::string_view的模式串
+  ///  @tparam			FormatString		日志模式串类型
+  ///  @tparam			Args...					日志模式串参数
   ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		fmt							模式串
-  ///  @param[in]		args...					模式串参数
+  ///  @param[in]		level						志记级别
+  ///  @param[in]		fmt							日志模式串
+  ///  @param[in]		args...					日志模式串参数
+  template <
+      typename FormatString,
+      std::enable_if_t<
+          std::is_convertible_v<const FormatString &, FmtStringView>, int> = 0,
+      typename... Args>
+  void LogWitchCheck(SourceLocation src_loc, LogLevel level,
+                     const FormatString &fmt, Args &&...args) {
+    LogStrv(std::move(src_loc), std::move(level), fmt,
+            fmt::make_args_checked<Args...>(fmt, args...));
+  }
+
+  /// 志记
+  /// 处理fmt::compile_string可转化为fmt::wstring_view的模式串
+  ///  @tparam			FormatString		日志模式串类型
+  ///  @tparam			Args...					日志模式串参数
+  ///  @param[in]		src_loc					源文件定位信息
+  ///  @param[in]		level						志记级别
+  ///  @param[in]		fmt							日志模式串
+  ///  @param[in]		args...					日志模式串参数
+  template <
+      typename FormatString,
+      std::enable_if_t<
+          std::is_convertible_v<const FormatString &, FmtWStringView>, int> = 0,
+      typename... Args>
+  void LogWitchCheck(SourceLocation src_loc, LogLevel level,
+                     const FormatString &fmt, Args &&...args) {
+    LogWStrv(std::move(src_loc), std::move(level), fmt,
+             fmt::make_args_checked<Args...>(fmt, args...));
+  }
+
+  /// 志记
+  /// 处理fmt::compile_string
+  ///  @tparam			FormatString		日志模式串类型
+  ///  @tparam			Args...					日志模式串参数
+  ///  @param[in]		src_loc					源文件定位信息
+  ///  @param[in]		level						志记级别
+  ///  @param[in]		fmt							日志模式串
+  ///  @param[in]		args...					日志模式串参数
   template <typename FormatString,
-            std::enable_if_t<fmt::is_compile_string<FormatString>::value &&
-                                 std::is_convertible_v<const FormatString &,
-                                                       std::string_view>,
-                             int> = 0,
+            std::enable_if_t<tpn::is_compile_string_v<FormatString>, int> = 0,
             typename... Args>
   void Log(SourceLocation src_loc, LogLevel level, const FormatString &fmt,
-           const Args &...args) {
-    LogStrv(src_loc, level, fmt, args...);
+           Args &&...args) {
+    LogWitchCheck(std::move(src_loc), std::move(level),
+                  std::forward<decltype(fmt)>(fmt),
+                  std::forward<decltype(args)>(args)...);
   }
 
   /// 志记
-  /// 处理string_view的字符串
-  ///  @tparam			Args						模式串参数
+  /// 处理非fmt::compile_string 此种方法暂无需求 空接口
+  ///  @tparam			FormatString		日志模式串类型
+  ///  @tparam			Args...					日志模式串参数
   ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		fmt							模式串
-  ///  @param[in]		args...					模式串参数
-  template <typename... Args>
-  void Log(SourceLocation src_loc, LogLevel level, std::string_view fmt,
-           const Args &...args) {
-    LogStrv(src_loc, level, fmt, args...);
-  }
-
-  /// 志记
-  /// 处理fmt::compile_string可以转化为std::wstring_view的字符串
-  ///  @tparam			FormatString		模式串类型
-  ///  @tparam			Args						模式串参数
-  ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		fmt							模式串
-  ///  @param[in]		args...					模式串参数
+  ///  @param[in]		level						志记级别
+  ///  @param[in]		fmt							日志模式串
+  ///  @param[in]		args...					日志模式串参数
   template <typename FormatString,
-            std::enable_if_t<fmt::is_compile_string<FormatString>::value &&
-                                 std::is_convertible_v<const FormatString &,
-                                                       std::wstring_view>,
-                             int> = 0,
+            std::enable_if_t<!tpn::is_compile_string_v<FormatString>, int> = 0,
             typename... Args>
-  void Log(SourceLocation src_loc, LogLevel level, const FormatString &fmt,
-           const Args &...args) {
-    LogWStrv(src_loc, level, fmt, args...);
-  }
-
-  /// 志记
-  /// 处理wstring_view的字符串
-  ///  @tparam			Args						模式串参数
-  ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		fmt							模式串
-  ///  @param[in]		args...					模式串参数
-  template <typename... Args>
-  void Log(SourceLocation src_loc, LogLevel level, std::wstring_view fmt,
-           const Args &...args) {
-    LogWStrv(src_loc, level, fmt, args...);
-  }
-
-  /// 志记
-  ///  @param[in]		src_loc			源文件定位信息
-  ///  @param[in]		level				志记级别
-  ///  @param[in]		msg					志记信息
-  void LogStrv(SourceLocation src_loc, LogLevel level, std::string_view msg);
-
-  /// 志记
-  ///  @param[in]		src_loc			源文件定位信息
-  ///  @param[in]		level				志记级别
-  ///  @param[in]		msg					志记信息
-  void LogWStrv(SourceLocation src_loc, LogLevel level, std::wstring_view msg);
-
-  /// 志记
-  /// 处理可以转换成std::string_view不能转换成fmt::compile_string的模式串
-  ///  @tparam			T								信息类型
-  ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		msg							志记信息
-  template <
-      typename T,
-      std::enable_if_t<std::is_convertible_v<const T &, std::string_view> &&
-                           !fmt::is_compile_string<T>::value,
-                       int> = 0>
-  void Log(SourceLocation src_loc, LogLevel level, const T &msg) {
-    LogStrv(src_loc, level, std::string_view{msg});
-  }
-
-  /// 志记
-  /// 处理可以转换成std::wstring_view不能转换成fmt::compile_string的模式串
-  ///  @tparam			T								信息类型
-  ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		msg							志记信息
-  template <
-      typename T,
-      std::enable_if_t<std::is_convertible_v<const T &, std::wstring_view> &&
-                           !fmt::is_compile_string<T>::value,
-                       int> = 0>
-  void Log(SourceLocation src_loc, LogLevel level, const T &msg) {
-    LogWStrv(src_loc, level, std::wstring_view{msg});
-  }
-
-  /// 志记
-  /// 处理不可转化为std::string_view与std::wstring_view的字符串
-  ///  @tparam			T								信息类型
-  ///  @param[in]		src_loc					源文件定位信息
-  ///  @param[in]		level						日志级别
-  ///  @param[in]		msg							志记信息
-  template <
-      typename T,
-      std::enable_if_t<!std::is_convertible_v<const T &, std::string_view> &&
-                           !std::is_convertible_v<const T &, std::wstring_view>,
-                       int> = 0>
-  void Log(SourceLocation src_loc, LogLevel level, const T &msg) {
-    Log(src_loc, level, "{}", msg);
+  [[maybe_unused]] void Log([[maybe_unused]] SourceLocation src_loc,
+                            [[maybe_unused]] LogLevel level,
+                            [[maybe_unused]] const FormatString &fmt,
+                            [[maybe_unused]] Args &&...args) {
+    TPN_ASSERT(false, "logger only support compile string");
   }
 
  protected:
-  template <typename FormatString, typename... Args>
-  void LogStrv(SourceLocation src_loc, LogLevel level, const FormatString &fmt,
-               const Args &...args) {
-    bool log_enabled = ShouldLog(level);
-    if (!log_enabled) {
-      return;
-    }
+  /// 志记
+  /// 处理fmt::wstring_view的模式串
+  ///  @param[in]		src_loc					源文件定位信息
+  ///  @param[in]		level						志记级别
+  ///  @param[in]		fmt							日志模式串
+  ///  @param[in]		args						日志模式串参数
+  void LogStrv(SourceLocation src_loc, LogLevel level, FmtStringView fmt,
+               FmtFormatArgs args);
 
-    try {
-      FmtMemoryBuf buf;
-      fmt::format_to(buf, fmt, args...);
-      LogMsg log_msg(name_, level, src_loc,
-                     std::string_view(buf.data(), buf.size()));
-      AppenderDoLog(log_msg);
-    } catch (const std::exception &ex) {
-      DoErrhandler(ex.what());
-    } catch (...) {
-      DoErrhandler("Unkown exception in logger.");
-    }
-  }
-
-  template <typename FormatString, typename... Args>
-  void LogWStrv(SourceLocation src_loc, LogLevel level, const FormatString &fmt,
-                const Args &...args) {
-    bool log_enabled = ShouldLog(level);
-    if (!log_enabled) {
-      return;
-    }
-
-    try {
-      FmtWMemoryBuf wbuf;
-      fmt::format_to(wbuf, fmt, args...);
-
-      std::string utf8str;
-      if (!WstrToUtf8(wbuf.data(), wbuf.size(), utf8str)) {
-        TPN_THROW(LogException("WstrToUtf8 exception in logger"));
-      }
-
-      LogMsg log_msg(name_, level, src_loc, utf8str);
-      AppenderDoLog(log_msg);
-    } catch (const std::exception &ex) {
-      DoErrhandler(ex.what());
-    } catch (...) {
-      DoErrhandler("Unkown exception in logger.");
-    }
-  }
+  /// 志记
+  /// 处理fmt::wstring_view的模式串
+  ///  @param[in]		src_loc					源文件定位信息
+  ///  @param[in]		level						志记级别
+  ///  @param[in]		fmt							日志模式串
+  ///  @param[in]		args						日志模式串参数
+  void LogWStrv(SourceLocation src_loc, LogLevel level, FmtWStringView fmt,
+                FmtWFormatArgs args);
 
  public:
   /// 主动刷新

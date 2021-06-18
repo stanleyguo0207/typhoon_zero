@@ -20,32 +20,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_TRAITS_TRAITS_HUB_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_TRAITS_TRAITS_HUB_H_
 
-#include <fmt/chrono.h>
-#include <fmt/color.h>
-#include <fmt/core.h>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
-#include <fmt/printf.h>
-#include <fmt/ranges.h>
-#include <fmt/compile.h>
-#include <fmt/locale.h>
+#include <type_traits>
+
+#include "fmt_wrap.h"
 
 namespace tpn {
 
-using FmtStringView  = fmt::basic_string_view<char>;
-using FmtWStringView = fmt::basic_string_view<wchar_t>;
-using FmtMemoryBuf   = fmt::basic_memory_buffer<char, 250>;
-using FmtWMemoryBuf  = fmt::basic_memory_buffer<wchar_t, 250>;
-using FmtFormatCtx   = fmt::format_context;
-using FmtWFromatCtx  = fmt::wformat_context;
-using FmtFormatArgs  = fmt::format_args;
-using FmtWFormatArgs = fmt::wformat_args;
-
-using namespace fmt::literals;
+/// 判断是否为继承自fmt::compile_string
+///  @tparam	FormatString		模式串
+template <typename FormatString>
+inline constexpr bool is_compile_string_v =
+    fmt::is_compile_string<FormatString>::value;
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_TRAITS_TRAITS_HUB_H_
