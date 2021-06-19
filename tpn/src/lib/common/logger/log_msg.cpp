@@ -49,14 +49,14 @@ LogMsg::LogMsg(std::string_view logger_name_in, LogLevel level_in,
              content_in) {}
 
 AsyncLogMsg::AsyncLogMsg(const LogMsg &msg) : LogMsg{msg} {
-  buf_.append(logger_name.begin(), logger_name.end());
-  buf_.append(content.begin(), content.end());
+  buf_.append(logger_name.data(), logger_name.data() + logger_name.size());
+  buf_.append(content.data(), content.data() + content.size());
   UpdateBuf();
 }
 
 AsyncLogMsg::AsyncLogMsg(const AsyncLogMsg &other) : LogMsg{other} {
-  buf_.append(logger_name.begin(), logger_name.end());
-  buf_.append(content.begin(), content.end());
+  buf_.append(logger_name.data(), logger_name.data() + logger_name.size());
+  buf_.append(content.data(), content.data() + content.size());
   UpdateBuf();
 }
 

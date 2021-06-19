@@ -8,5 +8,6 @@ compile_commands.json
 
 # vs
 .vs/
+.vscode/
 CMakeSettings.json
 

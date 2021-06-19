@@ -28,7 +28,7 @@ add_executable(test_rapidjson
 	"../../test_include.h"
 	"../../test_main.cpp"
 	"test_rapidjson.cpp"
-)
+	)
 
 set_property(TARGET
 	test_rapidjson
@@ -41,9 +41,20 @@ set_property(TARGET
 target_link_libraries(test_rapidjson
 	Catch2::Catch2
 	rapidjson
-)
+	)
 
 install(TARGETS test_rapidjson DESTINATION ${BIN_DIR}/tests)
 include(CTest)
 include(Catch)
 catch_discover_tests(test_rapidjson)
+
+if(WIN32)
+  add_custom_command(TARGET
+		test_rapidjson
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/configtest.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

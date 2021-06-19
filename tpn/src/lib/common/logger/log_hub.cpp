@@ -104,6 +104,8 @@ LoggerSptr LogHub::GetLoggerByName(std::string_view logger_name) {
   return iter != loggers_.end() ? iter->second : nullptr;
 }
 
+Logger *LogHub::GetDefaultLoggerRaw() { return default_logger_.get(); }
+
 LoggerSptr LogHub::GetDefaultLogger() {
   std::lock_guard<std::mutex> lock(logger_map_mutex_);
   return default_logger_;

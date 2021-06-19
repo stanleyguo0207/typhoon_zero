@@ -24,16 +24,16 @@
 function(WarnAboutSpacesInBuildPath)
 	# Only check win32 since unix doesn't allow spaces in paths
 	if(WIN32)
-	string(FIND "${CMAKE_BINARY_DIR}" " " SPACE_INDEX_POS)
+		string(FIND "${CMAKE_BINARY_DIR}" " " SPACE_INDEX_POS)
 
-	if(SPACE_INDEX_POS GREATER -1)
-		message("")
-		message(WARNING "
-			*** WARNING!\n
-			*** Your selected build directory contains spaces!\n
-			*** Please note that this will cause issues!
-		")
-	endif()
+		if(SPACE_INDEX_POS GREATER -1)
+			message("")
+			message(WARNING "
+				*** WARNING!\n
+				*** Your selected build directory contains spaces!\n
+				*** Please note that this will cause issues!
+			")
+		endif()
 	endif()
 endfunction()
 
@@ -91,7 +91,8 @@ function(IsDynamicLinkingRequired variable)
 	foreach(SCRIPT_MODULE ${SCRIPT_MODULE_LIST})
 	ScriptModuleNameToVariable(${SCRIPT_MODULE} SCRIPT_MODULE_VARIABLE)
 	if((${SCRIPT_MODULE_VARIABLE} STREQUAL "dynamic") OR
-			(${SCRIPT_MODULE_VARIABLE} STREQUAL "default" AND IS_DEFAULT_VALUE_DYNAMIC))
+		 (${SCRIPT_MODULE_VARIABLE} STREQUAL "default" AND
+		 IS_DEFAULT_VALUE_DYNAMIC))
 		set(IS_REQUIRED ON)
 		break()
 	endif()

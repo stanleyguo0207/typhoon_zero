@@ -28,11 +28,13 @@ add_executable(test_asio_echo
 	"../../../test_include.h"
 	"../../../test_main.cpp"
 	"test_asio_echo.cpp"
-)
+	)
+
 target_link_libraries(test_asio_echo
 	Catch2::Catch2
 	asio
-)
+	)
+	
 install(TARGETS test_asio_echo DESTINATION ${BIN_DIR}/tests)
 include(CTest)
 include(Catch)

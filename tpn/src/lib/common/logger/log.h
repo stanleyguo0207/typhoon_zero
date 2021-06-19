@@ -34,12 +34,13 @@ namespace log {
 using DefaultFactory = SynchronousFactory;
 
 /// 使用默认记录器工厂生产记录器
-///  @tparam			Appender					追加器类型
-///  @tparam			AppenderArgs...		追加器所需参数
-///  @param[in]		logger_name				记录器名称
-///  @param[in]		args...						追加器构造所需参数
+///  @tparam      Appender          追加器类型
+///  @tparam      AppenderArgs...   追加器所需参数
+///  @param[in]   logger_name       记录器名称
+///  @param[in]   args...           追加器构造所需参数
 template <typename Apppender, typename... AppenderArgs>
-inline LoggerSptr Create(std::string_view logger_name, AppenderArgs &&...args) {
+inline LoggerSptr Create(std::string_view logger_name,
+                         AppenderArgs &&... args) {
   return DefaultFactory::Create<Appender>(logger_name,
                                           std::forward<AppenderArgs>(args)...);
 }
@@ -53,25 +54,29 @@ inline LoggerSptr Create(std::string_view logger_name, AppenderArgs &&...args) {
 void Init();
 
 /// 注册记录器
-///  @param[in]		new_logger		新的记录器
+///  @param[in]   new_logger    新的记录器
 void RegisterLogger(LoggerSptr new_logger);
 
 /// 初始化记录器
 /// 如果开了自动注册 会注册到日志中枢
-///  @param[in]		new_logger		新的记录器
+///  @param[in]   new_logger    新的记录器
 void InitializeLogger(LoggerSptr new_logger);
 
 /// 根据名称获取记录器
-///  @param[in]		logger_name		记录器名称
+///  @param[in]   logger_name   记录器名称
 ///  @return 注册过的记录器或者为空
 LoggerSptr GetLoggerByName(std::string_view logger_name);
+
+/// 获取默认记录器原始指针
+///  @return 默认记录器指针或者为空
+Logger *GetDefaultLoggerRaw();
 
 /// 获取默认记录器
 ///  @return 默认记录器或者为空
 LoggerSptr GetDefaultLogger();
 
 /// 设置默认记录器
-///  @param[in]		new_default_logger		新的默认记录器
+///  @param[in]   new_default_logger    新的默认记录器
 void SetDefaultLogger(LoggerSptr new_default_logger);
 
 /// 设置日志中枢全局志记级别
@@ -84,11 +89,11 @@ void SetGlobalFlushLevel(LogLevel level);
 void FlushAll();
 
 /// 设置日志中枢全局错误处理函数
-///  @param[in]		err_handler			错误处理函数
+///  @param[in]   err_handler     错误处理函数
 void SetErrHandler(ErrHandler err_handler);
 
 /// 操作所有记录器
-///  @param[in]		func		可调用函数
+///  @param[in]   func    可调用函数
 void ApplyAll(const std::function<void(const LoggerSptr)> &func);
 
 /// 通过名称移除记录器
@@ -101,7 +106,7 @@ void DropAll();
 void Shutdown();
 
 /// 设置日志中枢自动注册标志
-///  @param[in]		automatic_registration		自动注册标志
+///  @param[in]   automatic_registration    自动注册标志
 void SetAutomaticRegistration(bool automatic_registration);
 
 }  // namespace log
@@ -117,11 +122,11 @@ void SetAutomaticRegistration(bool automatic_registration);
 #  define LOGGER_CALL_END
 #endif
 
-#define LOGGER_CALL(logger, level, format, ...)                            \
-  LOGGER_CALL_BEGIN do {                                                   \
-    (logger)->Log(SourceLocation{__FILE__, __FUNCTION__, __LINE__}, level, \
-                  FMT_STRING(format), ##__VA_ARGS__);                      \
-  }                                                                        \
+#define LOGGER_CALL(logger, level, format, ...)                              \
+  LOGGER_CALL_BEGIN do {                                                     \
+    (logger)->Log(SourceLocation{__FILE__, __FUNCTION__, __LINE__}, (level), \
+                  FMT_STRING((format)), ##__VA_ARGS__);                      \
+  }                                                                          \
   while (0) LOGGER_CALL_END
 
 #define LOGGER_TRACE(logger, ...) \
@@ -138,16 +143,20 @@ void SetAutomaticRegistration(bool automatic_registration);
   LOGGER_CALL(logger, tpn::log::LogLevel::kLogLevelFatal, __VA_ARGS__)
 
 /// 日志 级别 trace
-#define LOG_TRACE(...) LOGGER_TRACE(tpn::log::GetDefaultLogger(), __VA_ARGS__)
+#define LOG_TRACE(...) \
+  LOGGER_TRACE(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 /// 日志 级别 debug
-#define LOG_DEBUG(...) LOGGER_DEBUG(tpn::log::GetDefaultLogger(), __VA_ARGS__)
+#define LOG_DEBUG(...) \
+  LOGGER_DEBUG(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 /// 日志 级别 info
-#define LOG_INFO(...) LOGGER_INFO(tpn::log::GetDefaultLogger(), __VA_ARGS__)
+#define LOG_INFO(...) LOGGER_INFO(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 /// 日志 级别 warn
-#define LOG_WARN(...) LOGGER_WARN(tpn::log::GetDefaultLogger(), __VA_ARGS__)
+#define LOG_WARN(...) LOGGER_WARN(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 /// 日志 级别 error
-#define LOG_ERROR(...) LOGGER_ERROR(tpn::log::GetDefaultLogger(), __VA_ARGS__)
+#define LOG_ERROR(...) \
+  LOGGER_ERROR(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 /// 日志 级别 fatal
-#define LOG_FATAL(...) LOGGER_FATAL(tpn::log::GetDefaultLogger(), __VA_ARGS__)
+#define LOG_FATAL(...) \
+  LOGGER_FATAL(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_LOG_H_

@@ -28,7 +28,7 @@ add_executable(test_logger
 	"../../test_include.h"
 	"../../test_main.cpp"
 	"test_logger.cpp"
-)
+	)
 
 set_property(TARGET
 	test_logger	
@@ -41,8 +41,20 @@ set_property(TARGET
 target_link_libraries(test_logger
 	Catch2::Catch2
 	common
-)
+	)
+	
 install(TARGETS test_logger DESTINATION ${BIN_DIR}/tests)
 include(CTest)
 include(Catch)
 catch_discover_tests(test_logger)
+
+if(WIN32)
+  add_custom_command(TARGET
+		test_logger
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/config_logger_test.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

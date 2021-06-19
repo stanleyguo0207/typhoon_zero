@@ -33,7 +33,7 @@
 
 // 平台
 #if defined(_WIN64) || defined(__WIN32__) || defined(_WIN32)
-#  defined TPN_PLATFORM TPN_PLATFORM_WIN
+#  define TPN_PLATFORM TPN_PLATFORM_WIN
 #else
 #  define TPN_PLATFORM TPN_PLATFORM_UNIX
 #endif

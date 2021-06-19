@@ -28,11 +28,13 @@ add_executable(test_utfcpp
 	"../../test_include.h"
 	"../../test_main.cpp"
 	"test_utfcpp.cpp"
-)
+	)
+
 target_link_libraries(test_utfcpp
 	Catch2::Catch2
 	utfcpp
-)
+	)
+
 install(TARGETS test_utfcpp DESTINATION ${BIN_DIR}/tests)
 include(CTest)
 include(Catch)

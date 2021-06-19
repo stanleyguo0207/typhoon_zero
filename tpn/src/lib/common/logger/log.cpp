@@ -40,6 +40,8 @@ LoggerSptr GetLoggerByName(std::string_view logger_name) {
   return g_log_hub->GetLoggerByName(logger_name);
 }
 
+Logger *GetDefaultLoggerRaw() { return g_log_hub->GetDefaultLoggerRaw(); }
+
 LoggerSptr GetDefaultLogger() { return g_log_hub->GetDefaultLogger(); }
 
 void SetDefaultLogger(LoggerSptr new_default_logger) {
