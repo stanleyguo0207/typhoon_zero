@@ -27,3 +27,7 @@ zlib (A Massively Spiffy Yet Delicately Unobtrusive Compression Library)
 asio (Asio is a cross-platform C++ library for network and low-level I/O programming that provides developers with a consistent asynchronous model using a modern C++ approach.)
 	http://think-async.com/Asio/
 	Version: 1.18.2
+
+protobuf (Protocol Buffers - Google's data interchange format)
+  https://github.com/protocolbuffers/protobuf
+  Version: v3.17.3 909a0f36a10075c4b4bc70fdee2c7e32dd612a72

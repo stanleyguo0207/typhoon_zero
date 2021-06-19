@@ -20,12 +20,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if(SERVERS)
-	add_subdirectory(fmt)
-	add_subdirectory(sfmt)
-	add_subdirectory(threads)
-	add_subdirectory(utfcpp)
-	add_subdirectory(rapidjson)
-	add_subdirectory(asio)
-	add_subdirectory(zlib)
-endif()
+cmake_minimum_required(VERSION 3.20.0)
+
+project(test_zlib C)
+
+add_executable(test_zlib
+  "test_zlib.c"
+)
+
+target_link_libraries(test_zlib
+  zlib
+)
+
+install(TARGETS test_zlib DESTINATION ${BIN_DIR}/tests)
