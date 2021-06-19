@@ -144,20 +144,20 @@ message(STATUS "MSVC: Disabled POSIX warnings")
 # C4091: 'typedef ': ignored on left of '' when no variable is declared
 target_compile_options(typhoon-compile-option-interface
   INTERFACE
-    /wd4351
     /wd4091
+    /wd4351
 	)
 
-if(NOT WITH_WARNINGS)
+if(WITH_WARNINGS)
   target_compile_options(typhoon-compile-option-interface
     INTERFACE
-      /wd4996
-      /wd4355
       /wd4244
-      /wd4985
       /wd4267
-      /wd4619
+      /wd4355
       /wd4512
+      /wd4619
+      /wd4985
+      /wd4996
 		)
   message(STATUS "MSVC: Disabled generic compiletime warnings")
 endif()

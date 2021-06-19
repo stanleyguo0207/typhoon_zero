@@ -151,6 +151,13 @@ else()
   message(STATUS "Use ssl in network                                 : OFF (default)")
 endif()
 
+# unicode
+if(WITH_UNICODE)
+  message(STATUS "Use unicode                                        : ON (default)")
+else()
+  message(STATUS "Use unicode                                        : OFF")
+endif()
+
 # source tree
 if(NOT ${WITH_SOURCE_TREE} STREQUAL "")
   message(STATUS "Build the source tree for IDE's.                   : ${WITH_SOURCE_TREE}")

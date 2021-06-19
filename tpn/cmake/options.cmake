@@ -78,7 +78,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 # tests
-option(BUILD_TESTS "BUild tests" ON)
+option(BUILD_TESTS "Build tests" ON)
 
 # warnings
 option(WITH_WARNINGS "Show all warings during compile" ON)
@@ -93,6 +93,12 @@ endif()
 option(WITH_SSL "Enable openssl" OFF)
 if(WITH_SSL)
 	add_definitions(-DTPN_USE_SSL)
+endif()
+
+# unicode
+option(WITH_UNICODE "Enable utf-8" ON)
+if(WITH_UNICODE)
+	add_definitions(-DFMT_UNICODE -DUNICODE -D_UNICODE)
 endif()
 
 # srouce tree
