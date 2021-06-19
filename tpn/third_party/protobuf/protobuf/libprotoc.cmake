@@ -173,6 +173,8 @@ add_executable(protoc
 target_include_directories(protoc
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/config
   )
 
 # link library

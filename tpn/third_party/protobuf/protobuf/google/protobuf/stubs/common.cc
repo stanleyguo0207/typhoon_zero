@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <vector>
 
-#include "custom_config.h"
+#include <custom/custom_config.h>
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN

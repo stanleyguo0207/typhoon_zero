@@ -54,6 +54,7 @@ set(PROTOBUF_SOURCES_FILES
   )
 
 set(PROTOBUF_SOURCES_INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/custom/custom_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/any.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/any.pb.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/api.pb.h
@@ -117,6 +118,8 @@ add_library(protobuf
 target_include_directories(protobuf
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom
   )
 
 target_link_libraries(protobuf

@@ -32,6 +32,7 @@ set(PROTOBUF_LITE_SOURCES_FILES
   )
 
 set(PROTOBUF_LITE_SOURCES_INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/custom/custom_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/arena.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/arenastring.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/extension_set.h
@@ -67,6 +68,8 @@ add_library(protobuf-lite
 target_include_directories(protobuf-lite
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom
   )
 
 target_link_libraries(protobuf-lite
