@@ -6,8 +6,9 @@ root = true
 charset = utf-8
 indent_size = 2
 indent_style = space
-# tab_width = 2
+tab_width = 2
 # end_of_line = lf
+insert_final_newline = true
 # guidelines = 40 1px dotted white, 80 10px solid 30B0ED4C, 132
 guidelines = 80 2px solid 33FFFF
 

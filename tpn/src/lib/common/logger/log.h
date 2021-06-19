@@ -39,8 +39,7 @@ using DefaultFactory = SynchronousFactory;
 ///  @param[in]   logger_name       记录器名称
 ///  @param[in]   args...           追加器构造所需参数
 template <typename Apppender, typename... AppenderArgs>
-inline LoggerSptr Create(std::string_view logger_name,
-                         AppenderArgs &&... args) {
+inline LoggerSptr Create(std::string_view logger_name, AppenderArgs &&...args) {
   return DefaultFactory::Create<Appender>(logger_name,
                                           std::forward<AppenderArgs>(args)...);
 }
