@@ -54,7 +54,6 @@ set(PROTOBUF_SOURCES_FILES
   )
 
 set(PROTOBUF_SOURCES_INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/custom/custom_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/any.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/any.pb.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/api.pb.h
@@ -118,8 +117,6 @@ add_library(protobuf
 target_include_directories(protobuf
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/custom
   )
 
 target_link_libraries(protobuf
@@ -138,7 +135,7 @@ target_compile_definitions(protobuf
 
 if(MSVC)
   target_compile_options(protobuf
-    INTERFACE
+    PUBLIC
       /wd4018 # 'expression' : signed/unsigned mismatch
       /wd4065 # switch statement contains 'default' but no 'case' labels
       /wd4146 # unary minus operator applied to unsigned type, result still unsigned
@@ -156,8 +153,13 @@ if(MSVC)
     )
 
   target_compile_definitions(protobuf
-    INTERFACE
+    PUBLIC
       -D_SCL_SECURE_NO_WARNINGS
+    )
+else()
+  target_compile_definitions(protobuf
+    PUBLIC
+      -DHAVE_PTHREAD
     )
 endif()
 

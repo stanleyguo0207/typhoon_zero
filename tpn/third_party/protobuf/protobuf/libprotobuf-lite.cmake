@@ -32,7 +32,6 @@ set(PROTOBUF_LITE_SOURCES_FILES
   )
 
 set(PROTOBUF_LITE_SOURCES_INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/custom/custom_config.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/arena.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/arenastring.h
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/extension_set.h
@@ -68,8 +67,6 @@ add_library(protobuf-lite
 target_include_directories(protobuf-lite
   PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/custom
   )
 
 target_link_libraries(protobuf-lite
@@ -81,14 +78,14 @@ target_link_libraries(protobuf-lite
     zlib
   )
 
-  target_compile_definitions(protobuf-lite
+target_compile_definitions(protobuf-lite
   PUBLIC
     -DHAVE_ZLIB
 )
 
 if(MSVC)
   target_compile_options(protobuf-lite
-    INTERFACE
+    PUBLIC
       /wd4018 # 'expression' : signed/unsigned mismatch
       /wd4065 # switch statement contains 'default' but no 'case' labels
       /wd4146 # unary minus operator applied to unsigned type, result still unsigned
@@ -106,8 +103,13 @@ if(MSVC)
     )
 
   target_compile_definitions(protobuf-lite
-    INTERFACE
+    PUBLIC
       -D_SCL_SECURE_NO_WARNINGS
+    )
+else()
+  target_compile_definitions(protobuf-lite
+    PUBLIC
+      -DHAVE_PTHREAD
     )
 endif()
 
