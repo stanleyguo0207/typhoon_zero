@@ -26,14 +26,42 @@
 #include <type_traits>
 
 #include "fmt_wrap.h"
+#include "define.h"
 
 namespace tpn {
 
 /// 判断是否为继承自fmt::compile_string
 ///  @tparam	FormatString		模式串
 template <typename FormatString>
-inline constexpr bool is_compile_string_v =
+TPN_INLINE constexpr bool is_compile_string_v =
     fmt::is_compile_string<FormatString>::value;
+
+/// 初等模板识别一个size_t构造函数的缓冲区类型
+template <typename, typename = std::void_t<>>
+struct BufferHasConstructWithSize : std::false_type {};
+
+/// 特化识别一个size_t构造函数的缓冲区类型
+template <typename T>
+struct BufferHasConstructWithSize<T, std::void_t<decltype(T(size_t(0)))>>
+    : std::true_type {};
+
+/// 是否带有一个size_t构造函数类
+template <typename T>
+TPN_INLINE constexpr bool is_buffer_has_construct_with_size_v =
+    BufferHasConstructWithSize<T>::value;
+
+/// 初等模板识别是否带有max_size()函数的缓冲区类型
+template <typename, typename = std::void_t<>>
+struct BufferHasMaxSize : std::false_type {};
+
+/// 特化识别带有max_size()函数的缓冲区类型
+template <typename T>
+struct BufferHasMaxSize<T, std::void_t<decltype(std::declval<T>().max_size())>>
+    : std::true_type {};
+
+/// 是否带有一个max_size()函数的类
+template <typename T>
+TPN_INLINE constexpr bool is_buffer_has_max_size_v = BufferHasMaxSize<T>::value;
 
 }  // namespace tpn
 

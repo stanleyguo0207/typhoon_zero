@@ -25,6 +25,8 @@
 
 #include <chrono>
 
+#include "define.h"
+
 namespace tpn {
 
 using NanoSeconds  = std::chrono::nanoseconds;
@@ -46,7 +48,7 @@ using namespace std::chrono_literals;
 ///  @return 给定时间点的秒数除外的部分
 template <typename ToDuration,
           typename TimePoint = std::chrono::system_clock::time_point>
-inline auto TimeFraction(TimePoint tp) {
+TPN_INLINE auto TimeFraction(TimePoint tp) {
   using std::chrono::duration_cast;
   using std::chrono::seconds;
   auto duration = tp.time_since_epoch();

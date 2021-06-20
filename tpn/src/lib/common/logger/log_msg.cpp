@@ -66,17 +66,21 @@ AsyncLogMsg::AsyncLogMsg(AsyncLogMsg &&other) noexcept
 }
 
 AsyncLogMsg &AsyncLogMsg::operator=(const AsyncLogMsg &other) {
-  LogMsg::operator=(other);
-  buf_.clear();
-  buf_.append(other.buf_.data(), other.buf_.data() + other.buf_.size());
-  UpdateBuf();
+  if (this != &other) {
+    LogMsg::operator=(other);
+    buf_.clear();
+    buf_.append(other.buf_.data(), other.buf_.data() + other.buf_.size());
+    UpdateBuf();
+  }
   return *this;
 }
 
 AsyncLogMsg &AsyncLogMsg::operator=(AsyncLogMsg &&other) noexcept {
-  LogMsg::operator=(other);
-  buf_            = std::move(other.buf_);
-  UpdateBuf();
+  if (this != &other) {
+    LogMsg::operator=(other);
+    buf_            = std::move(other.buf_);
+    UpdateBuf();
+  }
   return *this;
 }
 

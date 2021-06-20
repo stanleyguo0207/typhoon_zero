@@ -149,7 +149,7 @@ template <typename FormatString, typename... Args>
   while (0) ASSERT_END
 
 template <typename T>
-inline decltype(auto) ASSERT_NOTNULL_IMPL(T *ptr, std::string_view expr) {
+TPN_INLINE decltype(auto) ASSERT_NOTNULL_IMPL(T *ptr, std::string_view expr) {
   TPN_ASSERT(ptr, "{}", expr);
   return ptr;
 }

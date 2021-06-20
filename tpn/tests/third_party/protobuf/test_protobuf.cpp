@@ -41,9 +41,9 @@ void PromptForAddress(tutorial::Person *person) {
   person->set_id(id);
   cin.ignore(256, '\n');
 
-  //fmt::print("Enter name: ");
-  //getline(cin, *person->mutable_name());
-  person->set_name("张三");
+  fmt::print("Enter name: ");
+  getline(cin, *person->mutable_name());
+  // person->set_name("张三");
 
   fmt::print("Enter email address (blank for none): ");
   string email;
@@ -52,7 +52,7 @@ void PromptForAddress(tutorial::Person *person) {
     person->set_email(email);
   }
 
-   while (true) {
+  while (true) {
     fmt::print("Enter a phone number (or leave blank to finish): ");
     string number;
     getline(cin, number);
@@ -124,6 +124,9 @@ void ListPeople(const tutorial::AddressBook &address_book) {
         } break;
         case tutorial::Person::WORK: {
           fmt::print("\tWork phone #:");
+        } break;
+        default: {
+          fmt::print("\tUnkown phone #:");
         } break;
       }
       fmt::print("{}\n", phone.number());

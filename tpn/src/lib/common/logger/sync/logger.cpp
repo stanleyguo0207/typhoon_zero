@@ -52,7 +52,9 @@ Logger::Logger(Logger &&other) noexcept
       err_handler_{std::move(other.err_handler_)} {}
 
 Logger &Logger::operator=(Logger other) noexcept {
-  this->Swap(other);
+  if (this != &other) {
+    this->Swap(other);
+  }
   return *this;
 }
 

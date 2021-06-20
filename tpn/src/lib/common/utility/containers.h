@@ -36,7 +36,7 @@ namespace containers {
 ///  @tparam			C						容器类型
 ///  @param[out]	container		容器
 template <typename C>
-inline void RandomShuffe(C &container) {
+TPN_INLINE void RandomShuffe(C &container) {
   std::shuffle(std::begin(container), std::end(container),
                *RandomEngine::Instance());
 }
@@ -47,7 +47,7 @@ inline void RandomShuffe(C &container) {
 ///  @param[out]	container		容器
 ///  @return 容器中的元素
 template <typename C>
-inline decltype(auto) SelectRandomContainerElement(const C &container) {
+TPN_INLINE decltype(auto) SelectRandomContainerElement(const C &container) {
   auto iter = std::begin(container);
   std::advance(iter,
                RandU32(0, static_cast<uint32_t>(std::size(container)) - 1));
@@ -62,7 +62,7 @@ inline decltype(auto) SelectRandomContainerElement(const C &container) {
 ///														使用者需要保证权重总和是大于0
 ///  @return 容器中的元素迭代器
 template <typename C>
-inline decltype(auto) SelectRandomWeightContainerElementIterator(
+TPN_INLINE decltype(auto) SelectRandomWeightContainerElementIterator(
     const C &container, std::vector<double> &weights) {
   auto iter = std::begin(container);
   std::advance(iter, RandU32Weighted(weights.data(), weights.size()));
@@ -78,7 +78,7 @@ inline decltype(auto) SelectRandomWeightContainerElementIterator(
 ///																	使用者需要保证权重总和是大于0
 ///  @return 容器中的元素迭代器
 template <typename C, typename Fn>
-inline decltype(auto) SelectRandomWeightContainerElementIterator(
+TPN_INLINE decltype(auto) SelectRandomWeightContainerElementIterator(
     const C &container, Fn weight_extractor) {
   std::vector<double> weights;
   weights.reserve(std::size(container));

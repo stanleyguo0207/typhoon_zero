@@ -62,6 +62,7 @@ target_link_libraries(common
 		sfmt
 		rapidjson
 		utfcpp
+    asio
 	)
 
 # export

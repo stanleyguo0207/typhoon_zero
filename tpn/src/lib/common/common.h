@@ -73,6 +73,9 @@ struct SrcLocInfo {
   std::uint_least32_t column_{0};       ///< 列号
 };
 
+/// buffer容量默认值
+constexpr size_t kBufferDefaultSize = 512;
+
 }  // namespace tpn
 
 // 为将来兼容std::source_location做扩展

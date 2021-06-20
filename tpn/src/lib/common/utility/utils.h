@@ -83,7 +83,7 @@ TPN_COMMON_API void Utf8Truncate(std::string &utf8str, size_t len);
 ///  @param[in]		value		枚举值
 ///  @return 枚举值的底层类型数据
 template <typename T>
-inline constexpr decltype(auto) EnumToUnderlyType(const T &value) {
+TPN_INLINE constexpr decltype(auto) EnumToUnderlyType(const T &value) {
   return static_cast<std::underlying_type_t<T>>(value);
 }
 
