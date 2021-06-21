@@ -23,6 +23,7 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_FMT_FMT_WRAP_H_
 
+#include <fmt/args.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
 #include <fmt/core.h>
@@ -32,17 +33,20 @@
 #include <fmt/ranges.h>
 #include <fmt/compile.h>
 #include <fmt/locale.h>
+#include <fmt/xchar.h>
 
 namespace tpn {
 
-using FmtStringView  = fmt::basic_string_view<char>;
-using FmtWStringView = fmt::basic_string_view<wchar_t>;
-using FmtMemoryBuf   = fmt::basic_memory_buffer<char, 250>;
-using FmtWMemoryBuf  = fmt::basic_memory_buffer<wchar_t, 250>;
-using FmtFormatCtx   = fmt::format_context;
-using FmtWFromatCtx  = fmt::wformat_context;
-using FmtFormatArgs  = fmt::format_args;
-using FmtWFormatArgs = fmt::wformat_args;
+using FmtStringView      = fmt::basic_string_view<char>;
+using FmtWStringView     = fmt::basic_string_view<wchar_t>;
+using FmtMemoryBuf       = fmt::basic_memory_buffer<char, 250>;
+using FmtWMemoryBuf      = fmt::basic_memory_buffer<wchar_t, 250>;
+using FmtFormatCtx       = fmt::format_context;
+using FmtWFromatCtx      = fmt::wformat_context;
+using FmtFormatArgs      = fmt::format_args;
+using FmtWFormatArgs     = fmt::wformat_args;
+using FmtBufferAppender  = fmt::detail::buffer_appender<char>;
+using FmtWBufferAppender = fmt::detail::buffer_appender<wchar_t>;
 
 using namespace fmt::literals;
 

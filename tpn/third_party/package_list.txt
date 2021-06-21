@@ -10,7 +10,7 @@ SFMT (SIMD-oriented Fast Mersenne Twister)
 
 fmt (a small, safe and fast formatting library)
   https://github.com/fmtlib/fmt
-  Version: 7.1.3 7bdf0628b1276379886c7f6dda2cef2b3b374f0b
+  Version: 8.0.0 9e8b86fd2d9806672cc73133d21780dd182bfd24
 
 utfcpp (UTF8-CPP: UTF-8 with C++ in a Portable Way)
 	https://github.com/nemtrif/utfcpp

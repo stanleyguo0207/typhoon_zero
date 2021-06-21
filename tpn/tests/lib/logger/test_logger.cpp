@@ -183,9 +183,10 @@ TEST_CASE("log", "[logger]") {
   LOG_INFO("str args: {}", "I am 台风");
   LOG_WARN("rangers: {}", std::vector(12, 10));
   LOG_ERROR("num: {1:f}, {0:d}", 20, 300.0);
-  // 编译期间检查不了 自定义类型
-  // LOG_ERROR("num: {numi:d}, {numf:f}", "numi"_a = 20, "numf"_a = 300.0);
-  // LOG_DEBUG("num: {numi}, {numf}", fmt::arg("numi", 88), fmt::arg("numf", 888.0));
+  LOG_ERROR("num: {numi:d}, {numf:f}", "numi"_a = 20, "numf"_a = 300.0);
+  // 编译期间检查不了 无法检查 fmt::arg
+  // LOG_DEBUG("num: {numi}, {numf}", fmt::arg("numi", 88),
+  //           fmt::arg("numf", 888.0));
   LOG_DEBUG("num: {}", "{0:10}"_format(1000));
   LOG_FATAL("check format: {:>5d}", 99);
 

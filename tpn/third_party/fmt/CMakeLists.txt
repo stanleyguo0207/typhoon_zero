@@ -30,17 +30,19 @@ endif()
 
 # source collect
 set(FMT_SOURCES
+	${CMAKE_CURRENT_SOURCE_DIR}/fmt/args.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/chrono.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/color.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/compile.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/core.h
-	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format.cc
-	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format-inl.h
+	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/locale.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/ostream.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/printf.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/ranges.h
+	${CMAKE_CURRENT_SOURCE_DIR}/fmt/xchar.h
+	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format.cc
 	)
 
 if(HAVE_OPEN)
@@ -70,6 +72,7 @@ target_compile_features(fmt
 		cxx_override
 		cxx_rvalue_references
 		cxx_deleted_functions
+    cxx_variadic_templates
 	)
 
 # link library

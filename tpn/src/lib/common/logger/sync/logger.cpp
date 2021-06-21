@@ -82,7 +82,7 @@ void Logger::LogStrv(SourceLocation src_loc, LogLevel level, FmtStringView fmt,
 
   try {
     FmtMemoryBuf buf;
-    fmt::vformat_to(buf, fmt, args);
+    fmt::vformat_to(FmtBufferAppender(buf), fmt, args);
     LogMsg log_msg(name_, level, src_loc,
                    std::string_view(buf.data(), buf.size()));
     AppenderDoLog(log_msg);
@@ -102,7 +102,7 @@ void Logger::LogWStrv(SourceLocation src_loc, LogLevel level,
 
   try {
     FmtWMemoryBuf wbuf;
-    fmt::vformat_to(wbuf, fmt, args);
+    fmt::vformat_to(FmtWBufferAppender(wbuf), fmt, args);
 
     std::string utf8str;
     if (!WstrToUtf8(wbuf.data(), wbuf.size(), utf8str)) {

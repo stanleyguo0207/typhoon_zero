@@ -36,6 +36,12 @@ template <typename FormatString>
 TPN_INLINE constexpr bool is_compile_string_v =
     fmt::is_compile_string<FormatString>::value;
 
+/// 判断是否为继承自fmt::compiled_string
+///  @tparam	FormatString		模式串
+template <typename FormatString>
+TPN_INLINE constexpr bool is_compiled_string_v =
+    fmt::detail::is_compiled_string<FormatString>::value;
+
 /// 初等模板识别一个size_t构造函数的缓冲区类型
 template <typename, typename = std::void_t<>>
 struct BufferHasConstructWithSize : std::false_type {};
