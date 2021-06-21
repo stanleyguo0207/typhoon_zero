@@ -33,47 +33,47 @@ namespace tpn {
 namespace byte_converter {
 
 template <size_t T>
-TPN_INLINE void Convert(char *val) {
+inline void Convert(char *val) {
   std::swap(*val, *(val + T - 1));
   Convert<T - 2>(val + 1);
 }
 
 template <>
-TPN_INLINE void Convert<0>(char *) {}
+inline void Convert<0>(char *) {}
 
 template <>
-TPN_INLINE void Convert<1>(char *) {}
+inline void Convert<1>(char *) {}
 
 template <typename T>
-TPN_INLINE void Apply(T *val) {
+inline void Apply(T *val) {
   Convert<sizeof(T)>(reinterpret_cast<char *>(val));
 }
 
 }  // namespace byte_converter
 
 template <typename T>
-TPN_INLINE void EndianRefMakeLittle(T &val) {
+inline void EndianRefMakeLittle(T &val) {
   if constexpr (std::endian::native == std::endian::big) {
     byte_converter::Apply<T>(&val);
   }
 }
 
 template <typename T>
-TPN_INLINE void EndianRefMakeBig(T &val) {
+inline void EndianRefMakeBig(T &val) {
   if constexpr (std::endian::native == std::endian::little) {
     byte_converter::Apply<T>(&val);
   }
 }
 
 template <typename T>
-TPN_INLINE void EndianPtrMakeLittle(void *val) {
+inline void EndianPtrMakeLittle(void *val) {
   if constexpr (std::endian::native == std::endian::big) {
     byte_converter::Apply<T>(val);
   }
 }
 
 template <typename T>
-TPN_INLINE void EndianPtrMakeBig(void *val) {
+inline void EndianPtrMakeBig(void *val) {
   if constexpr (std::endian::native == std::endian::little) {
     byte_converter::Apply<T>(val);
   }
@@ -87,10 +87,10 @@ void EndianRefMakeLittle(T *);
 template <typename T>
 void EndianRefMakeBig(T *);
 
-TPN_INLINE void EndianRefMakeLittle(uint8_t &) {}
-TPN_INLINE void EndianRefMakeLittle(int8_t &) {}
-TPN_INLINE void EndianRefMakeBig(uint8_t &) {}
-TPN_INLINE void EndianRefMakeBig(int8_t &) {}
+inline void EndianRefMakeLittle(uint8_t &) {}
+inline void EndianRefMakeLittle(int8_t &) {}
+inline void EndianRefMakeBig(uint8_t &) {}
+inline void EndianRefMakeBig(int8_t &) {}
 
 }  // namespace tpn
 

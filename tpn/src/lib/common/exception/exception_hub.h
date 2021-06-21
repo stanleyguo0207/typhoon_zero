@@ -68,6 +68,15 @@ class TPN_COMMON_API LogException final : public TpnException {
   ~LogException() noexcept final = default;
 };
 
+/// 字节流异常
+class TPN_COMMON_API ByteBufferException final : public TpnException {
+ public:
+  /// 异常信息
+  ///  @param[in]   pos     字节流位置
+  ByteBufferException(size_t pos, size_t size, size_t val_size);
+  ~ByteBufferException() noexcept final = default;
+};
+
 #if defined(TPN_NO_EXCEPTION)
 #  define TPN_THROW(ex)             \
     do {                            \

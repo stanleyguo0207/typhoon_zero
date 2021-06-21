@@ -32,4 +32,11 @@ LogException::LogException(std::string_view msg) {
   Message() = {msg.data(), msg.size()};
 }
 
+ByteBufferException::ByteBufferException(size_t pos, size_t size,
+                                         size_t val_size) {
+  Message().assign(
+      "Attempted to get value with size: {} in ByteBuffer (pos: {} size: {})"_format(
+          val_size, pos, size));
+}
+
 }  // namespace tpn
