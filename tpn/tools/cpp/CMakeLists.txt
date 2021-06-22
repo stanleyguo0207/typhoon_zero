@@ -20,4 +20,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(protoc-typhoon)
+add_subdirectory(protoc-gen-typhoon)
