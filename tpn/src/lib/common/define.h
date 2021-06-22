@@ -96,13 +96,6 @@
 #  define TPN_FORMAT_CHECK (false)
 #endif
 
-// format f v
-#if (TPN_COMPILER == TPN_COMPILER_GNU)
-#  define TPN_FORMAT_CHECK_F_V(F, V) __attribute__((format(printf, F, V)))
-#else
-#  define TPN_FORMAT_CHECK_F_V(F, V)
-#endif
-
 // 动态库
 #if defined(TPN_API_USE_DYNAMIC_LINKING)
 #  if (TPN_COMPILER == TPN_COMPILER_MSVC)
@@ -124,6 +117,13 @@
 #  define TPN_COMMON_API TPN_API_EXPORT
 #else
 #  define TPN_COMMON_API TPN_API_IMPORT
+#endif
+
+// proto api
+#if defined(TPN_API_EXPORT_PROTO)
+#  define TPN_PROTO_API TPN_API_EXPORT
+#else
+#  define TPN_PROTO_API TPN_API_IMPORT
 #endif
 
 // 行结尾符

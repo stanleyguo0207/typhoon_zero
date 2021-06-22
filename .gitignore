@@ -11,3 +11,6 @@ compile_commands.json
 .vscode/
 CMakeSettings.json
 
+# protobuf
+protoc
+protoc.exe

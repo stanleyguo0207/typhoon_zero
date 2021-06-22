@@ -39,13 +39,13 @@ CollectIncludeDirectories(
 # source tree
 GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
-# library common
-add_library(common
+# library proto
+add_library(proto
 	${PRIVATE_SOURCES}
 	)
 
 # include
-target_include_directories(common
+target_include_directories(proto
 	PRIVATE
 		${CMAKE_CURRENT_BINARY_DIR}
 	PUBLIC
@@ -53,23 +53,19 @@ target_include_directories(common
 	)
 
 # link
-target_link_libraries(common
+target_link_libraries(proto
   PRIVATE
     typhoon-core-interface
 	PUBLIC
-    threads
-    fmt
-    sfmt
-    rapidjson
-    utfcpp
-    asio
+    common
+    protobuf
 	)
 
 # export
-add_definitions(-DTPN_API_EXPORT_COMMON)
+add_definitions(-DTPN_API_EXPORT_PROTO)
 
 # ide folder
-set_target_properties(common
+set_target_properties(proto
 	PROPERTIES
 		FOLDER
 			"libs"
@@ -78,7 +74,7 @@ set_target_properties(common
 # shared library
 if(BUILD_SHARED_LIBS)
 	install(TARGETS
-		common
+		proto
 		LIBRARY
 			DESTINATION
 				${BIN_DIR}/lib
@@ -87,8 +83,8 @@ endif()
 
 # pch
 if(USE_COREPCH)
-	target_precompile_headers(common
+	target_precompile_headers(proto
 		PRIVATE
-			${CMAKE_CURRENT_SOURCE_DIR}/pch/pch_common.h
+			${CMAKE_CURRENT_SOURCE_DIR}/pch/pch_proto.h
 		)
 endif()

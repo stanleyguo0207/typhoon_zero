@@ -36,7 +36,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # module switch
 option(SERVERS "Build servers" ON)
-option(TOOLS "Build tools" OFF)
+option(TOOLS "Build tools" ON)
 
 # PCH
 if(NOPCH)

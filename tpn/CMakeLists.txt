@@ -72,6 +72,10 @@ add_subdirectory(third_party)
 # typhoon src
 add_subdirectory(src)
 
+if(TOOLS)
+  add_subdirectory(tools)
+endif()
+
 # tests
 if(BUILD_TESTS)
 	add_subdirectory(tests)
