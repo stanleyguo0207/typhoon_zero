@@ -20,33 +20,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PLUGIN_H_
-#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PLUGIN_H_
+#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_FWD_H_
+#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_FWD_H_
 
-#include "config.h"
-#include "fwd.h"
+namespace google {
 
-namespace pb  = google::protobuf;
-namespace pbc = pb::compiler;
+namespace protobuf {
 
-namespace tpn {
+class FileDescriptor;
 
-namespace protoc {
+namespace compiler {
 
-class CppRpcGenerator : public pbc::CodeGenerator {
- public:
-  CppRpcGenerator()          = default;
-  virtual ~CppRpcGenerator() = default;
+class GeneratorContext;
 
-  bool Generate(const pb::FileDescriptor *file, const std::string &parameter,
-                pbc::GeneratorContext *generator_context,
-                std::string *error) const override {
-    return true;
-  }
-};
+}  // namespace compiler
 
-}  // namespace protoc
+}  // namespace protobuf
 
-}  // namespace tpn
+}  // namespace google
 
-#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PLUGIN_H_
+#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_FWD_H_

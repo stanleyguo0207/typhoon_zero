@@ -23,17 +23,25 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PCH_PCH_PROTOC_GEN_TYPHOON_H_
 #define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PCH_PCH_PROTOC_GEN_TYPHOON_H_
 
+#include <string>
+
 // protobuf
 #include <google/protobuf/message.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/descriptor.pb.h>
+#include <google/protobuf/descriptor_database.h>
+#include <google/protobuf/util/json_util.h>
 #include <google/protobuf/repeated_field.h>
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/unknown_field_set.h>
 #include <google/protobuf/generated_message_util.h>
-#include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/strutil.h>
 #include <google/protobuf/io/printer.h>
+#include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/io/zero_copy_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+#include <google/protobuf/compiler/plugin.h>
 #include <google/protobuf/compiler/code_generator.h>
 #include <google/protobuf/compiler/cpp/cpp_helpers.h>
 #include <google/protobuf/compiler/cpp/cpp_enum.h>

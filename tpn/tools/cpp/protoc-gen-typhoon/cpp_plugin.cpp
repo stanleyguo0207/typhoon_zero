@@ -22,10 +22,6 @@
 
 #include "cpp_plugin.h"
 
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/compiler/code_generator.h>
-#include <google/protobuf/compiler/plugin.h>
-
 int main(int argc, char *argv[]) {
   tpn::protoc::CppRpcGenerator generator;
   return google::protobuf::compiler::PluginMain(argc, argv, &generator);
