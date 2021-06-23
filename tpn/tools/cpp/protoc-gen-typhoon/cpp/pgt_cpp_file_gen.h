@@ -20,32 +20,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-syntax = "proto3";
+#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_FILE_GEN_H_
+#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_FILE_GEN_H_
 
-import "google/protobuf/descriptor.proto";
-
-package tpn.protocol;
-
-option optimize_for = SPEED;
-
-option cc_generic_services = false;
-
-// 扩展服务选项
-extend google.protobuf.ServiceOptions {
-  tpn.protocol.TPNServiceOptions service_options = 90000;
-}
-
-// 扩展方法选项
-extend google.protobuf.MethodOptions {
-  tpn.protocol.TPNMethodOptions method_options = 90000;
-}
-
-// 服务选项
-message TPNServiceOptions {
-  string descriptor_name = 1;  // 用于生成 service_hash值
-}
-
-// 方法选项
-message TPNMethodOptions {
-  uint32 id = 1;  // 方法id
-}
+#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_FILE_GEN_H_

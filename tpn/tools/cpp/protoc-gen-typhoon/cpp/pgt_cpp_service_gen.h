@@ -20,23 +20,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_FWD_H_
-#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_FWD_H_
+#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_SERVICE_GEN_H_
+#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_SERVICE_GEN_H_
 
-namespace google {
-
-namespace protobuf {
-
-class FileDescriptor;
-
-namespace compiler {
-
-class GeneratorContext;
-
-}  // namespace compiler
-
-}  // namespace protobuf
-
-}  // namespace google
-
-#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_FWD_H_
+#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_SERVICE_GEN_H_

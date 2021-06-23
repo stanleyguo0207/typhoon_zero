@@ -20,21 +20,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CONFIG_H_
-#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CONFIG_H_
+#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PGT_FWD_H_
+#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PGT_FWD_H_
 
-#include <string>
+namespace google {
 
-#include <google/protobuf/message.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/descriptor.pb.h>
-#include <google/protobuf/descriptor_database.h>
-#include <google/protobuf/util/json_util.h>
-#include <google/protobuf/compiler/code_generator.h>
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/io/printer.h>
-#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
-#include <google/protobuf/compiler/plugin.h>
-#include <google/protobuf/compiler/code_generator.h>
+namespace protobuf {
 
-#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CONFIG_H_
+class FileDescriptor;
+
+namespace compiler {
+
+class GeneratorContext;
+
+}  // namespace compiler
+
+}  // namespace protobuf
+
+}  // namespace google
+
+#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PGT_FWD_H_

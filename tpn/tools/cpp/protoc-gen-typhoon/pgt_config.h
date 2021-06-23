@@ -20,33 +20,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PLUGIN_H_
-#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PLUGIN_H_
+#ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PGT_CONFIG_H_
+#define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PGT_CONFIG_H_
 
-#include "config.h"
-#include "fwd.h"
+#include <string>
 
-namespace pb  = google::protobuf;
-namespace pbc = pb::compiler;
+#include <google/protobuf/message.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/descriptor.pb.h>
+#include <google/protobuf/descriptor_database.h>
+#include <google/protobuf/util/json_util.h>
+#include <google/protobuf/compiler/code_generator.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/printer.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+#include <google/protobuf/compiler/plugin.h>
+#include <google/protobuf/compiler/code_generator.h>
 
-namespace tpn {
-
-namespace protoc {
-
-class CppRpcGenerator : public pbc::CodeGenerator {
- public:
-  CppRpcGenerator()          = default;
-  virtual ~CppRpcGenerator() = default;
-
-  bool Generate(const pb::FileDescriptor *file, const std::string &parameter,
-                pbc::GeneratorContext *generator_context,
-                std::string *error) const override {
-    return true;
-  }
-};
-
-}  // namespace protoc
-
-}  // namespace tpn
-
-#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PLUGIN_H_
+#endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_PGT_CONFIG_H_
