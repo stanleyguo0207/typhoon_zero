@@ -22,6 +22,18 @@
 
 #include "pgt_cpp_code_gen.h"
 
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include <google/protobuf/stubs/strutil.h>
+#include <google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <google/protobuf/descriptor.pb.h>
+#include <google/protobuf/io/printer.h>
+#include <google/protobuf/io/zero_copy_stream.h>
+
+#include "pgt_cpp_file_gen.h"
+
 namespace pb    = google::protobuf;
 namespace pbc   = pb::compiler;
 namespace pbcpp = pbc::cpp;
@@ -30,15 +42,53 @@ namespace tpn {
 
 namespace protoc {
 
-PGTCppCodeGenerator::PGTCppCodeGenerator() {}
-PGTCppCodeGenerator::~PGTCppCodeGenerator() {}
-
 bool PGTCppCodeGenerator::Generate(const pb::FileDescriptor *file,
                                    const std::string &parameter,
                                    pbc::GeneratorContext *generator_context,
                                    std::string *error) const {
   std::vector<std::pair<std::string, std::string> > options;
   pbc::ParseGeneratorParameter(parameter, &options);
+
+  // 选项处理
+  pbcpp::Options file_options;
+  for (auto &&[key, val] : options) {
+    if ("dllexport_decl" == key) {
+      file_options.dllexport_decl = val;
+    } else if ("safe_boundary_check" == key) {
+      file_options.safe_boundary_check = true;
+    } else if ("speed" == key) {
+      file_options.enforce_mode = pbcpp::EnforceOptimizeMode::kSpeed;
+    } else if ("code_size" == key) {
+      file_options.enforce_mode = pbcpp::EnforceOptimizeMode::kCodeSize;
+    } else if ("lite" == key) {
+      file_options.enforce_mode = pbcpp::EnforceOptimizeMode::kLiteRuntime;
+    } else {
+      *error = "Unknown value for experimental_tail_call_table_mode: " + val;
+      return false;
+    }
+  }
+
+  std::string basename = pbcpp::StripProto(file->name());
+  basename.append(".pb");
+
+  // 文件生成器
+  PGTCppFileGenerator file_generator(file, file_options);
+
+  // 头文件
+  {
+    std::unique_ptr<pb::io::ZeroCopyOutputStream> output(
+        generator_context->Open(basename + ".h"));
+    pb::io::Printer printer(output.get(), '$');
+    file_generator.GenerateHeader(&printer);
+  }
+
+  // 源文件
+  {
+    std::unique_ptr<pb::io::ZeroCopyOutputStream> output(
+        generator_context->Open(basename + ".cc"));
+    pb::io::Printer printer(output.get(), '$');
+    file_generator.GenerateSource(&printer);
+  }
 
   return true;
 }

@@ -164,6 +164,68 @@ set(PROTOC_SOURCES_INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}/protobuf/google/protobuf/compiler/zip_writer.h
   )
 
+add_library(protogen
+  STATIC
+    ${PROTOC_SOURCES_FILES}
+    ${PROTOC_SOURCES_INCLUDES}
+  )
+
+target_include_directories(protogen
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/protobuf
+  )
+
+target_link_libraries(protogen
+  PRIVATE
+    typhoon-default-interface
+    typhoon-no-warning-interface
+  PUBLIC
+    threads
+    zlib
+    protobuf
+  )
+
+target_compile_definitions(protogen
+  PUBLIC
+    -DHAVE_ZLIB
+)
+
+if(MSVC)
+  target_compile_options(protogen
+    PUBLIC
+      /wd4018 # 'expression' : signed/unsigned mismatch
+      /wd4065 # switch statement contains 'default' but no 'case' labels
+      /wd4146 # unary minus operator applied to unsigned type, result still unsigned
+      /wd4244 # 'conversion' conversion from 'type1' to 'type2', possible loss of data
+      /wd4251 # 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
+      /wd4267 # 'var' : conversion from 'size_t' to 'type', possible loss of data
+      /wd4305 # 'identifier' : truncation from 'type1' to 'type2'
+      /wd4307 # 'operator' : integral constant overflow
+      /wd4309 # 'conversion' : truncation of constant value
+      /wd4334 # 'operator' : result of 32-bit shift implicitly converted to 64 bits (was 64-bit shift intended?)
+      /wd4355 # 'this' : used in base member initializer list
+      /wd4506 # no definition for inline function 'function'
+      /wd4800 # 'type' : forcing value to bool 'true' or 'false' (performance warning)
+      /wd4996 # The compiler encountered a deprecated declaration.
+    )
+
+  target_compile_definitions(protogen
+    PUBLIC
+      -D_SCL_SECURE_NO_WARNINGS
+    )
+else()
+  target_compile_definitions(protogen
+    PUBLIC
+      -DHAVE_PTHREAD
+    )
+endif()
+
+set_target_properties(protogen
+  PROPERTIES
+    FOLDER
+      "third_party"
+  )
+
 # exec protc
 add_executable(protoc
   ${PROTOC_SOURCES_FILES}

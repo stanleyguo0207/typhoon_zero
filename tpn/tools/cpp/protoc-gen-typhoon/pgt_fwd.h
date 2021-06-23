@@ -28,10 +28,25 @@ namespace google {
 namespace protobuf {
 
 class FileDescriptor;
+class ServiceDescriptor;
+
+namespace io {
+
+class Printer;
+
+}  // namespace io
 
 namespace compiler {
 
 class GeneratorContext;
+
+namespace cpp {
+
+class EnumGenerator;
+class MessageGenerator;
+class ExtensionGenerator;
+
+}  // namespace cpp
 
 }  // namespace compiler
 

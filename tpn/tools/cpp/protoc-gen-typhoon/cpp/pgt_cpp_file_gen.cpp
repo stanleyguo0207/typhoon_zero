@@ -12,7 +12,7 @@
 // (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// but WITHOUT ANY WARRANTY without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
@@ -21,3 +21,42 @@
 //
 
 #include "pgt_cpp_file_gen.h"
+
+#include <memory>
+#include <string>
+#include <vector>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/io/printer.h>
+#include <google/protobuf/compiler/cpp/cpp_options.h>
+#include <google/protobuf/compiler/cpp/cpp_extension.h>
+#include <google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <google/protobuf/compiler/cpp/cpp_message.h>
+#include <google/protobuf/compiler/cpp/cpp_file.h>
+
+#include "pgt_cpp_code_gen.h"
+#include "pgt_cpp_service_gen.h"
+
+namespace tpn {
+
+namespace protoc {
+
+PGTCppFileGenerator::PGTCppFileGenerator(const pb::FileDescriptor *file,
+                                         const pbcpp::Options &options)
+    : file_(file), options_(options) {}
+
+PGTCppFileGenerator::~PGTCppFileGenerator() {}
+
+void PGTCppFileGenerator::GenerateHeader(pb::io::Printer *printer) {}
+
+void PGTCppFileGenerator::GenerateSource(pb::io::Printer *printer) {}
+
+void PGTCppFileGenerator::GenerateBuildDescriptors(pb::io::Printer *printer) {}
+
+void PGTCppFileGenerator::GenerateNamespaceOpeners(pb::io::Printer *printer) {}
+
+void PGTCppFileGenerator::GenerateNamespaceClosers(pb::io::Printer *printer) {}
+
+}  // namespace protoc
+
+}  // namespace tpn

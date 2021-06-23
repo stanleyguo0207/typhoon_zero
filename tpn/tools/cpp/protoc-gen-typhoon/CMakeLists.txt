@@ -58,7 +58,7 @@ target_link_libraries(protoc-gen-typhoon
     typhoon-core-interface
   PUBLIC
     common
-    protobuf
+    protogen
   )
 
 # ide folder

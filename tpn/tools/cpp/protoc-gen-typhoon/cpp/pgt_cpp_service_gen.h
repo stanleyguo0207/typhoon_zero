@@ -23,4 +23,34 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_SERVICE_GEN_H_
 #define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_SERVICE_GEN_H_
 
+#include <map>
+
+#include <google/protobuf/stubs/common.h>
+
+#include "pgt_fwd.h"
+
+namespace pb    = google::protobuf;
+namespace pbcpp = pb::compiler::cpp;
+
+namespace tpn {
+
+namespace protoc {
+
+class PGTCppServiceGenerator {
+ public:
+  PGTCppServiceGenerator(const pb::ServiceDescriptor *service,
+                         const pbcpp::Options &options);
+  ~PGTCppServiceGenerator();
+
+ private:
+  const pb::ServiceDescriptor *service_;  ///< 服务
+  std::map<std::string, std::string> vars_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(PGTCppServiceGenerator);
+};
+
+}  // namespace protoc
+
+}  // namespace tpn
+
 #endif  // TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_SERVICE_GEN_H_

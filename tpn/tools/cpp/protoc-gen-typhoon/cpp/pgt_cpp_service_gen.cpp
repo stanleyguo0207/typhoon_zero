@@ -21,3 +21,22 @@
 //
 
 #include "pgt_cpp_service_gen.h"
+
+#include <google/protobuf/compiler/cpp/cpp_service.h>
+#include <google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <google/protobuf/io/printer.h>
+#include <google/protobuf/stubs/strutil.h>
+
+namespace tpn {
+
+namespace protoc {
+
+PGTCppServiceGenerator::PGTCppServiceGenerator(
+    const pb::ServiceDescriptor *service, const pbcpp::Options &options)
+    : service_(service) {}
+
+PGTCppServiceGenerator::~PGTCppServiceGenerator() {}
+
+}  // namespace protoc
+
+}  // namespace tpn

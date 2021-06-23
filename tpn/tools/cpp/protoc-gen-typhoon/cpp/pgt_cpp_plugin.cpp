@@ -20,6 +20,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <google/protobuf/compiler/plugin.h>
+
 #include "pgt_cpp_code_gen.h"
 
 int main(int argc, char *argv[]) {

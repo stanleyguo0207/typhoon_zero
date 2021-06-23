@@ -23,6 +23,8 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_CODE_GEN_H_
 #define TYPHOON_ZERO_TPN_TOOLS_CPP_PROTOC_GEN_TYPHOON_CPP_PGT_CPP_CODE_GEN_H_
 
+#include <google/protobuf/compiler/code_generator.h>
+
 #include "pgt_config.h"
 #include "pgt_fwd.h"
 
@@ -36,9 +38,6 @@ namespace protoc {
 /// protobuf gen typhoon 代码生成器
 class PGTCppCodeGenerator : public pbc::CodeGenerator {
  public:
-  PGTCppCodeGenerator();
-  virtual ~PGTCppCodeGenerator();
-
   // Generates code for the given proto file, generating one or more files in
   // the given output directory.
   //
