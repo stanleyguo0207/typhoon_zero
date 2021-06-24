@@ -91,6 +91,7 @@ class ServiceGenerator {
   void GenerateServerCallMethod(io::Printer *printer);
   void GenerateServerImplementations(io::Printer *printer);
 
+  std::string HashToHex(uint64_t num);
   std::uint32_t HashServiceName(std::string const &name);
 
   const ServiceDescriptor *descriptor_;

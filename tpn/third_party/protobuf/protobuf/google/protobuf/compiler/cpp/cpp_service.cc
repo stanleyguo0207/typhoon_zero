@@ -34,6 +34,7 @@
 
 #include <google/protobuf/compiler/cpp/cpp_service.h>
 #include <google/protobuf/compiler/cpp/cpp_helpers.h>
+#include <google/protobuf/compiler/cpp/cpp_options.h>
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/strutil.h>
 
@@ -58,8 +59,8 @@ ServiceGenerator::ServiceGenerator(
 
   if (descriptor_->options().HasExtension(tpn::protocol::service_options)) {
     vars_["original_hash"] =
-        "  using OriginalHash = std::integral_constant<uint32, 0x" +
-        ToUpper(ToHex(
+        "  using OriginalHash = std::integral_constant<uint32_t, 0x" +
+        ToUpper(HashToHex(
             HashServiceName(descriptor_->options()
                                 .GetExtension(tpn::protocol::service_options)
                                 .descriptor_name()))) +
@@ -69,8 +70,8 @@ ServiceGenerator::ServiceGenerator(
   }
 
   vars_["name_hash"] =
-      "  using NameHash = std::integral_constant<uint32, 0x" +
-      ToUpper(ToHex(HashServiceName(descriptor_->full_name()))) + "u>;\n";
+      "  using NameHash = std::integral_constant<uint32_t, 0x" +
+      ToUpper(HashToHex(HashServiceName(descriptor_->full_name()))) + "u>;\n";
 }
 
 ServiceGenerator::~ServiceGenerator() = default;
@@ -424,6 +425,23 @@ void ServiceGenerator::GenerateServerImplementations(io::Printer *printer) {
           "\n");
     }
   }
+}
+
+std::string ServiceGenerator::HashToHex(uint64_t num) {
+  if (0 == num) {
+    return std::string("0");
+  }
+
+  char buf[16];
+  char *bufptr = buf + 16;
+
+  static const char kHexChars[] = "0123456789abcdef";
+  while (0 != num) {
+    *--bufptr = kHexChars[num & 0xf];
+    num >>= 4;
+  }
+
+  return std::string(bufptr, buf + 16 - bufptr);
 }
 
 std::uint32_t ServiceGenerator::HashServiceName(std::string const &name) {
