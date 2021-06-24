@@ -37,288 +37,404 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/strutil.h>
 
+#include <pgt_custom/pgt_custom_options.pb.h>
+
 namespace google {
 namespace protobuf {
 namespace compiler {
 namespace cpp {
 
-namespace {
-
-void InitMethodVariables(const MethodDescriptor* method, const Options& options,
-                         Formatter* format) {
-  format->Set("name", method->name());
-  format->Set("input_type", QualifiedClassName(method->input_type(), options));
-  format->Set("output_type",
-              QualifiedClassName(method->output_type(), options));
-}
-
-}  // namespace
-
 ServiceGenerator::ServiceGenerator(
-    const ServiceDescriptor* descriptor,
-    const std::map<std::string, std::string>& vars, const Options& options)
-    : descriptor_(descriptor), vars_(vars), options_(options) {
+    const ServiceDescriptor *descriptor,
+    const std::map<std::string, std::string> &vars, const Options &options)
+    : descriptor_(descriptor), vars_(vars) {
   vars_["classname"] = descriptor_->name();
   vars_["full_name"] = descriptor_->full_name();
-}
-
-ServiceGenerator::~ServiceGenerator() {}
-
-void ServiceGenerator::GenerateDeclarations(io::Printer* printer) {
-  Formatter format(printer, vars_);
-  // Forward-declare the stub type.
-  format(
-      "class $classname$_Stub;\n"
-      "\n");
-
-  GenerateInterface(printer);
-  GenerateStubDefinition(printer);
-}
-
-void ServiceGenerator::GenerateInterface(io::Printer* printer) {
-  Formatter format(printer, vars_);
-  format(
-      "class $dllexport_decl $$classname$ : public ::$proto_ns$::Service {\n"
-      " protected:\n"
-      "  // This class should be treated as an abstract interface.\n"
-      "  inline $classname$() {};\n"
-      " public:\n"
-      "  virtual ~$classname$();\n");
-  printer->Indent();
-
-  format(
-      "\n"
-      "typedef $classname$_Stub Stub;\n"
-      "\n"
-      "static const ::$proto_ns$::ServiceDescriptor* descriptor();\n"
-      "\n");
-
-  GenerateMethodSignatures(VIRTUAL, printer);
-
-  format(
-      "\n"
-      "// implements Service ----------------------------------------------\n"
-      "\n"
-      "const ::$proto_ns$::ServiceDescriptor* GetDescriptor();\n"
-      "void CallMethod(const ::$proto_ns$::MethodDescriptor* method,\n"
-      "                ::$proto_ns$::RpcController* controller,\n"
-      "                const ::$proto_ns$::Message* request,\n"
-      "                ::$proto_ns$::Message* response,\n"
-      "                ::google::protobuf::Closure* done);\n"
-      "const ::$proto_ns$::Message& GetRequestPrototype(\n"
-      "  const ::$proto_ns$::MethodDescriptor* method) const;\n"
-      "const ::$proto_ns$::Message& GetResponsePrototype(\n"
-      "  const ::$proto_ns$::MethodDescriptor* method) const;\n");
-
-  printer->Outdent();
-  format(
-      "\n"
-      " private:\n"
-      "  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS($classname$);\n"
-      "};\n"
-      "\n");
-}
-
-void ServiceGenerator::GenerateStubDefinition(io::Printer* printer) {
-  Formatter format(printer, vars_);
-  format(
-      "class $dllexport_decl $$classname$_Stub : public $classname$ {\n"
-      " public:\n");
-
-  printer->Indent();
-
-  format(
-      "$classname$_Stub(::$proto_ns$::RpcChannel* channel);\n"
-      "$classname$_Stub(::$proto_ns$::RpcChannel* channel,\n"
-      "                 ::$proto_ns$::Service::ChannelOwnership ownership);\n"
-      "~$classname$_Stub();\n"
-      "\n"
-      "inline ::$proto_ns$::RpcChannel* channel() { return channel_; }\n"
-      "\n"
-      "// implements $classname$ ------------------------------------------\n"
-      "\n");
-
-  GenerateMethodSignatures(NON_VIRTUAL, printer);
-
-  printer->Outdent();
-  format(
-      " private:\n"
-      "  ::$proto_ns$::RpcChannel* channel_;\n"
-      "  bool owns_channel_;\n"
-      "  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS($classname$_Stub);\n"
-      "};\n"
-      "\n");
-}
-
-void ServiceGenerator::GenerateMethodSignatures(VirtualOrNon virtual_or_non,
-                                                io::Printer* printer) {
-  for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    Formatter format(printer, vars_);
-    InitMethodVariables(method, options_, &format);
-    format.Set("virtual", virtual_or_non == VIRTUAL ? "virtual " : "");
-    format(
-        "$virtual$void $name$(::$proto_ns$::RpcController* controller,\n"
-        "                     const $input_type$* request,\n"
-        "                     $output_type$* response,\n"
-        "                     ::google::protobuf::Closure* done);\n");
+  if (options.dllexport_decl.empty()) {
+    vars_["dllexport_decl"] = "";
+  } else {
+    vars_["dllexport_decl"] = options.dllexport_decl + " ";
   }
+
+  if (descriptor_->options().HasExtension(tpn::protocol::service_options)) {
+    vars_["original_hash"] =
+        "  using OriginalHash = std::integral_constant<uint32, 0x" +
+        ToUpper(ToHex(
+            HashServiceName(descriptor_->options()
+                                .GetExtension(tpn::protocol::service_options)
+                                .descriptor_name()))) +
+        "u>;\n";
+  } else {
+    vars_["original_hash"] = "";
+  }
+
+  vars_["name_hash"] =
+      "  using NameHash = std::integral_constant<uint32, 0x" +
+      ToUpper(ToHex(HashServiceName(descriptor_->full_name()))) + "u>;\n";
 }
 
-// ===================================================================
+ServiceGenerator::~ServiceGenerator() = default;
 
-void ServiceGenerator::GenerateImplementation(io::Printer* printer) {
-  Formatter format(printer, vars_);
-  format(
-      "$classname$::~$classname$() {}\n"
+void ServiceGenerator::GenerateDeclarations(io::Printer *printer) {
+  GenerateInterface(printer);
+}
+
+void ServiceGenerator::GenerateInterface(io::Printer *printer) {
+  printer->Print(vars_,
+                 "class $dllexport_decl$$classname$ : public ServiceBase {\n"
+                 " public:\n"
+                 "\n"
+                 "  explicit $classname$(bool use_original_hash);\n"
+                 "  virtual ~$classname$();\n"
+                 "\n"
+                 "$original_hash"
+                 "$name_hash");
+
+  printer->Indent();
+
+  printer->Print(
+      vars_,
       "\n"
-      "const ::$proto_ns$::ServiceDescriptor* $classname$::descriptor() {\n"
-      "  "
-      "::$proto_ns$::internal::AssignDescriptors(&$desc_table$);\n"
-      "  return $file_level_service_descriptors$[$1$];\n"
+      "static const google::protobuf::ServiceDescriptor *descriptor();\n"
+      "\n");
+
+  // client
+  if (!descriptor_->options().HasExtension(tpn::protocol::service_options) ||
+      descriptor_->options()
+          .GetExtension(tpn::protocol::service_options)
+          .inbound()) {
+    printer->Print(vars_,
+                   "// client methods "
+                   "--------------------------------------------------\n");
+
+    GenerateClientMethodSignatures(printer);
+
+    printer->Print("\n");
+  }
+
+  printer->Print(
+      "void CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer "
+      "buffer) final;");
+
+  // server
+  if (!descriptor_->options().HasExtension(tpn::protocol::service_options) ||
+      descriptor_->options()
+          .GetExtension(tpn::protocol::service_options)
+          .outbound()) {
+    printer->Outdent();
+
+    printer->Print(
+        "\n"
+        " protected:\n");
+
+    printer->Print(
+        "// server methods "
+        "--------------------------------------------------\n");
+
+    GenerateServerMethodSignatures(printer);
+  }
+
+  printer->Outdent();
+
+  printer->Print(vars_,
+                 "\n"
+                 " private:\n"
+                 "\n"
+                 " GOOGLE_DISALLOW_EVIL_CONSTRUCTORS($classname$);\n"
+                 "};\n");
+}
+
+void ServiceGenerator::GenerateImplementation(io::Printer *printer) {
+  printer->Print(
+      vars_,
+      "$classname$::$classname$(bool use_original_hash) : "
+      "service_hash_(use_original_hash ? OriginalHash::value : "
+      "NameHash::value) {\n"
       "}\n"
       "\n"
-      "const ::$proto_ns$::ServiceDescriptor* $classname$::GetDescriptor() {\n"
-      "  return descriptor();\n"
+      "$classname$::~$classname$() {\n"
       "}\n"
-      "\n",
-      index_in_metadata_);
-
-  // Generate methods of the interface.
-  GenerateNotImplementedMethods(printer);
-  GenerateCallMethod(printer);
-  GenerateGetPrototype(REQUEST, printer);
-  GenerateGetPrototype(RESPONSE, printer);
-
-  // Generate stub implementation.
-  format(
-      "$classname$_Stub::$classname$_Stub(::$proto_ns$::RpcChannel* channel)\n"
-      "  : channel_(channel), owns_channel_(false) {}\n"
-      "$classname$_Stub::$classname$_Stub(\n"
-      "    ::$proto_ns$::RpcChannel* channel,\n"
-      "    ::$proto_ns$::Service::ChannelOwnership ownership)\n"
-      "  : channel_(channel),\n"
-      "    owns_channel_(ownership == "
-      "::$proto_ns$::Service::STUB_OWNS_CHANNEL) "
-      "{}\n"
-      "$classname$_Stub::~$classname$_Stub() {\n"
-      "  if (owns_channel_) delete channel_;\n"
+      "\n"
+      "const google::protobuf::ServiceDescriptor *$classname$::descriptor() {\n"
+      "  google::protobuf::internal::AssignDescriptors(&$desc_table$);"
+      "  return  $file_level_service_descriptors$[$index_in_metadata$];\n"
       "}\n"
       "\n");
 
-  GenerateStubMethods(printer);
-}
-
-void ServiceGenerator::GenerateNotImplementedMethods(io::Printer* printer) {
-  for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    Formatter format(printer, vars_);
-    InitMethodVariables(method, options_, &format);
-    format(
-        "void $classname$::$name$(::$proto_ns$::RpcController* controller,\n"
-        "                         const $input_type$*,\n"
-        "                         $output_type$*,\n"
-        "                         ::google::protobuf::Closure* done) {\n"
-        "  controller->SetFailed(\"Method $name$() not implemented.\");\n"
-        "  done->Run();\n"
+  if (!descriptor_->options().HasExtension(tpn::protocol::service_options) ||
+      descriptor_->options()
+          .GetExtension(tpn::protocol::service_options)
+          .inbound()) {
+    GenerateClientMethodImplementations(printer);
+  }
+  if (!descriptor_->options().HasExtension(tpn::protocol::service_options) ||
+      descriptor_->options()
+          .GetExtension(tpn::protocol::service_options)
+          .outbound()) {
+    GenerateServerCallMethod(printer);
+    GenerateServerImplementations(printer);
+  } else {
+    printer->Print(
+        vars_,
+        "void $classname$::CallServerMethod(uint32_t token, uint32_t "
+        "method_id, ByteBuffer /*buffer*/) {\n"
+        "  LOG_ERROR(\"{} Server tried to call server method {}\",\n"
+        "    GetCallerInfo(), method_id);\n"
         "}\n"
         "\n");
   }
 }
 
-void ServiceGenerator::GenerateCallMethod(io::Printer* printer) {
-  Formatter format(printer, vars_);
-  format(
-      "void $classname$::CallMethod(const ::$proto_ns$::MethodDescriptor* "
-      "method,\n"
-      "                             ::$proto_ns$::RpcController* controller,\n"
-      "                             const ::$proto_ns$::Message* request,\n"
-      "                             ::$proto_ns$::Message* response,\n"
-      "                             ::google::protobuf::Closure* done) {\n"
-      "  GOOGLE_DCHECK_EQ(method->service(), $file_level_service_descriptors$[$1$]);\n"
-      "  switch(method->index()) {\n",
-      index_in_metadata_);
+void ServiceGenerator::GenerateClientMethodSignatures(io::Printer *printer) {
+  for (int i = 0; i < descriptor_->method_count(); ++i) {
+    const MethodDescriptor *method = descriptor_->method(i);
+    if (!method->options().HasExtension(tpn::protocol::method_options)) {
+      continue;
+    }
 
-  for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    Formatter format(printer, vars_);
-    InitMethodVariables(method, options_, &format);
+    std::map<std::string, std::string> sub_vars;
+    sub_vars["name"]      = method->name();
+    sub_vars["full_name"] = descriptor_->name() + "." + method->name();
+    sub_vars["method_id"] = SimpleItoa(
+        method->options().GetExtension(tpn::protocol::method_options).id());
+    sub_vars["input_type"]      = ClassName(method->input_type(), true);
+    sub_vars["output_type"]     = ClassName(method->output_type(), true);
+    sub_vars["input_type_name"] = method->input_type()->full_name();
 
-    // Note:  down_cast does not work here because it only works on pointers,
-    //   not references.
-    format(
-        "    case $1$:\n"
-        "      $name$(controller,\n"
-        "             ::$proto_ns$::internal::DownCast<const $input_type$*>(\n"
-        "                 request),\n"
-        "             ::$proto_ns$::internal::DownCast<$output_type$*>(\n"
-        "                 response),\n"
-        "             done);\n"
-        "      break;\n",
-        i);
+    if (method->output_type()->name() != "NO_RESPONSE") {
+      printer->Print(
+          sub_vars,
+          "void $name$(const $input_type$ *request, "
+          "std::function<void(const $output_type$ *)> response_callback, bool "
+          "client = false, bool server = false);\n");
+    } else {
+      printer->Print(sub_vars,
+                     "void $name$(const $input_type$ *request, bool client = "
+                     "false, bool server = false);\n");
+    }
   }
-
-  format(
-      "    default:\n"
-      "      GOOGLE_LOG(FATAL) << \"Bad method index; this should never happen.\";\n"
-      "      break;\n"
-      "  }\n"
-      "}\n"
-      "\n");
 }
 
-void ServiceGenerator::GenerateGetPrototype(RequestOrResponse which,
-                                            io::Printer* printer) {
-  Formatter format(printer, vars_);
-  if (which == REQUEST) {
-    format("const ::$proto_ns$::Message& $classname$::GetRequestPrototype(\n");
-  } else {
-    format("const ::$proto_ns$::Message& $classname$::GetResponsePrototype(\n");
+void ServiceGenerator::GenerateServerMethodSignatures(io::Printer *printer) {
+  for (int i = 0; i < descriptor_->method_count(); ++i) {
+    const MethodDescriptor *method = descriptor_->method(i);
+    if (!method->options().HasExtension(tpn::protocol::method_options)) {
+      continue;
+    }
+
+    std::map<std::string, std::string> sub_vars;
+    sub_vars["name"]        = method->name();
+    sub_vars["input_type"]  = ClassName(method->input_type(), true);
+    sub_vars["output_type"] = ClassName(method->output_type(), true);
+
+    if (method->output_type()->name() != "NO_RESPONSE") {
+      printer->Print(
+          sub_vars,
+          "virtual uint32_t Handle$name$(const $input_type$ *request, "
+          "$output_type$ *response, std::function<void(ServiceBase*, uint32_t, "
+          "const google::protobuf::Message *)> &continuation);\n");
+    } else {
+      printer->Print(sub_vars,
+                     "virtual uint32_t Handle$name$(const $input_type$ const "
+                     "*request);\n");
+    }
   }
-
-  format(
-      "    const ::$proto_ns$::MethodDescriptor* method) const {\n"
-      "  GOOGLE_DCHECK_EQ(method->service(), descriptor());\n"
-      "  switch(method->index()) {\n");
-
-  for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    const Descriptor* type =
-        (which == REQUEST) ? method->input_type() : method->output_type();
-
-    format(
-        "    case $1$:\n"
-        "      return $2$::default_instance();\n",
-        i, QualifiedClassName(type, options_));
-  }
-
-  format(
-      "    default:\n"
-      "      GOOGLE_LOG(FATAL) << \"Bad method index; this should never happen.\";\n"
-      "      return *::$proto_ns$::MessageFactory::generated_factory()\n"
-      "          ->GetPrototype(method->$1$_type());\n"
-      "  }\n"
-      "}\n"
-      "\n",
-      which == REQUEST ? "input" : "output");
 }
 
-void ServiceGenerator::GenerateStubMethods(io::Printer* printer) {
+void ServiceGenerator::GenerateClientMethodImplementations(
+    io::Printer *printer) {
   for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    Formatter format(printer, vars_);
-    InitMethodVariables(method, options_, &format);
-    format(
-        "void $classname$_Stub::$name$(::$proto_ns$::RpcController* "
-        "controller,\n"
-        "                              const $input_type$* request,\n"
-        "                              $output_type$* response,\n"
-        "                              ::google::protobuf::Closure* done) {\n"
-        "  channel_->CallMethod(descriptor()->method($1$),\n"
-        "                       controller, request, response, done);\n"
-        "}\n",
-        i);
+    const MethodDescriptor *method = descriptor_->method(i);
+    if (!method->options().HasExtension(tpn::protocol::method_options)) {
+      continue;
+    }
+
+    std::map<std::string, std::string> sub_vars;
+    sub_vars["classname"] = vars_["classname"];
+    sub_vars["name"]      = method->name();
+    sub_vars["full_name"] = descriptor_->name() + "." + method->name();
+    sub_vars["method_id"] = SimpleItoa(
+        method->options().GetExtension(tpn::protocol::method_options).id());
+    sub_vars["input_type"]      = ClassName(method->input_type(), true);
+    sub_vars["output_type"]     = ClassName(method->output_type(), true);
+    sub_vars["input_type_name"] = method->input_type()->full_name();
+
+    if (method->output_type()->name() != "NO_RESPONSE") {
+      printer->Print(
+          sub_vars,
+          "void $classname$::$name$(const $input_type$ *request, "
+          "std::function<void(const $output_type$ *)> response_callback, bool "
+          "client /*= false*/, bool server /*= false*/) {\n"
+          "  LOG_DEBUG(\"{} Server called client method "
+          "$full_name$($input_type_name${{ {} }})\",\n"
+          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "  std::function<void(ByteBuffer)> callback = "
+          "[response_callback](ByteBuffer buffer) -> void {\n"
+          "    $output_type$ response;\n"
+          "    if (response.ParseFromArray(buffer.GetContents(), "
+          "buffer.GetSize()))\n"
+          "      response_callback(&response);\n"
+          "  };\n"
+          "  SendRequest(service_hash_, $method_id$ | (client ? 0x40000000 : "
+          "0) | (server ? 0x80000000 : 0), request, std::move(callback));\n"
+          "}\n"
+          "\n");
+    } else {
+      printer->Print(
+          sub_vars,
+          "void $classname$::$name$(const $input_type$ *request, bool client "
+          "/*= false*/, bool server /*= false*/) {\n"
+          "  LOG_DEBUG(\"{} Server called client "
+          "method $full_name$($input_type_name${{ {}  }})\",\n"
+          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "  SendRequest(service_hash_, $method_id$ | (client ? 0x40000000 : "
+          "0) | (server ? 0x80000000 : 0), request);\n"
+          "}\n"
+          "\n");
+    }
   }
+}
+
+void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
+  printer->Print(vars_,
+                 "void $classname$::CallServerMethod(uint32_t token, uint32_t "
+                 "method_id, ByteBuffer buffer) {\n"
+                 "  switch(methodId & 0x3FFFFFFF) {\n");
+
+  for (int i = 0; i < descriptor_->method_count(); i++) {
+    const MethodDescriptor *method = descriptor_->method(i);
+    if (!method->options().HasExtension(tpn::protocol::method_options)) {
+      continue;
+    }
+    std::map<std::string, std::string> sub_vars;
+    sub_vars["classname"] = vars_["classname"];
+    sub_vars["name"]      = method->name();
+    sub_vars["full_name"] = descriptor_->name() + "." + method->name();
+    sub_vars["method_id"] = SimpleItoa(
+        method->options().GetExtension(tpn::protocol::method_options).id());
+    sub_vars["input_type"]       = ClassName(method->input_type(), true);
+    sub_vars["output_type"]      = ClassName(method->output_type(), true);
+    sub_vars["input_type_name"]  = method->input_type()->full_name();
+    sub_vars["output_type_name"] = method->output_type()->full_name();
+
+    printer->Print(sub_vars,
+                   "    case $method_id$: {\n"
+                   "      $input_type$ request;\n"
+                   "      if (!request.ParseFromArray(buffer.GetContents(), "
+                   "buffer.GetSize())) {\n"
+                   "        LOG_DEBUG(\"{} Failed to parse request for "
+                   "$full_name$ server method call.\", GetCallerInfo());\n"
+                   "        SendResponse(service_hash_, method_id, token, "
+                   "kErrorCodeMalformedRequest);\n"
+                   "        return;\n"
+                   "      }\n");
+
+    if (method->output_type()->name() != "NO_RESPONSE") {
+      printer->Print(
+          sub_vars,
+          "      LOG_DEBUG(\"{} Client called server method "
+          "$full_name$($input_type_name${{ {} }}).\",\n"
+          "GetCallerInfo(), request.ShortDebugString());\n"
+          "      std::function<void(ServiceBase*, uint32_t, "
+          "const google::protobuf::Message *)> continuation = [token, "
+          "method_id](ServiceBase *service, uint32_t status, "
+          "const google::protobuf::Message *response)\n"
+          "      {\n"
+          "        TPN_ASSERT(response->GetDescriptor() == "
+          "$output_type$::descriptor());\n"
+          "        $classname$* self = static_cast<$classname$*>(service);\n"
+          "        LOG_DEBUG(\"{} Client called server method $full_name$() "
+          "returned $output_type_name${{ {} }} status {}.\",\n"
+          "          self->GetCallerInfo(), response->ShortDebugString(), "
+          "status);\n"
+          "        if (!status)\n"
+          "          self->SendResponse(self->service_hash_, method_id, token, "
+          "response);\n"
+          "        else\n"
+          "          self->SendResponse(self->service_hash_, method_id, token, "
+          "status);\n"
+          "      };\n"
+          "      $output_type$ response;\n"
+          "      uint32_t status = Handle$name$(&request, &response, "
+          "continuation);\n"
+          "      if (continuation)\n"
+          "        continuation(this, status, &response);\n");
+    } else {
+      printer->Print(
+          sub_vars,
+          "      uint32 status = Handle$name$(&request);\n"
+          "      LOG_DEBUG(\"{} Client called server "
+          "method $full_name$($input_type_name${{ {} }}) status {}.\",\n"
+          "        GetCallerInfo(), request.ShortDebugString(), status);\n"
+          "      if (status)\n"
+          "        SendResponse(service_hash_, method_id, token, status);\n");
+    }
+
+    printer->Print(sub_vars,
+                   "      break;\n"
+                   "    }\n");
+  }
+
+  printer->Print(vars_,
+                 "    default:\n"
+                 "      LOG_ERROR(\"Bad method id {}.\", methodId);\n"
+                 "      SendResponse(service_hash_, method_id, token, "
+                 "kErrorCodeInvalidMethod);\n"
+                 "      break;\n"
+                 "    }\n"
+                 "}\n"
+                 "\n");
+}
+
+void ServiceGenerator::GenerateServerImplementations(io::Printer *printer) {
+  for (int i = 0; i < descriptor_->method_count(); i++) {
+    const MethodDescriptor *method = descriptor_->method(i);
+    if (!method->options().HasExtension(tpn::protocol::method_options)) {
+      continue;
+    }
+
+    std::map<std::string, std::string> sub_vars;
+    sub_vars["classname"]   = vars_["classname"];
+    sub_vars["name"]        = method->name();
+    sub_vars["full_name"]   = descriptor_->name() + "." + method->name();
+    sub_vars["input_type"]  = ClassName(method->input_type(), true);
+    sub_vars["output_type"] = ClassName(method->output_type(), true);
+
+    if (method->output_type()->name() != "NO_RESPONSE") {
+      printer->Print(
+          sub_vars,
+          "uint32_t $classname$::Handle$name$(const $input_type$ *request, "
+          "$output_type$ *response, std::function<void(ServiceBase*, uint32_t, "
+          "const google::protobuf::Message *)>& continuation) {\n"
+          "  LOG_ERROR(\"{} Client tried to call not implemented method "
+          "$full_name$({{ {} }})\",\n"
+          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "  return kErrorCodeNotImplemented;\n"
+          "}\n"
+          "\n");
+    } else {
+      printer->Print(
+          sub_vars,
+          "uint32_t $classname$::Handle$name$(const $input_type$ *request) {\n"
+          "  LOG_ERROR(\"{} Client tried to call not implemented method "
+          "$full_name$({{ {} }})\",\n"
+          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "  return kErrorCodeNotImplemented;\n"
+          "}\n"
+          "\n");
+    }
+  }
+}
+
+std::uint32_t ServiceGenerator::HashServiceName(std::string const &name) {
+  std::uint32_t hash = 0x811C9DC5;
+
+  for (auto &&ch : name) {
+    hash ^= static_cast<uint32_t>(ch);
+    hash *= 0x1000193;
+  }
+
+  return hash;
 }
 
 }  // namespace cpp

@@ -32,7 +32,6 @@
 #include <fmt/printf.h>
 #include <fmt/ranges.h>
 #include <fmt/compile.h>
-#include <fmt/locale.h>
 #include <fmt/xchar.h>
 
 namespace tpn {
