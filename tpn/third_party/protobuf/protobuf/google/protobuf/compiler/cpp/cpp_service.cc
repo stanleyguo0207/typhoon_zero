@@ -88,8 +88,8 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
                  "  explicit $classname$(bool use_original_hash);\n"
                  "  virtual ~$classname$();\n"
                  "\n"
-                 "$original_hash"
-                 "$name_hash");
+                 "$original_hash$"
+                 "$name_hash$");
 
   printer->Indent();
 
@@ -127,6 +127,8 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
     printer->Print(
         "\n"
         " protected:\n");
+
+    printer->Indent();
 
     printer->Print(
         "// server methods "
