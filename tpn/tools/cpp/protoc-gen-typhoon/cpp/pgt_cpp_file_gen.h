@@ -62,6 +62,8 @@ class PGTCppFileGenerator {
   void GenerateSource(pb::io::Printer *printer);
 
  private:
+  /// Generate the BuildDescriptors() procedure, which builds all descriptors
+  /// for types defined in the file.
   void GenerateBuildDescriptors(pb::io::Printer *printer);
 
   void GenerateNamespaceOpeners(pb::io::Printer *printer);
@@ -69,6 +71,12 @@ class PGTCppFileGenerator {
 
   const pb::FileDescriptor *file_;  ///<  文件句柄
   const pbcpp::Options options_;    ///< 选项
+
+  pbcpp::MessageSCCAnalyzer scc_analyzer_;
+  std::map<std::string, std::string> variables_;
+
+  /// foo.bar package_parts_ is {"foo", "bar"}
+  std::vector<std::string> package_parts_;  ///< 包部分分割
 
   std::vector<std::unique_ptr<pbcpp::MessageGenerator>> message_generators_;
   std::vector<std::unique_ptr<pbcpp::EnumGenerator>> enum_generators_;

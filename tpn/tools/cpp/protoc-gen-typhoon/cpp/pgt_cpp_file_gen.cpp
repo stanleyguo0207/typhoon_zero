@@ -33,6 +33,7 @@
 #include <google/protobuf/compiler/cpp/cpp_helpers.h>
 #include <google/protobuf/compiler/cpp/cpp_message.h>
 #include <google/protobuf/compiler/cpp/cpp_file.h>
+#include <google/protobuf/descriptor.pb.h>
 
 #include "pgt_cpp_code_gen.h"
 #include "pgt_cpp_service_gen.h"
@@ -43,19 +44,65 @@ namespace protoc {
 
 PGTCppFileGenerator::PGTCppFileGenerator(const pb::FileDescriptor *file,
                                          const pbcpp::Options &options)
-    : file_(file), options_(options) {}
+    : file_(file), options_(options), scc_analyzer_(options) {
+  pbcpp::SetCommonVars(options, &variables_);
+  variables_["dllexport_decl"] = options.dllexport_decl;
+
+  std::vector<const pb::Descriptor *> msgs = pbcpp::FlattenMessagesInFile(file);
+  for (int i = 0; i < msgs.size(); ++i) {
+    pbcpp::MessageGenerator *msg_gen = new pbcpp::MessageGenerator(
+        msgs[i], variables_, i, options, &scc_analyzer_);
+    message_generators_.emplace_back(msg_gen);
+    msg_gen->AddGenerators(&enum_generators_, &extension_generators_);
+  }
+
+  for (int i = 0; i < file->enum_type_count(); ++i) {
+    enum_generators_.emplace_back(
+        new pbcpp::EnumGenerator(file->enum_type(i), variables_, options));
+  }
+
+  for (int i = 0; i < file->service_count(); ++i) {
+    service_generators_.emplace_back(
+        new PGTCppServiceGenerator(file->service(i), options));
+  }
+
+  for (int i = 0; i < file->extension_count(); ++i) {
+    extension_generators_.emplace_back(
+        new pbcpp::ExtensionGenerator(file->extension(i), options));
+  }
+
+  pb::SplitStringUsing(file->package(), ".", &package_parts_);
+}
 
 PGTCppFileGenerator::~PGTCppFileGenerator() {}
 
-void PGTCppFileGenerator::GenerateHeader(pb::io::Printer *printer) {}
+void PGTCppFileGenerator::GenerateHeader(pb::io::Printer *printer) {
+  printer->Print("hello world\n");
+}
 
 void PGTCppFileGenerator::GenerateSource(pb::io::Printer *printer) {}
 
 void PGTCppFileGenerator::GenerateBuildDescriptors(pb::io::Printer *printer) {}
 
-void PGTCppFileGenerator::GenerateNamespaceOpeners(pb::io::Printer *printer) {}
+void PGTCppFileGenerator::GenerateNamespaceOpeners(pb::io::Printer *printer) {
+  if (package_parts_.size() > 0) {
+    printer->Print("\n");
+  }
 
-void PGTCppFileGenerator::GenerateNamespaceClosers(pb::io::Printer *printer) {}
+  for (auto &&part : package_parts_) {
+    printer->Print("namespace $part$ {\n", "part", part);
+  }
+}
+
+void PGTCppFileGenerator::GenerateNamespaceClosers(pb::io::Printer *printer) {
+  if (package_parts_.size() > 0) {
+    printer->Print("\n");
+  }
+
+  for (auto &&part : package_parts_) {
+    printer->Print("}  //  namespace $part$\n", "part", part);
+  }
+}
 
 }  // namespace protoc
 
