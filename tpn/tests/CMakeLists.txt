@@ -31,6 +31,3 @@ endif()
 
 add_subdirectory(third_party)
 add_subdirectory(lib)
-if(TOOLS)
-  add_subdirectory(tools)
-endif()

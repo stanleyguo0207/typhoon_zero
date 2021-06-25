@@ -205,7 +205,7 @@ void ServiceGenerator::GenerateClientMethodSignatures(io::Printer *printer) {
     sub_vars["output_type"]     = ClassName(method->output_type(), true);
     sub_vars["input_type_name"] = method->input_type()->full_name();
 
-    if (method->output_type()->name() != "NO_RESPONSE") {
+    if (method->output_type()->name() != "NoResponse") {
       printer->Print(
           sub_vars,
           "void $name$(const $input_type$ *request, "
@@ -231,16 +231,16 @@ void ServiceGenerator::GenerateServerMethodSignatures(io::Printer *printer) {
     sub_vars["input_type"]  = ClassName(method->input_type(), true);
     sub_vars["output_type"] = ClassName(method->output_type(), true);
 
-    if (method->output_type()->name() != "NO_RESPONSE") {
+    if (method->output_type()->name() != "NoResponse") {
       printer->Print(
           sub_vars,
           "virtual uint32_t Handle$name$(const $input_type$ *request, "
           "$output_type$ *response, std::function<void(ServiceBase*, uint32_t, "
           "const google::protobuf::Message *)> &continuation);\n");
     } else {
-      printer->Print(sub_vars,
-                     "virtual uint32_t Handle$name$(const $input_type$ const "
-                     "*request);\n");
+      printer->Print(
+          sub_vars,
+          "virtual uint32_t Handle$name$(const $input_type$ *request);\n");
     }
   }
 }
@@ -263,7 +263,7 @@ void ServiceGenerator::GenerateClientMethodImplementations(
     sub_vars["output_type"]     = ClassName(method->output_type(), true);
     sub_vars["input_type_name"] = method->input_type()->full_name();
 
-    if (method->output_type()->name() != "NO_RESPONSE") {
+    if (method->output_type()->name() != "NoResponse") {
       printer->Print(
           sub_vars,
           "void $classname$::$name$(const $input_type$ *request, "
@@ -303,7 +303,7 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
   printer->Print(vars_,
                  "void $classname$::CallServerMethod(uint32_t token, uint32_t "
                  "method_id, ByteBuffer buffer) {\n"
-                 "  switch(methodId & 0x3FFFFFFF) {\n");
+                 "  switch(method_id & 0x3FFFFFFF) {\n");
 
   for (int i = 0; i < descriptor_->method_count(); i++) {
     const MethodDescriptor *method = descriptor_->method(i);
@@ -333,7 +333,7 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
                    "        return;\n"
                    "      }\n");
 
-    if (method->output_type()->name() != "NO_RESPONSE") {
+    if (method->output_type()->name() != "NoResponse") {
       printer->Print(
           sub_vars,
           "      LOG_DEBUG(\"{} Client called server method "
@@ -345,7 +345,9 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
           "const google::protobuf::Message *response)\n"
           "      {\n"
           "        TPN_ASSERT(response->GetDescriptor() == "
-          "$output_type$::descriptor());\n"
+          "$output_type$::descriptor(), \"response descriptor error {} != "
+          "{}\", response->GetDescriptor()->DebugString(), "
+          "$output_type$::descriptor()->DebugString());\n"
           "        $classname$* self = static_cast<$classname$*>(service);\n"
           "        LOG_DEBUG(\"{} Client called server method $full_name$() "
           "returned $output_type_name${{ {} }} status {}.\",\n"
@@ -366,7 +368,7 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
     } else {
       printer->Print(
           sub_vars,
-          "      uint32 status = Handle$name$(&request);\n"
+          "      uint32_t status = Handle$name$(&request);\n"
           "      LOG_DEBUG(\"{} Client called server "
           "method $full_name$($input_type_name${{ {} }}) status {}.\",\n"
           "        GetCallerInfo(), request.ShortDebugString(), status);\n"
@@ -381,7 +383,7 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
 
   printer->Print(vars_,
                  "    default:\n"
-                 "      LOG_ERROR(\"Bad method id {}.\", methodId);\n"
+                 "      LOG_ERROR(\"Bad method id {}.\", method_id);\n"
                  "      SendResponse(service_hash_, method_id, token, "
                  "kErrorCodeInvalidMethod);\n"
                  "      break;\n"
@@ -404,7 +406,7 @@ void ServiceGenerator::GenerateServerImplementations(io::Printer *printer) {
     sub_vars["input_type"]  = ClassName(method->input_type(), true);
     sub_vars["output_type"] = ClassName(method->output_type(), true);
 
-    if (method->output_type()->name() != "NO_RESPONSE") {
+    if (method->output_type()->name() != "NoResponse") {
       printer->Print(
           sub_vars,
           "uint32_t $classname$::Handle$name$(const $input_type$ *request, "

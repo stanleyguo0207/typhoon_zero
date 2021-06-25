@@ -28,7 +28,6 @@ add_executable(test_proto
   "../../test_include.h"
   "../../test_main.cpp"
   "test_proto.cpp"
-  "custom_options.pb.cc"
 )
 
 target_link_libraries(test_proto

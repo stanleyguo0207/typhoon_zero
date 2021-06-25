@@ -30,6 +30,7 @@
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/generated_enum_reflection.h>
+#include "define.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 #define PROTOBUF_INTERNAL_EXPORT_error_5fcode_2eproto
@@ -59,13 +60,15 @@ namespace protocol {
 
 enum ErrorCode : int {
   kErrorCodeOk = 0,
-  kErrorCodeTimedOut = 1,
+  kErrorCodeMalformedRequest = 1,
+  kErrorCodeInvalidMethod = 2,
+  kErrorCodeNotImplemented = 3,
   ErrorCode_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::min(),
   ErrorCode_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<::PROTOBUF_NAMESPACE_ID::int32>::max()
 };
 bool ErrorCode_IsValid(int value);
 constexpr ErrorCode ErrorCode_MIN = kErrorCodeOk;
-constexpr ErrorCode ErrorCode_MAX = kErrorCodeTimedOut;
+constexpr ErrorCode ErrorCode_MAX = kErrorCodeNotImplemented;
 constexpr int ErrorCode_ARRAYSIZE = ErrorCode_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* ErrorCode_descriptor();

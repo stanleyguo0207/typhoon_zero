@@ -1,0 +1,86 @@
+//
+//           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
+//            │ └┬┘├─┘├─┤│ ││ ││││
+//            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
+//
+// This file is part of the typhoon Project.
+// Copyright (C) 2021 stanley0207@163.com
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
+syntax = "proto3";
+
+import "type/rpc_type.proto";
+
+package tpn.protocol;
+
+option optimize_for = SPEED;
+option cc_generic_services = true;
+
+message SearchRequest {
+  string query = 1;
+  int32 page_number = 2;
+  int32 result_per_page = 3;
+}
+
+message SearchResponse {
+  repeated Result results = 1;
+}
+
+message Result {
+  string url = 1;
+  string title = 2;
+  repeated string snippets = 3;
+}
+
+service TestService1 {
+  option (service_options).descriptor_name = "tpn.protocol.testservice1";
+  option (service_options).inbound = true;
+
+  rpc ProcessClientRequest11(SearchRequest) returns (NoResponse) {
+    option (method_options).id = 1;
+  }
+
+  rpc ProcessClientRequest12(SearchRequest) returns (SearchResponse) {
+    option (method_options).id = 2;
+  }
+}
+
+service TestService2 {
+  option (service_options).descriptor_name = "tpn.protocol.testservices2";
+  option (service_options).outbound = true;
+
+  rpc ProcessClientRequest21(SearchRequest) returns (NoResponse) {
+    option (method_options).id = 1;
+  }
+
+  rpc ProcessClientRequest22(SearchRequest) returns (SearchResponse) {
+    option (method_options).id = 2;
+  }
+}
+
+service TestService3 {
+  option (service_options).descriptor_name = "tpn.protocol.testservices3";
+  option (service_options).inbound = true;
+  option (service_options).outbound = true;
+
+  rpc ProcessClientRequest31(SearchRequest) returns (NoResponse) {
+    option (method_options).id = 1;
+  }
+
+  rpc ProcessClientRequest32(SearchRequest) returns (SearchResponse) {
+    option (method_options).id = 2;
+  }
+}

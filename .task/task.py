@@ -101,6 +101,25 @@ def CleanTask(argv: list[str]):
         shutil.rmtree(install_path)
 
 
+def ProtoTask(argv: list[str]):
+    global root_path
+    global compile_commands_file
+
+    # Build   为proto源文件目录j
+    proto_path = "{}/{}".format(root_path, argv[0])
+    # Move    为install文件目录
+    install_path = "{}/{}".format(root_path, argv[1])
+
+    for root, dirs, files in os.walk(proto_path):
+        for file in files:
+            if file.endswith(".proto"):
+                filename = os.path.join(root, file)
+                build_cmd = "protoc --cpp_out={custom_options}:{} --proto_path={} {}".format(
+                    install_path, proto_path, filename, custom_options=" ".join(argv[2:]))
+                print("PROTO: Build cmd: {}".format(build_cmd))
+                subprocess.run(build_cmd, shell=True)
+
+
 def OpTask(op_code: str, argv: list[str]):
     if "Generate" == op_code:
         GenerateTask(argv)
@@ -110,6 +129,8 @@ def OpTask(op_code: str, argv: list[str]):
         InstallTask(argv)
     elif "Clean" == op_code:
         CleanTask(argv)
+    elif "Proto" == op_code:
+        ProtoTask(argv)
     else:
         print("Unkown op_code: {} argv: {}".format(op_code, argv))
         exit(1)

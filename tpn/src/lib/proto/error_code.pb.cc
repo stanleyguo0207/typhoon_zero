@@ -27,13 +27,15 @@ static constexpr ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema* schemas = n
 static constexpr ::PROTOBUF_NAMESPACE_ID::Message* const* file_default_instances = nullptr;
 
 const char descriptor_table_protodef_error_5fcode_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\020error_code.proto\022\014tpn.protocol*5\n\tErro"
-  "rCode\022\020\n\014kErrorCodeOk\020\000\022\026\n\022kErrorCodeTim"
-  "edOut\020\001B\003\200\001\000b\006proto3"
+  "\n\020error_code.proto\022\014tpn.protocol*x\n\tErro"
+  "rCode\022\020\n\014kErrorCodeOk\020\000\022\036\n\032kErrorCodeMal"
+  "formedRequest\020\001\022\033\n\027kErrorCodeInvalidMeth"
+  "od\020\002\022\034\n\030kErrorCodeNotImplemented\020\003B\005H\001\200\001"
+  "\000b\006proto3"
   ;
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_error_5fcode_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_error_5fcode_2eproto = {
-  false, false, 100, descriptor_table_protodef_error_5fcode_2eproto, "error_code.proto", 
+  false, false, 169, descriptor_table_protodef_error_5fcode_2eproto, "error_code.proto", 
   &descriptor_table_error_5fcode_2eproto_once, nullptr, 0, 0,
   schemas, file_default_instances, TableStruct_error_5fcode_2eproto::offsets,
   nullptr, file_level_enum_descriptors_error_5fcode_2eproto, file_level_service_descriptors_error_5fcode_2eproto,
@@ -54,6 +56,8 @@ bool ErrorCode_IsValid(int value) {
   switch (value) {
     case 0:
     case 1:
+    case 2:
+    case 3:
       return true;
     default:
       return false;

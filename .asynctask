@@ -46,3 +46,8 @@ cwd=<root>
 [project-clean:relwithdebinfo]
 command=python3 .task/task.py "Clean" "RelWithDebInfo"
 cwd=<root>
+
+{protobuf}
+[proto_build]
+command=python3 .task/task.py "Proto" "tpn/tools/proto" "tpn/src/lib/proto"
+cwd=<root>

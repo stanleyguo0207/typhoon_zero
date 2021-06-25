@@ -22,12 +22,33 @@
 
 syntax = "proto3";
 
+import "google/protobuf/descriptor.proto";
+
 package tpn.protocol;
 
+option optimize_for = SPEED;
 option cc_generic_services = false;
 
-// 错误码
-enum ErrorCode {
-  kErrorCodeOk = 0;        // 成功
-  kErrorCodeTimedOut = 1;  // 超时
+// protobuf gen typhoon
+
+// 扩展服务选项
+extend google.protobuf.ServiceOptions {
+  tpn.protocol.TPNServiceOptions service_options = 90000;
+}
+
+// 扩展方法选项
+extend google.protobuf.MethodOptions {
+  tpn.protocol.TPNMethodOptions method_options = 90000;
+}
+
+// 服务选项
+message TPNServiceOptions {
+  string descriptor_name = 1;  // 用于生成 service_hash值
+  bool inbound = 2;            // client listener
+  bool outbound = 3;           // server serivce
+}
+
+// 方法选项
+message TPNMethodOptions {
+  uint32 id = 1;  // 方法id
 }

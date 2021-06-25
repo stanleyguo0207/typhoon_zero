@@ -20,34 +20,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "../../test_include.h"
+syntax = "proto3";
 
-#include "custom_options.pb.h"
+import public "pgt_custom/pgt_custom_options.proto";
 
-#include "fmt_wrap.h"
+package tpn.protocol;
 
-namespace pb = google::protobuf;
+option optimize_for = SPEED;
+option cc_generic_services = false;
 
-TEST_CASE("opt", "[proto]") {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
+// 无回应
+message NoResponse {}
 
-  std::shared_ptr<void> protobuf_handle(
-      nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
-
-  tpn::protocol::TPNMethodOptions opt;
-
-  const pb::ServiceDescriptor *file = nullptr;
-  // file->options().HasExtension(tpn::protocol::service_options);
-}
-
-#include "error_code.pb.h"
-
-TEST_CASE("proto", "[proto]") {
-  GOOGLE_PROTOBUF_VERIFY_VERSION;
-
-  std::shared_ptr<void> protobuf_handle(
-      nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
-
-  auto code = tpn::protocol::kErrorCodeOk;
-  fmt::print("err_code {}\n", code);
+// 网络地址
+message Address {
+  string add_ress = 1;  // 地址
+  uint32 port = 2;      // 端口
 }

@@ -24,10 +24,13 @@ syntax = "proto3";
 
 package tpn.protocol;
 
+option optimize_for = SPEED;
 option cc_generic_services = false;
 
 // 错误码
 enum ErrorCode {
-  kErrorCodeOk = 0;        // 成功
-  kErrorCodeTimedOut = 1;  // 超时
+  kErrorCodeOk = 0;                // 成功
+  kErrorCodeMalformedRequest = 1;  // 错误的请求格式
+  kErrorCodeInvalidMethod = 2;     // 无效的方法
+  kErrorCodeNotImplemented = 3;    // 方法未实现
 }
