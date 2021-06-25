@@ -53,10 +53,10 @@ namespace cpp {
 CppGenerator::CppGenerator() {}
 CppGenerator::~CppGenerator() {}
 
-bool CppGenerator::Generate(const FileDescriptor* file,
-                            const std::string& parameter,
-                            GeneratorContext* generator_context,
-                            std::string* error) const {
+bool CppGenerator::Generate(const FileDescriptor *file,
+                            const std::string &parameter,
+                            GeneratorContext *generator_context,
+                            std::string *error) const {
   std::vector<std::pair<std::string, std::string> > options;
   ParseGeneratorParameter(parameter, &options);
 
@@ -77,7 +77,7 @@ bool CppGenerator::Generate(const FileDescriptor* file,
   //
   Options file_options;
 
-  file_options.opensource_runtime = opensource_runtime_;
+  file_options.opensource_runtime   = opensource_runtime_;
   file_options.runtime_include_base = runtime_include_base_;
 
   for (int i = 0; i < options.size(); i++) {
@@ -143,7 +143,6 @@ bool CppGenerator::Generate(const FileDescriptor* file,
   }
 
   // -----------------------------------------------------------------
-
 
   std::string basename = StripProto(file->name());
 

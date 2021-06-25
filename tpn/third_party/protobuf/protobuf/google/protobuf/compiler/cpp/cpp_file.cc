@@ -53,6 +53,8 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/strutil.h>
 
+#include <pgt_custom/pgt_custom_options.pb.h>
+
 // Must be last.
 #include <google/protobuf/port_def.inc>
 
@@ -291,6 +293,9 @@ void FileGenerator::GeneratePBHeader(io::Printer *printer,
     GenerateDependencyIncludes(printer);
   }
 
+  // generate protobuf gen typhoon header
+  GeneratePGTHeaderInclude(printer);
+
   // This is unfortunately necessary for some plugins. I don't see why we
   // need two of the same insertion points.
   // TODO(gerbens) remove this.
@@ -425,6 +430,8 @@ void FileGenerator::GenerateSourceIncludes(io::Printer *printer) {
     format(
         "#include \"third_party/absl/strings/internal/string_constant.h\"\n");
   }
+
+  GeneratePGTSourceInclude(printer);
 
   format("// @@protoc_insertion_point(includes)\n");
   IncludeFile("net/proto2/public/port_def.inc", printer);
@@ -1395,6 +1402,25 @@ void FileGenerator::GenerateProto2NamespaceEnumSpecializations(
       }
       format("\n");
     }
+  }
+}
+
+void FileGenerator::GeneratePGTHeaderInclude(io::Printer *printer) {
+  if (file_->service_count() > 0) {
+    printer->Print("#include \"ServiceBase.h\"\n");
+    printer->Print("#include \"ByteBuffer.h\"\n");
+    printer->Print("#include <functional>\n");
+    printer->Print("#include <type_traits>\n");
+  } else {
+    printer->Print("#include \"define.h\"\n");
+  }
+}
+
+void FileGenerator::GeneratePGTSourceInclude(io::Printer *printer) {
+  printer->Print("#include \"log.h\"\n");
+  if (file_->service_count() > 0) {
+    printer->Print("#include \"debug_hub.h\"\n");
+    printer->Print("#include \"error_code.pb.h\"\n");
   }
 }
 

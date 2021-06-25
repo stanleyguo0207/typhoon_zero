@@ -142,8 +142,9 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
   printer->Print(vars_,
                  "\n"
                  " private:\n"
+                 "  uint32_t service_hash_{0};\n"
                  "\n"
-                 " GOOGLE_DISALLOW_EVIL_CONSTRUCTORS($classname$);\n"
+                 "  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS($classname$);\n"
                  "};\n");
 }
 
@@ -159,7 +160,7 @@ void ServiceGenerator::GenerateImplementation(io::Printer *printer) {
       "}\n"
       "\n"
       "const google::protobuf::ServiceDescriptor *$classname$::descriptor() {\n"
-      "  google::protobuf::internal::AssignDescriptors(&$desc_table$);"
+      "  google::protobuf::internal::AssignDescriptors(&$desc_table$);\n"
       "  return  $file_level_service_descriptors$[$index_in_metadata$];\n"
       "}\n"
       "\n");
