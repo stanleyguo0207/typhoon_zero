@@ -23,13 +23,25 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_PROTO_PCH_PCH_PROTO_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_PROTO_PCH_PCH_PROTO_H_
 
-// protobuf
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/wire_format.h>
+#include <functional>
+#include <type_traits>
 
+// protobuf
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/arena.h>
+#include <google/protobuf/arenastring.h>
+#include <google/protobuf/generated_message_table_driven.h>
+#include <google/protobuf/generated_message_util.h>
+#include <google/protobuf/metadata_lite.h>
+#include <google/protobuf/generated_message_reflection.h>
+#include <google/protobuf/generated_enum_reflection.h>
+
+#include <google/protobuf/service.h>
+#include <google/protobuf/unknown_field_set.h>
+
+#include "define.h"
 #include "log.h"
+#include "byte_buffer.h"
 #include "service_base.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_PROTO_PCH_PCH_PROTO_H_

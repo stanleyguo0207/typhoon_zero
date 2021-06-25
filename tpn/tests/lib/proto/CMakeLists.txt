@@ -30,6 +30,14 @@ add_executable(test_proto
   "test_proto.cpp"
 )
 
+set_property(TARGET
+  test_proto
+  APPEND
+  PROPERTY
+    COMPILE_DEFINITIONS
+    _TPN_LOGGER_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../logger/config_logger_test.json"
+  )
+
 target_link_libraries(test_proto
   Catch2::Catch2
   common

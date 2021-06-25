@@ -20,13 +20,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ASIO_ASIO_WRAP_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ASIO_ASIO_WRAP_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_PCH_PCH_NET_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_PCH_PCH_NET_H_
 
-#include <asio.hpp>
+#include "define.h"
+#include "asio_wrap.h"
+#include "service_base.h"
+#include "byte_buffer.h"
+#include "byte_converter.h"
 
-#if defined(TPN_USE_SSL)
-#  include <asio/ssl.hpp>
-#endif
-
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ASIO_ASIO_WRAP_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_PCH_PCH_NET_H_

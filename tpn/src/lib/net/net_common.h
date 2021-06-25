@@ -20,13 +20,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ASIO_ASIO_WRAP_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ASIO_ASIO_WRAP_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
 
-#include <asio.hpp>
+#include "net_define.h"
 
-#if defined(TPN_USE_SSL)
-#  include <asio/ssl.hpp>
-#endif
+#include "asio_wrap.h"
+#include "log.h"
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ASIO_ASIO_WRAP_H_
+namespace tpn {
+
+namespace net {
+
+/// 网络状态
+enum class NetState {
+  kNetStateStopped = 0,  ///< 已停止
+  kNetStateStoping,      ///< 停止中
+  kNetStateStarting,     ///< 启动中
+  kNetStateStarted,      ///< 已启动
+};
+
+}  // namespace net
+
+}  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_

@@ -23,14 +23,19 @@
 #include "../../test_include.h"
 
 #include "log.h"
+#include "config.h"
 #include "test_service.pb.h"
 
 using namespace std;
 using namespace tpn;
 
-class CatchProtoTestService1 : public protocol::TestService1 {
+#ifndef _TPN_LOGGER_CONFIG_TEST_FILE
+#  define _TPN_LOGGER_CONFIG_TEST_FILE "config_logger_test.json"
+#endif
+
+class CatchProtoTestService2 : public protocol::TestService1 {
  public:
-  CatchProtoTestService1(bool use_original_hash)
+  CatchProtoTestService2(bool use_original_hash)
       : protocol::TestService1(use_original_hash) {}
 
   void SendRequest(uint32_t service_hash, uint32_t method_id,
@@ -49,4 +54,26 @@ class CatchProtoTestService1 : public protocol::TestService1 {
   std::string GetCallerInfo() const { return "CatchProtoTestService1 "; };
 };
 
-TEST_CASE("test1", "[proto]") { CatchProtoTestService1 service1(true); }
+TEST_CASE("test1", "[proto]") {
+  string config_error;
+  if (!g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {}, config_error)) {
+    fmt::print(stderr, "Error in config file {}, error {}\n",
+               _TPN_LOGGER_CONFIG_TEST_FILE, config_error);
+    return;
+  }
+
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
+
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  std::shared_ptr<void> protobuf_handle(
+      nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
+
+  LOG_INFO("Proto Test Start");
+
+  CatchProtoTestService2 service1(true);
+
+  LOG_INFO("Proto Test End");
+}
