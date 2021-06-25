@@ -113,6 +113,8 @@ def ProtoTask(argv: list[str]):
     for root, dirs, files in os.walk(proto_path):
         for file in files:
             if file.endswith(".proto"):
+                if "descriptor.proto" in file:
+                    continue
                 filename = os.path.join(root, file)
                 build_cmd = "protoc --cpp_out={custom_options}:{} --proto_path={} {}".format(
                     install_path, proto_path, filename, custom_options=" ".join(argv[2:]))
