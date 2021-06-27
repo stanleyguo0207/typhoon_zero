@@ -77,7 +77,7 @@ if(BUILD_SHARED_LIBS)
     net
     LIBRARY
       DESTINATION
-        ${BIN_DIR}/lib
+        ${LIBS_DIR}
     )
 endif()
 

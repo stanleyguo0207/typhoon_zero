@@ -20,19 +20,40 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_H_
+#include <iostream>
+#include <vector>
+#include <memory>
+#include <thread>
+#include <filesystem>
 
-namespace tpn {
+#include "config.h"
+#include "log.h"
+#include "chrono_wrap.h"
+#include "test_service_dispatcher.h"
 
-namespace net {
+#ifndef _TPN_SVR_TEST_CONFIG
+#  define _TPN_SVR_TEST_CONFIG "test_config.json"
+#endif
 
-TPN_NET_API void Init();
+int main(int argc, char *argv[]) {
+  std::string config_error;
+  if (!g_config->Load(_TPN_SVR_TEST_CONFIG,
+                      std::vector<std::string>(argv, argv + argc),
+                      config_error)) {
+    printf("Error in config file: %s\n", config_error.c_str());
+    return 1;
+  }
 
-TPN_NET_API void Shutdown();
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
 
-}  // namespace net
+  LOG_INFO("Test server start init...");
 
-}  // namespace tpn
+  g_test_svr_service_dispatcher->Init();
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_H_
+  LOG_INFO("Test server shutdown in 5s...");
+  std::this_thread::sleep_for(5s);
+
+  return 0;
+}

@@ -20,27 +20,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE_DISPATCHER_H_
+#define TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE_DISPATCHER_H_
 
-#include "define.h"
-#include "asio_wrap.h"
+#include "byte_buffer.h"
 #include "log.h"
+#include "common.h"
+#include "service_dispatcher.h"
+#include "test_service123.h"
 
 namespace tpn {
 
-namespace net {
+class TestSession;
 
-/// 网络状态
-enum class NetState {
-  kNetStateStopped = 0,  ///< 已停止
-  kNetStateStoping,      ///< 停止中
-  kNetStateStarting,     ///< 启动中
-  kNetStateStarted,      ///< 已启动
+using namespace net;
+
+class TestServerServiceDispatcher : public ServiceDispatcher<TestSession> {
+ public:
+  void Init();
+
+  TPN_SINGLETON_DECL(TestServerServiceDispatcher)
 };
-
-}  // namespace net
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
+#define g_test_svr_service_dispatcher \
+  tpn::TestServerServiceDispatcher::Instance()
+
+#endif  // TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE_DISPATCHER_H_

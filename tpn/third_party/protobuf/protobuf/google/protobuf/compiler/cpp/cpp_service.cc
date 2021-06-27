@@ -58,20 +58,18 @@ ServiceGenerator::ServiceGenerator(
   }
 
   if (descriptor_->options().HasExtension(tpn::protocol::service_options)) {
-    vars_["original_hash"] =
-        "  using OriginalHash = std::integral_constant<uint32_t, 0x" +
+    vars_["service_hash"] =
+        "  using ServiceHash = std::integral_constant<uint32_t, 0x" +
         ToUpper(HashToHex(
             HashServiceName(descriptor_->options()
                                 .GetExtension(tpn::protocol::service_options)
                                 .descriptor_name()))) +
-        "u>;\n";
+        "u>;";
   } else {
-    vars_["original_hash"] = "";
+    vars_["service_hash"] =
+        "  using ServiceHash = std::integral_constant<uint32_t, 0x" +
+        ToUpper(HashToHex(HashServiceName(descriptor_->full_name()))) + "u>;";
   }
-
-  vars_["name_hash"] =
-      "  using NameHash = std::integral_constant<uint32_t, 0x" +
-      ToUpper(HashToHex(HashServiceName(descriptor_->full_name()))) + "u>;\n";
 }
 
 ServiceGenerator::~ServiceGenerator() = default;
@@ -85,11 +83,10 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
                  "class $dllexport_decl$$classname$ : public ServiceBase {\n"
                  " public:\n"
                  "\n"
-                 "  explicit $classname$(bool use_original_hash);\n"
+                 "  $classname$();\n"
                  "  virtual ~$classname$();\n"
                  "\n"
-                 "$original_hash$"
-                 "$name_hash$");
+                 "$service_hash$\n");
 
   printer->Indent();
 
@@ -151,9 +148,8 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
 void ServiceGenerator::GenerateImplementation(io::Printer *printer) {
   printer->Print(
       vars_,
-      "$classname$::$classname$(bool use_original_hash) : "
-      "service_hash_(use_original_hash ? OriginalHash::value : "
-      "NameHash::value) {\n"
+      "$classname$::$classname$() : "
+      "service_hash_(ServiceHash::value) {\n"
       "}\n"
       "\n"
       "$classname$::~$classname$() {\n"

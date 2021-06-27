@@ -585,11 +585,10 @@ class Result final :
 class TestService1 : public ServiceBase {
  public:
 
-  explicit TestService1(bool use_original_hash);
+  TestService1();
   virtual ~TestService1();
 
-  using OriginalHash = std::integral_constant<uint32_t, 0x63F1143Fu>;
-  using NameHash = std::integral_constant<uint32_t, 0x1A48BF3Fu>;
+  using ServiceHash = std::integral_constant<uint32_t, 0x63F1143Fu>;
 
   static const google::protobuf::ServiceDescriptor *descriptor();
 
@@ -609,11 +608,10 @@ class TestService1 : public ServiceBase {
 class TestService2 : public ServiceBase {
  public:
 
-  explicit TestService2(bool use_original_hash);
+  TestService2();
   virtual ~TestService2();
 
-  using OriginalHash = std::integral_constant<uint32_t, 0x52265835u>;
-  using NameHash = std::integral_constant<uint32_t, 0x1B48C0D2u>;
+  using ServiceHash = std::integral_constant<uint32_t, 0x52265835u>;
 
   static const google::protobuf::ServiceDescriptor *descriptor();
 
@@ -634,11 +632,10 @@ class TestService2 : public ServiceBase {
 class TestService3 : public ServiceBase {
  public:
 
-  explicit TestService3(bool use_original_hash);
+  TestService3();
   virtual ~TestService3();
 
-  using OriginalHash = std::integral_constant<uint32_t, 0x512656A2u>;
-  using NameHash = std::integral_constant<uint32_t, 0x1C48C265u>;
+  using ServiceHash = std::integral_constant<uint32_t, 0x512656A2u>;
 
   static const google::protobuf::ServiceDescriptor *descriptor();
 

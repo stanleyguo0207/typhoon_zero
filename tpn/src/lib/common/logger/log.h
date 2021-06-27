@@ -159,4 +159,21 @@ void SetAutomaticRegistration(bool automatic_registration);
 #define LOG_FATAL(...) \
   LOGGER_FATAL(tpn::log::GetDefaultLoggerRaw(), __VA_ARGS__)
 
+#if defined(TPN_NETDEBUG)
+#  define NET_TRACE(...) LOG_TRACE(__VA_ARGS__)
+#  define NET_DEBUG(...) LOG_DEBUG(__VA_ARGS__)
+#  define NET_INFO(...) LOG_INFO(__VA_ARGS__)
+#  define NET_WARN(...) LOG_WARN(__VA_ARGS__)
+#  define NET_ERROR(...) LOG_ERROR(__VA_ARGS__)
+#  define NET_FATAL(...) LOG_FATAL(__VA_ARGS__)
+#else
+#  define NET_TRACE(...)
+#  define NET_DEBUG(...)
+#  define NET_INFO(...) LOG_INFO(__VA_ARGS__);
+#  define NET_WARN(...)
+#  define NET_ERROR(...) LOG_ERROR(__VA_ARGS__);
+#  define NET_FATAL(...) LOG_FATAL(__VA_ARGS__);
+
+#endif
+
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_LOG_H_

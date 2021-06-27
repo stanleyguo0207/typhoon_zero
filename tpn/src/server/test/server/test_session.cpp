@@ -20,26 +20,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_DEFINE_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_DEFINE_H_
-
-#include "define.h"
+#include "test_session.h"
 
 namespace tpn {
 
-namespace net {
+TestSession::TestSession() {}
 
-// template <typename>
-#define TPN_NET_TEMPLATE_DECL_1 template <typename>
+TestSession::~TestSession() {}
 
-// template <typename, typename>
-#define TPN_NET_TEMPLATE_DECL_2 template <typename, typename>
+void TestSession::SendRequest(uint32_t service_hash, uint32_t method_id,
+                              const google::protobuf::Message *request,
+                              std::function<void(ByteBuffer)> callback) {}
 
-// template <typename, bool>
-#define TPN_NET_TEMPLATE_DECL_2_BOOL template <typename, bool>
+void TestSession::SendRequest(uint32_t service_hash, uint32_t method_id,
+                              const google::protobuf::Message *request) {}
 
-}  // namespace net
+void TestSession::SendResponse(uint32_t service_hash, uint32_t method_id,
+                               uint32_t token, uint32_t status) {}
+
+void TestSession::SendResponse(uint32_t service_hash, uint32_t method_id,
+                               uint32_t token,
+                               const google::protobuf::Message *response) {}
+
+std::string TestSession::GetCallerInfo() const { return "TestSession"; }
 
 }  // namespace tpn
-
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_DEFINE_H_

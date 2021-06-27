@@ -22,73 +22,90 @@
 
 # collect source
 CollectSourceFiles(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	PRIVATE_SOURCES
-	# Exclude
-	${CMAKE_CURRENT_SOURCE_DIR}/pch
-	)
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  PRIVATE_SOURCES
+  # Exclude
+  ${CMAKE_CURRENT_SOURCE_DIR}/pch
+  )
 
 # collect include
 CollectIncludeDirectories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	PUBLIC_INCLUDES
-	# Exclude
-	${CMAKE_CURRENT_SOURCE_DIR}/pch
-	)
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  PUBLIC_INCLUDES
+  # Exclude
+  ${CMAKE_CURRENT_SOURCE_DIR}/pch
+  )
 
 # source tree
 GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
-# library common
-add_library(common
-	${PRIVATE_SOURCES}
-	)
+# executable test
+add_executable(test
+  ${PRIVATE_SOURCES}
+  )
 
 # include
-target_include_directories(common
-	PRIVATE
-		${CMAKE_CURRENT_BINARY_DIR}
-	PUBLIC
-		${PUBLIC_INCLUDES}
-	)
+target_include_directories(test
+  PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+  PUBLIC
+    ${PUBLIC_INCLUDES}
+  )
 
 # link
-target_link_libraries(common
+target_link_libraries(test
   PRIVATE
     typhoon-core-interface
-	PUBLIC
-    threads
-    fmt
-    sfmt
-    rapidjson
-    utfcpp
-    asio
-	)
-
-# export
-add_definitions(-DTPN_API_EXPORT_COMMON)
+  PUBLIC
+    common
+    proto
+    net
+  )
 
 # ide folder
-set_target_properties(common
-	PROPERTIES
-		FOLDER
-			"libs"
+set_target_properties(test
+  PROPERTIES
+    FOLDER
+      "server"
+  )
+
+# config
+set_property(TARGET
+  test	
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+		_TPN_SVR_TEST_CONFIG="${CMAKE_CURRENT_SOURCE_DIR}/test_config.json"
 	)
 
-# shared library
-if(BUILD_SHARED_LIBS)
-  install(TARGETS
-    common
-    LIBRARY
-      DESTINATION
-        ${LIBS_DIR}
-    )
+# config win32
+if(WIN32)
+  add_custom_command(TARGET
+		test
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/test_config.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
 endif()
+
+# install
+install(TARGETS
+  test
+    DESTINATION
+      ${BIN_DIR}
+  )
+install(FILES
+  test_config.json 
+    DESTINATION
+    ${CONF_DIR}
+  )
 
 # pch
 if(USE_COREPCH)
-	target_precompile_headers(common
-		PRIVATE
-			${CMAKE_CURRENT_SOURCE_DIR}/pch/pch_common.h
-		)
+  target_precompile_headers(test
+    PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}/pch/pch_test.h
+    )
 endif()

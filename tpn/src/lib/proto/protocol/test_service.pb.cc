@@ -882,7 +882,7 @@ void Result::InternalSwap(Result* other) {
 
 // ===================================================================
 
-TestService1::TestService1(bool use_original_hash) : service_hash_(use_original_hash ? OriginalHash::value : NameHash::value) {
+TestService1::TestService1() : service_hash_(ServiceHash::value) {
 }
 
 TestService1::~TestService1() {
@@ -917,7 +917,7 @@ void TestService1::CallServerMethod(uint32_t token, uint32_t method_id, ByteBuff
 
 // ===================================================================
 
-TestService2::TestService2(bool use_original_hash) : service_hash_(use_original_hash ? OriginalHash::value : NameHash::value) {
+TestService2::TestService2() : service_hash_(ServiceHash::value) {
 }
 
 TestService2::~TestService2() {
@@ -991,7 +991,7 @@ uint32_t TestService2::HandleProcessClientRequest22(const ::tpn::protocol::Searc
 
 // ===================================================================
 
-TestService3::TestService3(bool use_original_hash) : service_hash_(use_original_hash ? OriginalHash::value : NameHash::value) {
+TestService3::TestService3() : service_hash_(ServiceHash::value) {
 }
 
 TestService3::~TestService3() {

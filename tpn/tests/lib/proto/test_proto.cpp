@@ -35,8 +35,7 @@ using namespace tpn;
 
 class CatchProtoTestService2 : public protocol::TestService1 {
  public:
-  CatchProtoTestService2(bool use_original_hash)
-      : protocol::TestService1(use_original_hash) {}
+  CatchProtoTestService2() : protocol::TestService1() {}
 
   void SendRequest(uint32_t service_hash, uint32_t method_id,
                    const google::protobuf::Message *request,
@@ -73,7 +72,7 @@ TEST_CASE("test1", "[proto]") {
 
   LOG_INFO("Proto Test Start");
 
-  CatchProtoTestService2 service1(true);
+  CatchProtoTestService2 service1;
 
   LOG_INFO("Proto Test End");
 }

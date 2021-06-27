@@ -144,6 +144,14 @@ else()
   message(STATUS "Include additional debug-code in core              : OFF (default)")
 endif()
 
+# net debug
+if(WITH_NETDEBUG)
+  message(STATUS "Include additional debug-code in net               : ON")
+else()
+  message(STATUS "Include additional debug-code in net               : OFF (default)")
+endif()
+
+
 # openssl
 if(WITH_SSL)
   message(STATUS "Use ssl in network                                 : ON")

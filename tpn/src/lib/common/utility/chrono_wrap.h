@@ -27,6 +27,8 @@
 
 #include "define.h"
 
+using namespace std::chrono_literals;
+
 namespace tpn {
 
 using NanoSeconds  = std::chrono::nanoseconds;
@@ -38,8 +40,6 @@ using Hours        = std::chrono::hours;
 
 using SystemClock = std::chrono::system_clock;
 using SteadyClock = std::chrono::steady_clock;
-
-using namespace std::chrono_literals;
 
 /// 获取给定时间点的秒数除外的部分
 ///  @tparam	ToDuration	返还的时间单位

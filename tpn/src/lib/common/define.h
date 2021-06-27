@@ -222,4 +222,13 @@
 // crtp to const derive static_cast<const Derived&>(*this)
 #define CRTP_CONST_CAST(This) static_cast<const Derived &>(*This)
 
+// template <typename>
+#define TEMPLATE_DECL_1 template <typename>
+
+// template <typename, typename>
+#define TEMPLATE_DECL_2 template <typename, typename>
+
+// template <typename, bool>
+#define TEMPLATE_DECL_2_BOOL template <typename, bool>
+
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_

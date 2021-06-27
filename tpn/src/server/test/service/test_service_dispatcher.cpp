@@ -20,27 +20,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
-
-#include "define.h"
-#include "asio_wrap.h"
-#include "log.h"
+#include "test_service_dispatcher.h"
 
 namespace tpn {
 
-namespace net {
+void TestServerServiceDispatcher::Init() { AddService<Test2>(); }
 
-/// 网络状态
-enum class NetState {
-  kNetStateStopped = 0,  ///< 已停止
-  kNetStateStoping,      ///< 停止中
-  kNetStateStarting,     ///< 启动中
-  kNetStateStarted,      ///< 已启动
-};
-
-}  // namespace net
+TPN_SINGLETON_IMPL(TestServerServiceDispatcher)
 
 }  // namespace tpn
-
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_

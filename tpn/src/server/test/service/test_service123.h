@@ -20,10 +20,40 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "net.h"
+#ifndef TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE123_H_
+#define TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE123_H_
+
+#include "common.h"
+#include "service.h"
+#include "test_service.pb.h"
 
 namespace tpn {
 
-namespace net {}  // namespace net
+namespace protocol {}
+
+using namespace tpn::protocol;
+
+using namespace net;
+
+class TestSession;
+
+class Test2 : public Service<tpn::protocol::TestService2, TestSession> {
+  using TestService2 = Service<tpn::protocol::TestService2, TestSession>;
+
+ public:
+  Test2(std::shared_ptr<TestSession> session_sptr);
+
+  uint32_t HandleProcessClientRequest21(
+      const ::tpn::protocol::SearchRequest *request) override;
+
+  uint32_t HandleProcessClientRequest22(
+      const ::tpn::protocol::SearchRequest *request,
+      ::tpn::protocol::SearchResponse *response,
+      std::function<void(ServiceBase *, uint32_t,
+                         const google::protobuf::Message *)> &continuation)
+      override;
+};
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE123_H_

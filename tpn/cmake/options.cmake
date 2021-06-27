@@ -89,6 +89,12 @@ if(WITH_COREDEBUG)
 	add_definitions(-DTPN_COREDEBUG)
 endif()
 
+# net debug
+option(WITH_NETDEBUG "Include additional debug-code in net" ON)
+if(WITH_NETDEBUG)
+  add_definitions(-DTPN_NETDEBUG)
+endif()
+
 # openssl
 option(WITH_SSL "Enable openssl" OFF)
 if(WITH_SSL)
