@@ -37,3 +37,12 @@ message Address {
   string add_ress = 1;  // 地址
   uint32 port = 2;      // 端口
 }
+
+// 数据包头
+message Header {
+  uint32 service_id = 1;     // 服务器id
+  uint32 token = 2;          // 令牌
+  uint32 size = 3;           // 数据包体大小
+  fixed32 service_hash = 4;  // 服务哈希值
+  uint32 method_id = 5;      // 方法id
+}

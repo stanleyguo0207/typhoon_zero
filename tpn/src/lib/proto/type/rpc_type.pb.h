@@ -48,7 +48,7 @@ struct TableStruct_type_2frpc_5ftype_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[2]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -60,6 +60,9 @@ namespace protocol {
 class Address;
 struct AddressDefaultTypeInternal;
 extern AddressDefaultTypeInternal _Address_default_instance_;
+class Header;
+struct HeaderDefaultTypeInternal;
+extern HeaderDefaultTypeInternal _Header_default_instance_;
 class NoResponse;
 struct NoResponseDefaultTypeInternal;
 extern NoResponseDefaultTypeInternal _NoResponse_default_instance_;
@@ -67,6 +70,7 @@ extern NoResponseDefaultTypeInternal _NoResponse_default_instance_;
 }  // namespace tpn
 PROTOBUF_NAMESPACE_OPEN
 template<> ::tpn::protocol::Address* Arena::CreateMaybeMessage<::tpn::protocol::Address>(Arena*);
+template<> ::tpn::protocol::Header* Arena::CreateMaybeMessage<::tpn::protocol::Header>(Arena*);
 template<> ::tpn::protocol::NoResponse* Arena::CreateMaybeMessage<::tpn::protocol::NoResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace tpn {
@@ -353,6 +357,189 @@ class Address final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_type_2frpc_5ftype_2eproto;
 };
+// -------------------------------------------------------------------
+
+class Header final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tpn.protocol.Header) */ {
+ public:
+  inline Header() : Header(nullptr) {}
+  ~Header() override;
+  explicit constexpr Header(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  Header(const Header& from);
+  Header(Header&& from) noexcept
+    : Header() {
+    *this = ::std::move(from);
+  }
+
+  inline Header& operator=(const Header& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Header& operator=(Header&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Header& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const Header* internal_default_instance() {
+    return reinterpret_cast<const Header*>(
+               &_Header_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(Header& a, Header& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Header* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Header* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline Header* New() const final {
+    return new Header();
+  }
+
+  Header* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<Header>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const Header& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const Header& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Header* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "tpn.protocol.Header";
+  }
+  protected:
+  explicit Header(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kServiceIdFieldNumber = 1,
+    kTokenFieldNumber = 2,
+    kSizeFieldNumber = 3,
+    kServiceHashFieldNumber = 4,
+    kMethodIdFieldNumber = 5,
+  };
+  // uint32 service_id = 1;
+  void clear_service_id();
+  ::PROTOBUF_NAMESPACE_ID::uint32 service_id() const;
+  void set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_service_id() const;
+  void _internal_set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 token = 2;
+  void clear_token();
+  ::PROTOBUF_NAMESPACE_ID::uint32 token() const;
+  void set_token(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_token() const;
+  void _internal_set_token(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 size = 3;
+  void clear_size();
+  ::PROTOBUF_NAMESPACE_ID::uint32 size() const;
+  void set_size(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_size() const;
+  void _internal_set_size(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // fixed32 service_hash = 4;
+  void clear_service_hash();
+  ::PROTOBUF_NAMESPACE_ID::uint32 service_hash() const;
+  void set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_service_hash() const;
+  void _internal_set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 method_id = 5;
+  void clear_method_id();
+  ::PROTOBUF_NAMESPACE_ID::uint32 method_id() const;
+  void set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_method_id() const;
+  void _internal_set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:tpn.protocol.Header)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 service_id_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 token_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 size_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 service_hash_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 method_id_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_type_2frpc_5ftype_2eproto;
+};
 // ===================================================================
 
 
@@ -434,9 +621,115 @@ inline void Address::set_port(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:tpn.protocol.Address.port)
 }
 
+// -------------------------------------------------------------------
+
+// Header
+
+// uint32 service_id = 1;
+inline void Header::clear_service_id() {
+  service_id_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_service_id() const {
+  return service_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::service_id() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.service_id)
+  return _internal_service_id();
+}
+inline void Header::_internal_set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  service_id_ = value;
+}
+inline void Header::set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_service_id(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.service_id)
+}
+
+// uint32 token = 2;
+inline void Header::clear_token() {
+  token_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_token() const {
+  return token_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::token() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.token)
+  return _internal_token();
+}
+inline void Header::_internal_set_token(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  token_ = value;
+}
+inline void Header::set_token(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_token(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.token)
+}
+
+// uint32 size = 3;
+inline void Header::clear_size() {
+  size_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_size() const {
+  return size_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::size() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.size)
+  return _internal_size();
+}
+inline void Header::_internal_set_size(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  size_ = value;
+}
+inline void Header::set_size(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_size(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.size)
+}
+
+// fixed32 service_hash = 4;
+inline void Header::clear_service_hash() {
+  service_hash_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_service_hash() const {
+  return service_hash_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::service_hash() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.service_hash)
+  return _internal_service_hash();
+}
+inline void Header::_internal_set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  service_hash_ = value;
+}
+inline void Header::set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_service_hash(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.service_hash)
+}
+
+// uint32 method_id = 5;
+inline void Header::clear_method_id() {
+  method_id_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_method_id() const {
+  return method_id_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::method_id() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.method_id)
+  return _internal_method_id();
+}
+inline void Header::_internal_set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  method_id_ = value;
+}
+inline void Header::set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_method_id(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.method_id)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 
