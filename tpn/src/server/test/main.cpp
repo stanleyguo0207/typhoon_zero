@@ -29,7 +29,7 @@
 #include "config.h"
 #include "log.h"
 #include "chrono_wrap.h"
-#include "test_service_dispatcher.h"
+// #include "test_service_dispatcher.h"
 
 #ifndef _TPN_SVR_TEST_CONFIG
 #  define _TPN_SVR_TEST_CONFIG "test_config.json"
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
   LOG_INFO("Test server start init...");
 
-  g_test_svr_service_dispatcher->Init();
+  // g_test_svr_service_dispatcher->Init();
 
   LOG_INFO("Test server shutdown in 5s...");
   std::this_thread::sleep_for(5s);

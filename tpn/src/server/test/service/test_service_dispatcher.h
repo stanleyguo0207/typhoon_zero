@@ -23,28 +23,28 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE_DISPATCHER_H_
 #define TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE_DISPATCHER_H_
 
-#include "byte_buffer.h"
-#include "log.h"
-#include "common.h"
-#include "service_dispatcher.h"
-#include "test_service123.h"
-
-namespace tpn {
-
-class TestSession;
-
-using namespace net;
-
-class TestServerServiceDispatcher : public ServiceDispatcher<TestSession> {
- public:
-  void Init();
-
-  TPN_SINGLETON_DECL(TestServerServiceDispatcher)
-};
-
-}  // namespace tpn
-
-#define g_test_svr_service_dispatcher \
-  tpn::TestServerServiceDispatcher::Instance()
+// #include "byte_buffer.h"
+// #include "log.h"
+// #include "common.h"
+// #include "service_dispatcher.h"
+// #include "test_service123.h"
+//
+// namespace tpn {
+//
+// class TestSession;
+//
+// using namespace net;
+//
+// class TestServerServiceDispatcher : public ServiceDispatcher<TestSession> {
+//  public:
+//   void Init();
+//
+//   TPN_SINGLETON_DECL(TestServerServiceDispatcher)
+// };
+//
+// }  // namespace tpn
+//
+// #define g_test_svr_service_dispatcher \
+//   tpn::TestServerServiceDispatcher::Instance()
 
 #endif  // TYPHOON_ZERO_TPN_SRC_SERVER_TEST_SERVICE_TEST_SERVICE_DISPATCHER_H_

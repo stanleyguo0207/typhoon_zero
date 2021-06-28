@@ -20,12 +20,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "test_service_dispatcher.h"
-
-namespace tpn {
-
-void TestServerServiceDispatcher::Init() { AddService<Test2>(); }
-
-TPN_SINGLETON_IMPL(TestServerServiceDispatcher)
-
-}  // namespace tpn
+// #include "test_service_dispatcher.h"
+//
+// namespace tpn {
+//
+// void TestServerServiceDispatcher::Init() { AddService<Test2>(); }
+//
+// TPN_SINGLETON_IMPL(TestServerServiceDispatcher)
+//
+// }  // namespace tpn

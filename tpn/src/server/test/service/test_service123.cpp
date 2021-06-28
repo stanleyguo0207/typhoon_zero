@@ -20,27 +20,28 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "test_service123.h"
-
-#include "test_session.h"
-#include "error_code.pb.h"
-
-namespace tpn {
-
-Test2::Test2(std::shared_ptr<TestSession> session_sptr)
-    : TestService2(session_sptr) {}
-
-uint32_t Test2::HandleProcessClientRequest21(
-    const ::tpn::protocol::SearchRequest *request) {
-  return kErrorCodeOk;
-}
-
-uint32_t Test2::HandleProcessClientRequest22(
-    const ::tpn::protocol::SearchRequest *request,
-    ::tpn::protocol::SearchResponse *response,
-    std::function<void(ServiceBase *, uint32_t,
-                       const google::protobuf::Message *)> &continuation) {
-  return kErrorCodeOk;
-}
-
-}  // namespace tpn
+// #include "test_service123.h"
+//
+// #include "test_session.h"
+// #include "error_code.pb.h"
+//
+// namespace tpn {
+//
+// Test2::Test2(std::shared_ptr<TestSession> session_sptr)
+//     : TestService2(session_sptr) {}
+//
+// uint32_t Test2::HandleProcessClientRequest21(
+//     const ::tpn::protocol::SearchRequest *request) {
+//   return kErrorCodeOk;
+// }
+//
+// uint32_t Test2::HandleProcessClientRequest22(
+//     const ::tpn::protocol::SearchRequest *request,
+//     ::tpn::protocol::SearchResponse *response,
+//     std::function<void(ServiceBase *, uint32_t,
+//                        const google::protobuf::Message *)> &continuation) {
+//   return kErrorCodeOk;
+// }
+//
+// }  // namespace tpn
+//
