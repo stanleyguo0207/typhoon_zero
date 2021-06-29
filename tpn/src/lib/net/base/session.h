@@ -30,39 +30,86 @@
 #include "buffer_wrap.h"
 #include "net_common.h"
 #include "io_pool.h"
+#include "socket_wrap.h"
+#include "post_wrap.h"
 
 namespace tpn {
 
 namespace net {
 
+TPN_NET_FORWARD_DECL_BASE_CLASS
+
 template <typename Derived, typename ArgsType>
-class SessionBase : public CRTPObject<Derived> {
+class SessionBase : public CRTPObject<Derived>,
+                    public PostWrap<Derived, ArgsType>,
+                    public Socket<Derived, ArgsType> {
+  TPN_NET_FRIEND_DECL_BASE_CLASS
+
  public:
   using Super      = CRTPObject<Derived>;
   using Self       = SessionBase<Derived, ArgsType>;
   using BufferType = typename ArgsType::BufferType;
 
+  template <typename... Args>
   explicit SessionBase(IoHandle &rw_io_handle, SessionMgr<Derived> &session_mgr,
-                       size_type max, size_type prepare)
+                       size_type max, size_type prepare, Args &&...args)
       : Super(),
+        PostWrap<Derived, ArgsType>(),
+        Socket<Derived, ArgsType>(std::forward<Args>(args)...),
         io_handle_(rw_io_handle),
         session_mgr_(session_mgr),
         buffer_(max, prepare) {}
 
-  ~SessionBase() {}
+  ~SessionBase() = default;
 
-  TPN_INLINE void Stop() { this->counter_sptr_.reset(); }
+  TPN_INLINE void Stop() {
+    if (!this->io_handle_.GetStrand().running_in_this_thread()) {
+      NET_DEBUG(
+          "SessionBase Stop not running in this thread PostWrap to all "
+          "context, session key: {}",
+          this->GetDerivedObj().GetHashKey());
+      this->GetDerivedObj().Post(
+          [this, this_ptr = this->GetSelfSptr()]() mutable { this->Stop(); });
+      return;
+    }
 
-  TPN_INLINE bool IsStarted() {}
+    NET_DEBUG("SessionBase Stop state {}, session key: {}",
+              ToNetStateStr(this->state_), this->GetDerivedObj().GetHashKey());
 
-  TPN_INLINE bool IsStopped() {}
+    this->StopAllPostedTasks();
+
+    this->counter_sptr_.reset();
+  }
+
+  TPN_INLINE bool IsStarted() {
+    return (NetState::kNetStateStarted == this->state_ &&
+            this->socket_.lowest_layer().is_open());
+  }
+
+  TPN_INLINE bool IsStopped() {
+    return (NetState::kNetStateStopped == this->state_ &&
+            !this->socket_.lowest_layer().is_open());
+  }
 
   TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }
 
   TPN_INLINE BufferWrap<BufferType> &GetBuffer() { return this->buffer_; }
 
  protected:
-  TPN_INLINE void Start() {}
+  TPN_INLINE void Start() {
+    if (!this->io_handle_.GetStrand().running_in_this_thread()) {
+      NET_DEBUG(
+          "SessionBase Start not running in this thread PostWrap to all "
+          "context, session key: {}",
+          this->GetDerivedObj().GetHashKey());
+      this->GetDerivedObj().Post(
+          [this, this_ptr = this->GetSelfSptr()]() mutable { this->Start(); });
+      return;
+    }
+
+    NET_DEBUG("SessionBase Start state {}, session key: {}",
+              ToNetStateStr(this->state_), this->GetDerivedObj().GetHashKey());
+  }
 
   TPN_INLINE SessionMgr<Derived> &GetSessionMgr() { return this->session_mgr_; }
 

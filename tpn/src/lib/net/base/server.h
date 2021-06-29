@@ -33,13 +33,20 @@
 #include "io_pool.h"
 #include "session_mgr.h"
 #include "custom_allocator.h"
+#include "post_wrap.h"
 
 namespace tpn {
 
 namespace net {
 
+TPN_NET_FORWARD_DECL_BASE_CLASS
+
 template <typename Derived, typename SessionType>
-class ServerBase : public CRTPObject<Derived, false>, public IoPool {
+class ServerBase : public CRTPObject<Derived, false>,
+                   public IoPool,
+                   public PostWrap<Derived> {
+  TPN_NET_FRIEND_DECL_BASE_CLASS
+
  public:
   using Super = CRTPObject<Derived, false>;
   using Self  = ServerBase<Derived, SessionType>;
@@ -48,23 +55,39 @@ class ServerBase : public CRTPObject<Derived, false>, public IoPool {
       size_t concurrency_hint = std::thread::hardware_concurrency() * 2)
       : Super(),
         IoPool(concurrency_hint),
+        PostWrap<Derived>(),
         io_handle_(GetIoHandleByIndex(0)),
         session_mgr_(io_handle_),
         rallocator_(),
         wallocator_() {}
 
-  ~ServerBase() {}
+  ~ServerBase() = default;
 
-  TPN_INLINE bool Start() { return true; }
+  TPN_INLINE bool Start() {
+    NET_DEBUG("ServerBase Start state {}", ToNetStateStr(this->state_));
+    return true;
+  }
 
-  TPN_INLINE void Stop() {}
+  TPN_INLINE void Stop() {
+    if (!this->io_handle_.GetStrand().running_in_this_thread()) {
+      NET_DEBUG(
+          "ServerBase Stop not running in this thread PostWrap to all context");
+      this->GetDerivedObj().Post(
+          [this, this_ptr = this->GetSelfSptr()]() mutable { this->Stop(); });
+      return;
+    }
+
+    NET_DEBUG("ServerBase Stop state {}", ToNetStateStr(this->state_));
+
+    this->StopAllPostedTasks();
+  }
 
   TPN_INLINE bool IsStarted() {
-    return this->state_ == NetState::kNetStateStarted;
+    return NetState::kNetStateStarted == this->state_;
   }
 
   TPN_INLINE bool IsStopped() {
-    return this->state_ == NetState::kNetStateStopped;
+    return NetState::kNetStateStopped == this->state_;
   }
 
   TPN_INLINE size_t GetSessionCount() { return this->session_mgr_.GetSize(); }
@@ -78,6 +101,30 @@ class ServerBase : public CRTPObject<Derived, false>, public IoPool {
   TPN_INLINE std::shared_ptr<SessionType> FindSessionIf(
       const std::function<void(std::shared_ptr<SessionType> &)> &fn) {
     return std::shared_ptr<SessionType>(this->session_mgr_.FindIf(fn));
+  }
+
+  TPN_INLINE auto &GetAcceptor() { return this->GetDerivedObj().GetAcceptor(); }
+
+  TPN_INLINE std::string GetListenAddress() {
+    try {
+      return this->GetAcceptor().local_endpoint().address().to_string();
+    } catch (std::system_error &e) {
+      NET_ERROR("ServerBase GetListenAddress error {}", e.code());
+      SetLastError(e);
+    }
+
+    return std::string();
+  }
+
+  TPN_INLINE unsigned short GetListenPort() {
+    try {
+      return this->GetAcceptor().local_endpoint().port();
+    } catch (std::system_error &e) {
+      NET_ERROR("ServerBase GetListenPort error {}", e.code());
+      SetLastError(e);
+    }
+
+    return static_cast<unsigned short>(0);
   }
 
   TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }

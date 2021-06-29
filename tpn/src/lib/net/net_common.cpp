@@ -22,8 +22,27 @@
 
 #include "net_common.h"
 
+#include "utils.h"
+
 namespace tpn {
 
-namespace net {}  // namespace net
+namespace net {
+
+static constexpr std::string_view s_net_state_names[]{"STOPPED", "STOPPING",
+                                                      "STARTING", "STARTED"};
+
+static constexpr std::string_view s_listener_event_names[]{
+    "RECV",    "CONNECT", "DISCONNECT", "ACCEPT", "HANDSHAKE",
+    "UPGRADE", "INIT",    "START",      "STOP",   "UNKNOWN"};
+
+std::string_view ToNetStateStr(NetState state) noexcept {
+  return s_net_state_names[EnumToUnderlyType(state)];
+}
+
+std::string_view ToListenerEventStr(ListenerEvent event) noexcept {
+  return s_listener_event_names[EnumToUnderlyType(event)];
+}
+
+}  // namespace net
 
 }  // namespace tpn
