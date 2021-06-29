@@ -1,5 +1,4 @@
 //
-//
 //           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
 //            │ └┬┘├─┘├─┤│ ││ ││││
 //            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
@@ -21,28 +20,36 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
-
-#include "define.h"
-#include "asio_wrap.h"
-#include "log.h"
 #include "net_error.h"
 
 namespace tpn {
 
 namespace net {
 
-/// 网络状态
-enum class NetState {
-  kNetStateStopped = 0,  ///< 已停止
-  kNetStateStoping,      ///< 停止中
-  kNetStateStarting,     ///< 启动中
-  kNetStateStarted,      ///< 已启动
-};
+namespace {
+
+thread_local static std::error_code s_ec_last;
+
+}  // namespace
+
+void SetLastError(int ec) { s_ec_last.assign(ec, std::system_category()); }
+
+void SetLastError(int ec, const std::error_category &ecat) {
+  s_ec_last.assign(ec, ecat);
+}
+
+void SetLastError(const std::error_code &ec) { s_ec_last = ec; }
+
+void SetLastError(const std::system_error &e) { s_ec_last = e.code(); }
+
+void ClearLastError() { s_ec_last.clear(); }
+
+std::error_code &GetLastError() { return s_ec_last; }
+
+int GetLastErrorVal() { return s_ec_last.value(); }
+
+std::string GetLastErrorMsg() { return s_ec_last.message(); }
 
 }  // namespace net
 
 }  // namespace tpn
-
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_

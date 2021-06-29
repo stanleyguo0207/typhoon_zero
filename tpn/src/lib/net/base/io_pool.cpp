@@ -46,7 +46,7 @@ class IoPool::IoPoolImpl {
 
   ~IoPoolImpl() { this->Stop(); }
 
-  bool Start() {
+  TPN_INLINE bool Start() {
     std::lock_guard<std::mutex> lock(this->mutex_);
 
     NET_DEBUG("io pool start.");
@@ -88,7 +88,7 @@ class IoPool::IoPoolImpl {
     return true;
   }
 
-  void Stop() {
+  TPN_INLINE void Stop() {
     {
       std::lock_guard<std::mutex> lock(this->mutex_);
       NET_DEBUG("io pool stop.");
@@ -131,11 +131,11 @@ class IoPool::IoPoolImpl {
     }
   }
 
-  bool IsStarted() const { return !this->stopped_; }
+  TPN_INLINE bool IsStarted() const { return !this->stopped_; }
 
-  bool IsStopped() const { return this->stopped_; }
+  TPN_INLINE bool IsStopped() const { return this->stopped_; }
 
-  IoHandle &GetIoHandleByIndex(size_t index) {
+  TPN_INLINE IoHandle &GetIoHandleByIndex(size_t index) {
     return this->ios_[index < this->ios_.size()
                           ? index
                           : ((++(this->next_)) % this->ios_.size())];
@@ -144,7 +144,7 @@ class IoPool::IoPoolImpl {
  private:
   /// 检查当前线程是否在对象池中
   ///  @return 线程是否在对象池中
-  bool IsRunningInIoPoolThreads() {
+  TPN_INLINE bool IsRunningInIoPoolThreads() {
     auto curr_tid = std::this_thread::get_id();
     for (auto &thread : this->threads_) {
       if (curr_tid == thread.get_id()) {
@@ -156,7 +156,7 @@ class IoPool::IoPoolImpl {
   }
 
   /// 确保asio::post(...)事件被调用
-  void WaitIoThreads() {
+  TPN_INLINE void WaitIoThreads() {
     {
       NET_DEBUG("io pool wait io threads");
       std::lock_guard<std::mutex> lock(this->mutex_);

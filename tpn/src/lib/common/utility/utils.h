@@ -28,6 +28,7 @@
 #include <string_view>
 
 #include "define.h"
+#include "traits_hub.h"
 
 namespace tpn {
 
@@ -142,6 +143,38 @@ class TPN_COMMON_API Tokenizer {
 
   TPN_NO_IMPLICITABLE(Tokenizer)
 };
+
+/// 转化为std::string
+template <typename T>
+TPN_INLINE std::string ToString(T &&v) {
+  using type = TPN_RMRFCV(T);
+  std::string s;
+  if constexpr (is_string_view_v<type>) {
+    s = {v.data(), v.size()};
+  } else if constexpr (std::is_integral_v<type>) {
+    s = std::to_string(v);
+  } else if constexpr (std::is_pointer_v<type>) {
+    if (v) {
+      s = v;
+    }
+  } else if constexpr (std::is_array_v<type>) {
+    s = std::forward<T>(v);
+  } else {
+    s = std::forward<T>(v);
+  }
+  return s;
+}
+
+/// 转化为整型
+template <typename IntegerType, typename T>
+TPN_INLINE IntegerType ToInteger(T &&v) {
+  using type = TPN_RMRFCV(T);
+  if constexpr (std::is_integral_v<type>) {
+    return static_cast<IntegerType>(v);
+  } else {
+    return static_cast<IntegerType>(std::stoull(ToString(std::forward<T>(v))));
+  }
+}
 
 }  // namespace tpn
 

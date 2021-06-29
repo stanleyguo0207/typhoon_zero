@@ -1,5 +1,4 @@
 //
-//
 //           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
 //            │ └┬┘├─┘├─┤│ ││ ││││
 //            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
@@ -21,28 +20,41 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_COPYABLE_WRAP_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_COPYABLE_WRAP_H_
 
 #include "define.h"
-#include "asio_wrap.h"
-#include "log.h"
-#include "net_error.h"
 
 namespace tpn {
 
-namespace net {
+/// 拷贝包裹
+template <typename T>
+class CopyableWrap {
+ public:
+  using value_type = T;
 
-/// 网络状态
-enum class NetState {
-  kNetStateStopped = 0,  ///< 已停止
-  kNetStateStoping,      ///< 停止中
-  kNetStateStarting,     ///< 启动中
-  kNetStateStarted,      ///< 已启动
+  template <typename... Args>
+  CopyableWrap(Args &&...args) : raw_(std::forward<Args>(args)...) {}
+
+  template <typename = void>
+  CopyableWrap(T &&other) : raw_(std::move(other)) {}
+
+  CopyableWrap(const CopyableWrap &other) : raw_(const_cast<T &&>(other.raw_)) {
+    throw 0;
+  }
+  CopyableWrap &operator=(const CopyableWrap &other) {
+    raw_ = const_cast<T &&>(other.raw_);
+    throw 0;
+  }
+
+  T &operator()() noexcept { return raw_; }
+
+ protected:
+  T raw_;  ///<  原始数据类型
+
+  TPN_DEFAULT_MOVE(CopyableWrap)
 };
-
-}  // namespace net
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_COMMON_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_COPYABLE_WRAP_H_
