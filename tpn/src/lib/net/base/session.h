@@ -30,6 +30,7 @@
 #include "buffer_wrap.h"
 #include "net_common.h"
 #include "io_pool.h"
+#include "listener.h"
 #include "socket_wrap.h"
 #include "post_wrap.h"
 
@@ -57,6 +58,7 @@ class SessionBase : public CRTPObject<Derived>,
         PostWrap<Derived, ArgsType>(),
         Socket<Derived, ArgsType>(std::forward<Args>(args)...),
         io_handle_(rw_io_handle),
+        listener_(),
         session_mgr_(session_mgr),
         buffer_(max, prepare) {}
 
@@ -111,12 +113,15 @@ class SessionBase : public CRTPObject<Derived>,
               ToNetStateStr(this->state_), this->GetDerivedObj().GetHashKey());
   }
 
-  TPN_INLINE SessionMgr<Derived> &GetSessionMgr() { return this->session_mgr_; }
+  TPN_INLINE Listener &GetListener() { return this->listener_; }
 
   TPN_INLINE std::atomic<NetState> &GetNetState() { return this->state_; }
 
+  TPN_INLINE SessionMgr<Derived> &GetSessionMgr() { return this->session_mgr_; }
+
  protected:
   IoHandle &io_handle_;  ///< 包含(io_context和strand)，用来处理接受事件
+  Listener listener_;                                         ///< 监听器
   std::atomic<NetState> state_ = NetState::kNetStateStopped;  ///< 服务状态
   SessionMgr<SessionType> &session_mgr_;  ///< 会话管理器
   std::shared_ptr<void>

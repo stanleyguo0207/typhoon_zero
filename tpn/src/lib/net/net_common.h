@@ -164,6 +164,47 @@ TPN_NET_API std::string_view ToNetStateStr(NetState state) noexcept;
 /// 转换成网络事件
 TPN_NET_API std::string_view ToListenerEventStr(ListenerEvent event) noexcept;
 
+/// tcp握手默认超时时长 5 * 1000
+static constexpr long kTcpHandshakeTimeout = 5000;
+/// udp握手默认超时时长 5 * 1000
+static constexpr long kUdpHandshakeTimeout = 5000;
+/// http握手默认超时时长 5 * 1000
+static constexpr long kHttpHandshakeTimeout = 5000;
+
+/// tcp连接超时时长 5 * 1000
+static constexpr long kTcpConnectTimeout = 5000;
+/// udp连接超时时长 5 * 1000
+static constexpr long kUdpConnectTimeout = 5000;
+/// http连接超时时长 5 * 1000
+static constexpr long kHttpConnectTimeout = 5000;
+
+/// tcp静默超时时长 60 * 60 * 1000
+static constexpr long kTcpSilenceTimeout = 3600000;
+/// udp静默超时时长 60 * 1000
+static constexpr long kUdpSilenceTimeout = 60000;
+/// http静默超时时长 85 * 1000
+static constexpr long kHttpSilenceTimeout = 85000;
+
+/// http执行超时时长 5 * 1000
+static constexpr long kHttpExecuteTimeout = 5000;
+
+/// ssl关闭超时 5 * 1000
+static constexpr long kSslShutdownTimeout = 5000;
+/// websocket关闭超时 5 * 1000
+static constexpr long kWsShutdownTimeout = 5000;
+
+/// ssl握手超时 5 * 1000
+static constexpr long kSslHandshakeTimeout = 5000;
+/// websocket握手超时 5 * 1000
+static constexpr long kWsHandshakeTimeout = 5000;
+
+/// tcp帧大小
+static constexpr size_t kTcpFrameSize = 1536;
+/// udp帧大小
+static constexpr size_t kUdpFrameSize = 1024;
+/// http帧大小
+static constexpr size_t kHttpFrameSize = 1536;
+
 }  // namespace net
 
 }  // namespace tpn

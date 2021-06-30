@@ -31,6 +31,7 @@
 #include "crtp_object.h"
 #include "net_common.h"
 #include "io_pool.h"
+#include "listener.h"
 #include "session_mgr.h"
 #include "custom_allocator.h"
 #include "post_wrap.h"
@@ -57,6 +58,7 @@ class ServerBase : public CRTPObject<Derived, false>,
         IoPool(concurrency_hint),
         PostWrap<Derived>(),
         io_handle_(GetIoHandleByIndex(0)),
+        listener_(),
         session_mgr_(io_handle_),
         rallocator_(),
         wallocator_() {}
@@ -130,18 +132,21 @@ class ServerBase : public CRTPObject<Derived, false>,
   TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }
 
  protected:
-  TPN_INLINE auto &GetReadAllocator() { return this->rallocator_; }
+  TPN_INLINE Listener &GetListener() { return this->listener_; }
 
-  TPN_INLINE auto &GetWriteAllocator() { return this->wallocator_; }
+  TPN_INLINE std::atomic<NetState> &GetNetState() { return this->state_; }
 
   TPN_INLINE SessionMgr<SessionType> &GetSessionMgr() {
     return this->session_mgr_;
   }
 
-  TPN_INLINE std::atomic<NetState> &GetNetState() { return this->state_; }
+  TPN_INLINE auto &GetReadAllocator() { return this->rallocator_; }
+
+  TPN_INLINE auto &GetWriteAllocator() { return this->wallocator_; }
 
  protected:
   IoHandle &io_handle_;  ///< 包含(io_context和strand)，用来处理接受事件
+  Listener listener_;                                         ///< 监听器
   std::atomic<NetState> state_ = NetState::kNetStateStopped;  ///< 服务状态
   SessionMgr<SessionType> session_mgr_;  ///< 会话管理器
   std::shared_ptr<void>

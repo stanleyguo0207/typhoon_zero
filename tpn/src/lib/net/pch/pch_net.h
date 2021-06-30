@@ -28,5 +28,6 @@
 #include "service_base.h"
 #include "byte_buffer.h"
 #include "byte_converter.h"
+#include "net_common.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_PCH_PCH_NET_H_
