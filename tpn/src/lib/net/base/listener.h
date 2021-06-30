@@ -104,7 +104,7 @@ class Observer : public ObserverBase {
       };
     } else {
       // 非指针或非引用属于不合法行为
-      TPN_ASSERT(false);
+      TPN_ASSERT(false, "Listener Bind obj valid");
     }
     NET_DEBUG("Observer bind {}", this->func_.target_type().name());
   }

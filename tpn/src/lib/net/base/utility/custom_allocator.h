@@ -76,7 +76,7 @@ class HandlerMemory<SizeN, std::false_type> {
   }
 
  private:
-  std::aligned_storage_t<SizeN::size> storage_;
+  std::aligned_storage_t<SizeN::Size> storage_;
   bool in_use_{false};
 
   TPN_NO_COPYABLE(HandlerMemory)
@@ -104,7 +104,7 @@ class HandlerMemory<SizeN, std::true_type> {
   }
 
  private:
-  std::aligned_storage_t<SizeN::size> storage_;
+  std::aligned_storage_t<SizeN::Size> storage_;
   std::atomic_flag in_use_;
 
   TPN_NO_COPYABLE(HandlerMemory)

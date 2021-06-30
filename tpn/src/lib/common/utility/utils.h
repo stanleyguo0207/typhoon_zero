@@ -176,6 +176,12 @@ TPN_INLINE IntegerType ToInteger(T &&v) {
   }
 }
 
+template <typename... Ts>
+inline constexpr void IgnoreUnused(const Ts &...) {}
+
+template <typename... Ts>
+inline constexpr void IgnoreUnused() {}
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_

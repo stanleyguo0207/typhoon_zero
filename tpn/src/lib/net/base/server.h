@@ -28,6 +28,7 @@
 #include <functional>
 #include <type_traits>
 
+#include "chrono_wrap.h"
 #include "crtp_object.h"
 #include "net_common.h"
 #include "io_pool.h"

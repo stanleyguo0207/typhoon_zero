@@ -248,7 +248,7 @@ class PostWrap {
           derive.GetIoHandle().GetStrand(),
           MakeAllocator(derive.GetWriteAllocator(),
                         [this, this_ptr = derive.GetSelfSptr()]() mutable {
-                          this->StopAllTimedTasks();
+                          this->StopAllPostedTasks();
                         }));
       return (derive);
     }

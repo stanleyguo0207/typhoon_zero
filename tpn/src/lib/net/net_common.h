@@ -138,7 +138,7 @@ namespace net {
 /// 网络状态
 enum class NetState : uint8_t {
   kNetStateStopped = 0,  ///< 已停止
-  kNetStateStoping,      ///< 停止中
+  kNetStateStopping,     ///< 停止中
   kNetStateStarting,     ///< 启动中
   kNetStateStarted,      ///< 已启动
 };

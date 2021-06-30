@@ -52,15 +52,16 @@ class SessionBase : public CRTPObject<Derived>,
   using BufferType = typename ArgsType::BufferType;
 
   template <typename... Args>
-  explicit SessionBase(IoHandle &rw_io_handle, SessionMgr<Derived> &session_mgr,
-                       size_type max, size_type prepare, Args &&...args)
+  explicit SessionBase(IoHandle &rw_io_handle, Listener &listener,
+                       SessionMgr<Derived> &session_mgr, size_t buffer_max,
+                       size_t buffer_prepare, Args &&...args)
       : Super(),
         PostWrap<Derived, ArgsType>(),
         Socket<Derived, ArgsType>(std::forward<Args>(args)...),
         io_handle_(rw_io_handle),
-        listener_(),
+        listener_(listener),
         session_mgr_(session_mgr),
-        buffer_(max, prepare) {}
+        buffer_(buffer_max, buffer_prepare) {}
 
   ~SessionBase() = default;
 
@@ -121,9 +122,9 @@ class SessionBase : public CRTPObject<Derived>,
 
  protected:
   IoHandle &io_handle_;  ///< 包含(io_context和strand)，用来处理接受事件
-  Listener listener_;                                         ///< 监听器
+  Listener &listener_;                                        ///< 监听器
   std::atomic<NetState> state_ = NetState::kNetStateStopped;  ///< 服务状态
-  SessionMgr<SessionType> &session_mgr_;  ///< 会话管理器
+  SessionMgr<Derived> &session_mgr_;  ///< 会话管理器
   std::shared_ptr<void>
       counter_sptr_;  ///< 用来确保服务器在所有会话停止后才停止
   bool in_session_mgr_{false};     ///< 是否在已连接的会话管理器中

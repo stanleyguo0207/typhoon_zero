@@ -46,7 +46,7 @@ class SessionMgr {
   using Self = SessionMgr<SessionType>;
 
   explicit SessionMgr(IoHandle &acceptor_io_handle)
-      acceptor_io_handle_(acceptor_io_handle) {
+      : acceptor_io_handle_(acceptor_io_handle) {
     this->sessions_.reserve(64);
   }
 
