@@ -35,7 +35,11 @@
 #include "post_wrap.h"
 #include "connect.h"
 #include "disconnect.h"
+#include "alive_time.h"
+#include "connect_time.h"
 #include "connect_timer.h"
+#include "silence_timer.h"
+#include "event_queue.h"
 
 namespace tpn {
 
@@ -48,7 +52,11 @@ class SessionBase : public CRTPObject<Derived>,
                     public PostWrap<Derived, ArgsType>,
                     public Connect<Derived, ArgsType>,
                     public Disconnect<Derived, ArgsType>,
+                    public AliveTime<Derived, ArgsType>,
+                    public ConnectTime<Derived, ArgsType>,
                     public ConnectTimeout<Derived, ArgsType>,
+                    public SilenceTimer<Derived, ArgsType>,
+                    public EventQueue<Derived, ArgsType>,
                     public Socket<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
 
@@ -66,7 +74,11 @@ class SessionBase : public CRTPObject<Derived>,
         PostWrap<Derived, ArgsType>(),
         Connect<Derived, ArgsType>(),
         Disconnect<Derived, ArgsType>(),
+        AliveTime<Derived, ArgsType>(),
+        ConnectTime<Derived, ArgsType>(),
         ConnectTimeout<Derived, ArgsType>(rw_io_handle),
+        SilenceTimer<Derived, ArgsType>(rw_io_handle),
+        EventQueue<Derived, ArgsType>(),
         Socket<Derived, ArgsType>(std::forward<Args>(args)...),
         io_handle_(rw_io_handle),
         listener_(listener),
@@ -88,6 +100,8 @@ class SessionBase : public CRTPObject<Derived>,
 
     NET_DEBUG("SessionBase Stop state {}, session key: {}",
               ToNetStateStr(this->state_), this->GetDerivedObj().GetHashKey());
+
+    this->StopSilenceTimer();
 
     this->StopConnectTimeoutTimer(asio::error::operation_aborted);
 
@@ -124,6 +138,8 @@ class SessionBase : public CRTPObject<Derived>,
 
     NET_DEBUG("SessionBase Start state {}, session key: {}",
               ToNetStateStr(this->state_), this->GetDerivedObj().GetHashKey());
+
+    this->PostConnectTimeoutTimer(this->connect_timeout_, this->GetSelfSptr());
   }
 
   TPN_INLINE Listener &GetListener() { return this->listener_; }

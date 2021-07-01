@@ -25,6 +25,7 @@
 
 #include "net_common.h"
 #include "session.h"
+#include "tcp_keepalive.h"
 
 namespace tpn {
 
@@ -44,7 +45,8 @@ struct TemplateArgsTcpSession {
 };
 
 template <typename Derived, typename ArgsType>
-class TcpSessionBase : public SessionBase<Derived, ArgsType> {
+class TcpSessionBase : public SessionBase<Derived, ArgsType>,
+                       public TcpKeepAlive<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS
@@ -62,8 +64,12 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
                           size_t buffer_prepare)
       : Super(io_handle, listener, session_mgr, buffer_max, buffer_prepare,
               io_handle.GetIoContext()),
+        TcpKeepAlive<Derived, ArgsType>(this->socket_),
         rallocator_(),
-        wallocator_() {}
+        wallocator_() {
+    this->SetSilenceTimeout(MilliSeconds(kTcpSilenceTimeout));
+    this->SetConnectTimeout(MilliSeconds(kTcpConnectTimeout));
+  }
 
   ~TcpSessionBase() = default;
 
@@ -133,15 +139,12 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
     IgnoreUnused(this_ptr);
 
     // 重置初始状态
-    // this->ResetConnectTime();
+    this->ResetConnectTime();
     // 更新存活时间
-    // this->UpdateAliveTime();
+    this->UpdateAliveTime();
 
     // 设置默认保持连接选项
-    // this->SetKeepAliveOptions();
-
-    NET_DEBUG("TcpSessionBase DoInit state {} key {}",
-              ToNetStateStr(this->state_), this->GetHashKey());
+    this->SetKeepAliveOptions();
   }
 
   TPN_INLINE void JoinSession(std::shared_ptr<Derived> this_ptr) {

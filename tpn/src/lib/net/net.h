@@ -24,6 +24,7 @@
 #define TYPHOON_ZERO_TPN_SRC_LIB_NET_NET_H_
 
 #include "net_common.h"
+#include "tcp_client.h"
 #include "tcp_server.h"
 #include "tcp_session.h"
 

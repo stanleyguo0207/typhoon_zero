@@ -102,7 +102,7 @@ class SessionMgr {
     {
       std::unique_lock<std::shared_mutex> guard(this->mutex_);
       if (session_sptr->in_session_mgr_) {
-        erased = (this->sessions_.erased(session_sptr->GetHashKey()) > 0);
+        erased = (this->sessions_.erase(session_sptr->GetHashKey()) > 0);
       }
     }
 

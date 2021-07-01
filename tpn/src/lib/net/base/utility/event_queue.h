@@ -79,7 +79,7 @@ class EventQueueGuard {
   bool valid_{false};                              ///<  是否有效
 };
 
-template <typename Derived, typename ArgsT = void>
+template <typename Derived, typename ArgsType = void>
 class EventQueue {
  public:
   EventQueue()  = default;
@@ -114,7 +114,7 @@ class EventQueue {
 
  protected:
   template <typename = void>
-  inline Derived &NextEvent() {
+  TPN_INLINE Derived &NextEvent() {
     Derived &derive = CRTP_CAST(this);
 
     NET_DEBUG("EventQueue next event");

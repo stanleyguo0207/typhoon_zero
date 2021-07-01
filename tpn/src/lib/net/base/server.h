@@ -74,7 +74,7 @@ class ServerBase : public CRTPObject<Derived, false>,
   TPN_INLINE void Stop() {
     if (!this->io_handle_.GetStrand().running_in_this_thread()) {
       NET_DEBUG(
-          "ServerBase Stop not running in this thread PostWrap to all context");
+          "ServerBase Stop not running in this thread PostWrap to strand io");
       this->GetDerivedObj().Post(
           [this, this_ptr = this->GetSelfSptr()]() mutable { this->Stop(); });
       return;

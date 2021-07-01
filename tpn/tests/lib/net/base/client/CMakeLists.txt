@@ -20,5 +20,35 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(server)
-add_subdirectory(client)
+cmake_minimum_required(VERSION 3.20.0)
+
+project(test_tcp_base_client CXX)
+
+add_executable(test_tcp_base_client
+  "test_tcp_base_client.cpp"
+)
+
+set_property(TARGET
+  test_tcp_base_client
+  APPEND
+  PROPERTY
+    COMPILE_DEFINITIONS
+    _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_net_base_client_test.json"
+)
+
+target_link_libraries(test_tcp_base_client
+  net
+)
+
+install(TARGETS test_tcp_base_client DESTINATION ${BIN_DIR}/tests/net)
+
+if(WIN32)
+  add_custom_command(TARGET
+		test_logger
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/config_net_base_client_test.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

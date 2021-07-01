@@ -77,7 +77,7 @@ class ReconnectTimer {
 
     derive.PostReconnectTimer(std::move(this_ptr),
                               std::forward<Callback>(callback),
-                              Nanoseconds::max());
+                              NanoSeconds::max());
   }
 
   template <typename Callback>
@@ -112,7 +112,7 @@ class ReconnectTimer {
 
       derive.PostReconnectTimer(std::move(this_ptr),
                                 std::forward<Callback>(callback),
-                                Nanoseconds::max());
+                                NanoSeconds::max());
     }
   }
 

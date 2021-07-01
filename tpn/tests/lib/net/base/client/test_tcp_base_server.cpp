@@ -30,9 +30,9 @@
 
 #include "net.h"
 
-#ifndef _TPN_NET_BASE_SERVER_CONFIG_TEST_FILE
-#  define _TPN_NET_BASE_SERVER_CONFIG_TEST_FILE \
-    "config_net_base_server_test.json"
+#ifndef _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE
+#  define _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE \
+    "config_net_base_client_test.json"
 #endif
 
 using namespace tpn;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   std::string config_error;
-  if (!g_config->Load(_TPN_NET_BASE_SERVER_CONFIG_TEST_FILE,
+  if (!g_config->Load(_TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE,
                       std::vector<std::string>(argv, argv + argc),
                       config_error)) {
     printf("Error in config file: %s\n", config_error.c_str());
@@ -54,21 +54,22 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
 
-  std::string_view host = "0.0.0.0";
+  std::string_view host = "127.0.0.1";
   std::string_view port = "9990";
 
-  net::TcpServer server;
+  net::TcpClient client;
 
-  LOG_INFO("Tcp base server start init...");
+  LOG_INFO("Tcp base client start init...");
 
-  server.Start(host, port);
+  client.AutoReconnect(true, MilliSeconds(1000));
+  client.Start(host, port);
 
   while (std::getchar() != '\n')
     ;
 
-  server.Stop();
+  client.Stop();
 
-  LOG_INFO("Tcp base server shutdown in 5s...");
+  LOG_INFO("Tcp base client shutdown in 5s...");
   std::this_thread::sleep_for(5s);
 
   return 0;
