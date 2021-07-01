@@ -46,13 +46,13 @@ class ObserverBase {
 template <typename... Args>
 class Observer : public ObserverBase {
  public:
-  using FuncType = std::function<void(Args...)>;
+  using func_type = std::function<void(Args...)>;
 
   /// 构造函数
-  explicit Observer(const FuncType &func) : func_(func) {}
+  explicit Observer(const func_type &func) : func_(func) {}
 
   /// 构造函数
-  explicit Observer(FuncType &&func) : func_(std::move(func)) {}
+  explicit Observer(func_type &&func) : func_(std::move(func)) {}
 
   /// 拷贝构造函数
   explicit Observer(const Observer<Args...> &other) : func_(other.func_) {}
@@ -79,7 +79,7 @@ class Observer : public ObserverBase {
   ///  @param[in]   func    观察函数
   template <typename Func>
   inline void Bind(Func &&func) {
-    this->func_ = FuncType(std::forward<Func>(func));
+    this->func_ = func_type(std::forward<Func>(func));
     NET_DEBUG("Observer bind {}", this->func_.target_type().name());
   }
 
@@ -117,10 +117,10 @@ class Observer : public ObserverBase {
   }
 
   /// 观察函数移动
-  FuncType Move() { return std::move(this->func_); }
+  func_type Move() { return std::move(this->func_); }
 
  private:
-  FuncType func_;  ///< 观察函数
+  func_type func_;  ///< 观察函数
 };
 
 /// 监听器

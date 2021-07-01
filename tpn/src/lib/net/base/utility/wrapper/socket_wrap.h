@@ -33,7 +33,7 @@ namespace net {
 
 /// 套接字封装
 ///  @tparam  Derived     CRTP类型
-///  @tparam  ArgsType    套接字模板参数 需要提供 SocketType类型定义
+///  @tparam  ArgsType    套接字模板参数 需要提供 socket_type类型定义
 ///
 /// @sa asio::ip::tcp::socket
 /// @sa asio::ip::udp::socket
@@ -41,7 +41,7 @@ template <typename Derived, typename ArgsType>
 class Socket {
  public:
   /// 套接字类型
-  using SocketType = TPN_RMRFCV(typename ArgsType::SocketType);
+  using socket_type = TPN_RMRFCV(typename ArgsType::socket_type);
 
   /// 构造函数
   ///  @param[in]   args    @sa asio::ip::tcp::socket @sa asio::ip::udp::socket
@@ -51,12 +51,12 @@ class Socket {
   ~Socket() = default;
 
   /// 获取socket对象引用
-  ///  @return Socket<Derived,Stream>::SocketType
-  inline SocketType &GetSocket() { return this->socket_; }
+  ///  @return Socket<Derived,Stream>::socket_type
+  inline socket_type &GetSocket() { return this->socket_; }
 
   /// 获取stream对象引用
-  ///  @return Socket<Derived,Stream>::SocketType
-  inline SocketType &GetStream() { return this->socket_; }
+  ///  @return Socket<Derived,Stream>::socket_type
+  inline socket_type &GetStream() { return this->socket_; }
 
   /// 获取本地地址
   ///  @throw   异常被SetLastError截获 @ref SetLastError
@@ -241,7 +241,7 @@ class Socket {
   ///    只对tcp有效 非tcp不做任何事情
   inline Derived &SetNoDelay(bool val) {
     try {
-      if constexpr (std::is_same_v<typename SocketType::protocol_type,
+      if constexpr (std::is_same_v<typename socket_type::protocol_type,
                                    asio::ip::tcp>) {
         this->socket_.lowest_layer().set_option(asio::ip::tcp::no_delay(val));
       } else {
@@ -262,7 +262,7 @@ class Socket {
   ///    只对tcp有效 非tcp不做任何事情
   inline bool IsNodelay() const {
     try {
-      if constexpr (std::is_same_v<typename SocketType::protocol_type,
+      if constexpr (std::is_same_v<typename socket_type::protocol_type,
                                    asio::ip::tcp>) {
         asio::ip::tcp::no_delay option;
         this->socket_.lowest_layer().get_option(option);
@@ -278,7 +278,7 @@ class Socket {
   }
 
  protected:
-  typename ArgsType::SocketType socket_;  ///< socket
+  typename ArgsType::socket_type socket_;  ///< socket
 };
 
 }  // namespace net

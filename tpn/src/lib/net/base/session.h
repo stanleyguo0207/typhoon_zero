@@ -33,6 +33,9 @@
 #include "listener.h"
 #include "socket_wrap.h"
 #include "post_wrap.h"
+#include "connect.h"
+#include "disconnect.h"
+#include "connect_timer.h"
 
 namespace tpn {
 
@@ -43,13 +46,17 @@ TPN_NET_FORWARD_DECL_BASE_CLASS
 template <typename Derived, typename ArgsType>
 class SessionBase : public CRTPObject<Derived>,
                     public PostWrap<Derived, ArgsType>,
+                    public Connect<Derived, ArgsType>,
+                    public Disconnect<Derived, ArgsType>,
+                    public ConnectTimeout<Derived, ArgsType>,
                     public Socket<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
 
  public:
-  using Super      = CRTPObject<Derived>;
-  using Self       = SessionBase<Derived, ArgsType>;
-  using BufferType = typename ArgsType::BufferType;
+  using buffer_type = typename ArgsType::buffer_type;
+
+  using Super = CRTPObject<Derived>;
+  using Self  = SessionBase<Derived, ArgsType>;
 
   template <typename... Args>
   explicit SessionBase(IoHandle &rw_io_handle, Listener &listener,
@@ -57,6 +64,9 @@ class SessionBase : public CRTPObject<Derived>,
                        size_t buffer_prepare, Args &&...args)
       : Super(),
         PostWrap<Derived, ArgsType>(),
+        Connect<Derived, ArgsType>(),
+        Disconnect<Derived, ArgsType>(),
+        ConnectTimeout<Derived, ArgsType>(rw_io_handle),
         Socket<Derived, ArgsType>(std::forward<Args>(args)...),
         io_handle_(rw_io_handle),
         listener_(listener),
@@ -79,6 +89,8 @@ class SessionBase : public CRTPObject<Derived>,
     NET_DEBUG("SessionBase Stop state {}, session key: {}",
               ToNetStateStr(this->state_), this->GetDerivedObj().GetHashKey());
 
+    this->StopConnectTimeoutTimer(asio::error::operation_aborted);
+
     this->StopAllPostedTasks();
 
     this->counter_sptr_.reset();
@@ -96,7 +108,7 @@ class SessionBase : public CRTPObject<Derived>,
 
   TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }
 
-  TPN_INLINE BufferWrap<BufferType> &GetBuffer() { return this->buffer_; }
+  TPN_INLINE BufferWrap<buffer_type> &GetBuffer() { return this->buffer_; }
 
  protected:
   TPN_INLINE void Start() {
@@ -127,8 +139,8 @@ class SessionBase : public CRTPObject<Derived>,
   SessionMgr<Derived> &session_mgr_;  ///< 会话管理器
   std::shared_ptr<void>
       counter_sptr_;  ///< 用来确保服务器在所有会话停止后才停止
-  bool in_session_mgr_{false};     ///< 是否在已连接的会话管理器中
-  BufferWrap<BufferType> buffer_;  ///< 缓冲区
+  bool in_session_mgr_{false};      ///< 是否在已连接的会话管理器中
+  BufferWrap<buffer_type> buffer_;  ///< 缓冲区
 };
 
 }  // namespace net

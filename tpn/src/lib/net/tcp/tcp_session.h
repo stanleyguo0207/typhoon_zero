@@ -39,8 +39,8 @@ struct TemplateArgsTcpSession {
   static constexpr bool is_session = true;
   static constexpr bool is_client  = false;
 
-  using SocketType = asio::ip::tcp::socket;
-  using BufferType = asio::streambuf;
+  using socket_type = asio::ip::tcp::socket;
+  using buffer_type = asio::streambuf;
 };
 
 template <typename Derived, typename ArgsType>
@@ -51,11 +51,11 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_TCP_SESSION_CLASS
 
  public:
-  using key_type = size_t;
+  using key_type    = size_t;
+  using buffer_type = typename ArgsType::buffer_type;
 
-  using Super      = SessionBase<Derived, ArgsType>;
-  using Self       = TcpSessionBase<Derived, ArgsType>;
-  using BufferType = typename ArgsType::BufferType;
+  using Super = SessionBase<Derived, ArgsType>;
+  using Self  = TcpSessionBase<Derived, ArgsType>;
 
   explicit TcpSessionBase(IoHandle &io_handle, Listener &listener,
                           SessionMgr<Derived> &session_mgr, size_t buffer_max,
@@ -69,7 +69,7 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
 
   TPN_INLINE void Stop() {
     NET_DEBUG("TcpSessionBase Stop state {}", ToNetStateStr(this->state_));
-    // this->GetDerivedObj().DoDisconnect(asio::error::operation_aborted);
+    this->GetDerivedObj().DoDisconnect(asio::error::operation_aborted);
   }
 
   TPN_INLINE const key_type GetHashKey() const {
@@ -111,8 +111,8 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
       Super::Start();
 
       // 连接处理
-      // this->GetDerivedObj().HandleConnect(
-      //     std::error_code{}, std::move(this_ptr), std::move(condition));
+      this->GetDerivedObj().HandleConnect(std::error_code{},
+                                          std::move(this_ptr));
 
       NET_DEBUG("TcpSessionBase Start state {} key {} done",
                 ToNetStateStr(this->state_), this->GetHashKey());
@@ -122,7 +122,7 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
 
       SetLastError(e);
 
-      // this->GetDerivedObj().DoDisconnect(e.code());
+      this->GetDerivedObj().DoDisconnect(e.code());
     }
   }
 
@@ -157,7 +157,7 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType> {
       } else {
         NET_DEBUG("TcpSessionBase JoinSession {} state {} key {} DoDisconnect",
                   inserted, ToNetStateStr(this->state_), this->GetHashKey());
-        // this->GetDerivedObj().DoDisconnect(asio::error::address_in_use);
+        this->GetDerivedObj().DoDisconnect(asio::error::address_in_use);
       }
     });
   }
