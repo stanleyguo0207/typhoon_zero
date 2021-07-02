@@ -61,7 +61,7 @@ MessageBuffer &MessageBuffer::operator=(MessageBuffer &&other) {
   return *this;
 }
 
-void MessageBuffer::Rest() {
+void MessageBuffer::Rset() {
   wpos_ = 0;
   rpos_ = 0;
 }

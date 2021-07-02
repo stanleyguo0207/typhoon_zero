@@ -46,7 +46,7 @@ class TcpSendWrap {
     asio::async_write(
         derive.GetStream(),
         asio::buffer(packet.GetContents(), packet.GetSize()),
-        std::bind_executor(
+        asio::bind_executor(
             derive.GetIoHandle().GetStrand(),
             MakeAllocator(
                 derive.GetWriteAllocator(),

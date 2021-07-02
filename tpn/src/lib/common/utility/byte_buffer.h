@@ -85,6 +85,16 @@ class TPN_COMMON_API ByteBuffer {
 
   const uint8_t *GetContents() const;
 
+  uint8_t *GetBasePointer();
+
+  uint8_t *GetReadPointer();
+
+  uint8_t *GetWritePointer();
+
+  void ReadCompleted(size_t bytes);
+
+  void WriteCompleted(size_t bytes);
+
   size_t GetSize() const;
 
   size_t GetRemainingSpace() const;

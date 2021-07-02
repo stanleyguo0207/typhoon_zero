@@ -89,7 +89,7 @@ class EventQueue {
   TPN_INLINE Derived &EventEnqueue(Callback &&callback) {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("EventQueue enqueue {}", typeid(callback).name());
+    // NET_DEBUG("EventQueue enqueue {}", typeid(callback).name());
 
     if (derive.GetIoHandle().GetStrand().running_in_this_thread()) {
       bool empty = this->events_.empty();

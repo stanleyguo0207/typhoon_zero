@@ -122,7 +122,7 @@ class TcpRecv {
   bool HandleReadHeader() {
     Derived &derive = CRTP_CAST(this);
     protocol::Header header;
-    if (!header.ParseFromArray(derive.header_buffer_.GetContents(),
+    if (!header.ParseFromArray(derive.header_buffer_.GetReadPointer(),
                                derive.header_buffer_.GetSize())) {
       NET_WARN("TcpRecv HandleReadHeader error size : ",
                derive.header_buffer_.GetSize());
@@ -135,12 +135,19 @@ class TcpRecv {
   bool HandleReadPacket() {
     Derived &derive = CRTP_CAST(this);
     protocol::Header header;
-    TPN_ASSERT(header.ParseFromArray(derive.header_buffer_.GetContents(),
+    TPN_ASSERT(header.ParseFromArray(derive.header_buffer_.GetReadPointer(),
                                      derive.header_buffer_.GetSize()),
                "TcpRecv HandleReadPacket header error");
 
     protocol::SearchRequest request;
-    NET_DEBUG("TcpRecv HandleReadPacket query {}", request.query());
+    if (!request.ParseFromArray(derive.packet_buffer_.GetReadPointer(),
+                                derive.packet_buffer_.GetSize())) {
+      NET_WARN("TcpRecv HandleReadPacket error size : ",
+               derive.header_buffer_.GetSize());
+      return false;
+    }
+    NET_DEBUG("TcpRecv HandleReadPacket query {}, {}, {}", request.query(),
+              request.page_number(), request.result_per_page());
     return true;
   }
 
@@ -152,6 +159,8 @@ class TcpRecv {
               ToNetStateStr(derive.GetNetState()), bytes_recvd, ec);
 
     SetLastError(ec);
+
+    derive.GetBuffer().commit(bytes_recvd);
 
     if (!ec) {
       derive.UpdateAliveTime();
@@ -233,7 +242,7 @@ class TcpRecv {
 
         if (packet_buffer_.GetRemainingSpace() > 0) {
           size_t read_data_size = (std::min)(
-              input_buffer.size(), header_buffer_.GetRemainingSpace());
+              input_buffer.size(), packet_buffer_.GetRemainingSpace());
           packet_buffer_.Append(
               static_cast<const uint8_t *>(input_buffer.data().data()),
               read_data_size);

@@ -47,7 +47,6 @@ class SendWrap {
   SendWrap()  = default;
   ~SendWrap() = default;
 
- protected:
   TPN_INLINE bool Send(ByteBuffer &&packet) {
     Derived &derive = CRTP_CAST(this);
 
@@ -59,8 +58,8 @@ class SendWrap {
         asio::detail::throw_error(asio::error::not_connected);
       }
 
-      derive.EventQueue([&derive, packet = std::move(packet))](
-                            EventQueueGuard<Derived> &&guard) mutable {
+      derive.EventEnqueue([&derive, packet = std::move(packet)](
+                              EventQueueGuard<Derived> &&guard) mutable {
         NET_DEBUG("SendWrap Send DoSend");
         return derive.DoSend(std::move(packet));
       });

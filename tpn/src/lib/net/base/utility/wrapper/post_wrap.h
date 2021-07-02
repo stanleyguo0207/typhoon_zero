@@ -54,7 +54,7 @@ class PostWrap {
   inline Derived &Post(Func &&func) {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostWrap Post {}", typeid(func).name());
+    NET_DEBUG("PostWrap Post");
 
     asio::post(
         derive.GetIoHandle().GetStrand(),
@@ -75,7 +75,7 @@ class PostWrap {
   inline Derived &Post(Func &&func, std::chrono::duration<Rep, Period> delay) {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostWrap Post {} delay {}", typeid(func).name(), delay);
+    NET_DEBUG("PostWrap Post delay {}", delay);
 
     auto timer = std::make_unique<asio::steady_timer>(
         derive.GetIoHandle().GetIoContext());
@@ -97,8 +97,7 @@ class PostWrap {
             [this, self = derive.GetSelfSptr(), timer = std::move(timer),
              func =
                  std::forward<Func>(func)](const std::error_code &ec) mutable {
-              NET_DEBUG("PostWrap Post async_wait {} error {}",
-                        typeid(func).name(), ec);
+              NET_DEBUG("PostWrap Post async_wait error {}", ec);
               func();
               this->timed_tasks_.erase(timer.get());
             })));
@@ -119,7 +118,7 @@ class PostWrap {
 
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostWrap Post {} asio::use_future_t", typeid(func).name());
+    NET_DEBUG("PostWrap Post asio::use_future_t");
 
     std::packaged_task<ReturnType()> task(std::forward<Func>(func));
 
@@ -150,8 +149,7 @@ class PostWrap {
 
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostWrap Post {} asio::use_future_t delay {}",
-              typeid(func).name(), delay);
+    NET_DEBUG("PostWrap Post asio::use_future_t delay {}", delay);
 
     std::packaged_task<ReturnType()> task(std::forward<Func>(func));
 
@@ -179,8 +177,7 @@ class PostWrap {
             derive.GetWriteAllocator(),
             [this, self = derive.GetSelfSptr(), timer = std::move(timer),
              task = std::move(task)](const std::error_code &ec) mutable {
-              NET_DEBUG("PostWrap Post async_wait {} error {}",
-                        typeid(task).name(), ec);
+              NET_DEBUG("PostWrap Post async_wait error {}", ec);
               task();
               this->timed_tasks_.erase(timer.get());
             })));
@@ -197,7 +194,7 @@ class PostWrap {
   inline Derived &Dispatch(Func &&func) {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostWrap Dispatch {}", typeid(func).name());
+    NET_DEBUG("PostWrap Dispatch");
 
     asio::dispatch(
         derive.GetIoHandle().GetStrand(),
@@ -218,7 +215,7 @@ class PostWrap {
 
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostWrap Dispatch asio::use_future_t {}", typeid(func).name());
+    NET_DEBUG("PostWrap Dispatch asio::use_future_t");
 
     std::packaged_task<ReturnType()> task(std::forward<Func>(func));
 
@@ -242,8 +239,7 @@ class PostWrap {
     if (!derive.GetIoHandle().GetStrand().running_in_this_thread()) {
       NET_DEBUG(
           "PostWrap StopAllPostedTasks not running in this thread asio::post "
-          "to "
-          "all");
+          "to strand");
       asio::post(
           derive.GetIoHandle().GetStrand(),
           MakeAllocator(derive.GetWriteAllocator(),

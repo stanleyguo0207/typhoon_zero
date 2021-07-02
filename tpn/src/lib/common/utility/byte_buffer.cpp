@@ -134,6 +134,16 @@ const uint8_t *ByteBuffer::GetContents() const {
   return storage_.data();
 }
 
+uint8_t *ByteBuffer::GetBasePointer() { return storage_.data(); }
+
+uint8_t *ByteBuffer::GetReadPointer() { return GetBasePointer() + rpos_; }
+
+uint8_t *ByteBuffer::GetWritePointer() { return GetBasePointer() + wpos_; }
+
+void ByteBuffer::ReadCompleted(size_t bytes) { rpos_ += bytes; }
+
+void ByteBuffer::WriteCompleted(size_t bytes) { wpos_ += bytes; }
+
 size_t ByteBuffer::GetSize() const { return storage_.size(); }
 
 size_t ByteBuffer::GetRemainingSpace() const { return storage_.size() - wpos_; }
@@ -143,7 +153,7 @@ bool ByteBuffer::IsEmpty() const { return storage_.empty(); }
 void ByteBuffer::Resize(size_t new_size) {
   storage_.resize(new_size, 0);
   rpos_ = 0;
-  wpos_ = storage_.size();
+  wpos_ = 0;
 }
 
 void ByteBuffer::Reserve(size_t res_size) {

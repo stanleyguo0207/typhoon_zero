@@ -58,7 +58,7 @@ class MessageBuffer {
 
   /// 重置读写
   /// 只重置读写位置 内存不会变化
-  void Rest();
+  void Rset();
 
   /// 重置缓冲区
   ///  @param[in]   bytes     重置后的大小

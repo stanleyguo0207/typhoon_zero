@@ -102,6 +102,15 @@ class TcpClientBase : public ClientBase<Derived, ArgsType>,
     this->IoPoolStop();
   }
 
+  template <typename Func, typename... Objects>
+  TPN_INLINE Derived &BindConnect(Func &&func, Objects &&...objs) {
+    this->listener_.Bind(
+        ListenerEvent::kListenerEventConnect,
+        Observer<std::error_code>(std::forward<Func>(func),
+                                  std::forward<Objects>(objs)...));
+    return (this->GetDerivedObj());
+  }
+
  protected:
   template <bool IsAsync, typename String, typename StrOrInt>
   bool DoConnect(String &&host, StrOrInt &&port) {
@@ -235,6 +244,14 @@ class TcpClientBase : public ClientBase<Derived, ArgsType>,
     this->socket_.lowest_layer().shutdown(asio::socket_base::shutdown_both,
                                           s_ec_ignore);
     this->socket_.lowest_layer().close(s_ec_ignore);
+  }
+
+  TPN_INLINE void FireConnect(std::shared_ptr<Derived> &this_ptr,
+                              std::error_code ec) {
+    NET_DEBUG("TcpClientBase FireConnect state {} error {}",
+              ToNetStateStr(this->state_), ec);
+
+    this->listener_.Notify(ListenerEvent::kListenerEventConnect, ec);
   }
 };
 
