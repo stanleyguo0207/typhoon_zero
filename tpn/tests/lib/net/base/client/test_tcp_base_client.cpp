@@ -30,6 +30,11 @@
 
 #include "net.h"
 
+#include "rpc_type.pb.h"
+#include "test_service.pb.h"
+
+#include "byte_converter.h"
+
 #ifndef _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE
 #  define _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE \
     "config_net_base_client_test.json"
@@ -63,6 +68,21 @@ int main(int argc, char *argv[]) {
 
   client.AutoReconnect(true, MilliSeconds(1000));
   client.Start(host, port);
+
+  protocol::SearchRequest request;
+  request.set_query("Hello world!");
+
+  protocol::Header header;
+  header.set_size(static_cast<uint32_t>(request.ByteSizeLong()));
+
+  uint16_t header_size = static_cast<uint16_t>(header.ByteSizeLong());
+
+  EndianRefMakeLittle(header_size);
+
+  ByteBuffer packet(sizeof(header_size) + header.GetCachedSize() +
+                    request.GetCachedSize());
+
+  packet << header_size;
 
   while (std::getchar() != '\n')
     ;

@@ -31,6 +31,7 @@
 #include "custom_allocator.h"
 #include "io_pool.h"
 #include "post_wrap.h"
+#include "send_wrap.h"
 #include "listener.h"
 #include "connect.h"
 #include "disconnect.h"
@@ -53,6 +54,7 @@ template <typename Derived, typename ArgsType>
 class ClientBase : public CRTPObject<Derived, false>,
                    public IoPool,
                    public PostWrap<Derived, ArgsType>,
+                   public SendWrap<Derived, ArgsType>,
                    public Connect<Derived, ArgsType>,
                    public Disconnect<Derived, ArgsType>,
                    public AliveTime<Derived, ArgsType>,
@@ -76,6 +78,7 @@ class ClientBase : public CRTPObject<Derived, false>,
       : Super(),
         IoPool(concurrency_hint),
         PostWrap<Derived, ArgsType>(),
+        SendWrap<Derived, ArgsType>(),
         Connect<Derived, ArgsType>(),
         Disconnect<Derived, ArgsType>(),
         AliveTime<Derived, ArgsType>(),

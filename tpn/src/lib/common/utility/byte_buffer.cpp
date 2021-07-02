@@ -136,6 +136,8 @@ const uint8_t *ByteBuffer::GetContents() const {
 
 size_t ByteBuffer::GetSize() const { return storage_.size(); }
 
+size_t ByteBuffer::GetRemainingSpace() const { return storage_.size() - wpos_; }
+
 bool ByteBuffer::IsEmpty() const { return storage_.empty(); }
 
 void ByteBuffer::Resize(size_t new_size) {

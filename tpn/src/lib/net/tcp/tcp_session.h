@@ -26,6 +26,7 @@
 #include "net_common.h"
 #include "session.h"
 #include "tcp_keepalive.h"
+#include "tcp_recv.h"
 
 namespace tpn {
 
@@ -46,7 +47,8 @@ struct TemplateArgsTcpSession {
 
 template <typename Derived, typename ArgsType>
 class TcpSessionBase : public SessionBase<Derived, ArgsType>,
-                       public TcpKeepAlive<Derived, ArgsType> {
+                       public TcpKeepAlive<Derived, ArgsType>,
+                       public TcpRecv<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS
@@ -65,6 +67,7 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
       : Super(io_handle, listener, session_mgr, buffer_max, buffer_prepare,
               io_handle.GetIoContext()),
         TcpKeepAlive<Derived, ArgsType>(this->socket_),
+        TcpRecv<Derived, ArgsType>(),
         rallocator_(),
         wallocator_() {
     this->SetSilenceTimeout(MilliSeconds(kTcpSilenceTimeout));
@@ -147,6 +150,41 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
     this->SetKeepAliveOptions();
   }
 
+  TPN_INLINE void StartRecv(std::shared_ptr<Derived> this_ptr) {
+    NET_DEBUG("TcpSessionBase StartRecv state {} key {}",
+              ToNetStateStr(this->state_), this->GetHashKey());
+
+    asio::post(
+        this->GetIoHandle().GetStrand(),
+        MakeAllocator(this->rallocator_,
+                      [this, self_ptr = std::move(this_ptr)]() mutable {
+                        NET_DEBUG("TcpSessionBase StartRecv PostRecv");
+                        this->GetDerivedObj().GetBuffer().consume(
+                            this->GetDerivedObj().GetBuffer().size());
+
+                        this->GetDerivedObj().PostSilenceTimer(
+                            this->silence_timeout_, self_ptr);
+
+                        this->GetDerivedObj().PostRecv(std::move(self_ptr));
+                      }));
+  }
+
+  TPN_INLINE void PostRecv(std::shared_ptr<Derived> this_ptr) {
+    NET_DEBUG("TcpSessionBase PostRecv state {} key {}",
+              ToNetStateStr(this->state_), this->GetHashKey());
+
+    this->GetDerivedObj().TcpPostRecv(std::move(this_ptr));
+  }
+
+  TPN_INLINE void HandleRecv(const std::error_code &ec, size_t bytes_recvd,
+                             std::shared_ptr<Derived> this_ptr) {
+    NET_DEBUG(
+        "TcpSessionBase HandleRecv state {} key {} error {} recv_bytes {}",
+        ToNetStateStr(this->state_), this->GetHashKey(), ec, bytes_recvd);
+
+    this->GetDerivedObj().TcpHandleRecv(ec, bytes_recvd, std::move(this_ptr));
+  }
+
   TPN_INLINE void JoinSession(std::shared_ptr<Derived> this_ptr) {
     NET_DEBUG("TcpSessionBase JoinSession state {} key {}",
               ToNetStateStr(this->state_), this->GetHashKey());
@@ -156,7 +194,7 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
       if (inserted) {
         NET_DEBUG("TcpSessionBase JoinSession {} state {} key {} StartRecv",
                   inserted, ToNetStateStr(this->state_), this->GetHashKey());
-        // this->GetDerivedObj().StartRecv(std::move(this_ptr));
+        this->GetDerivedObj().StartRecv(std::move(this_ptr));
       } else {
         NET_DEBUG("TcpSessionBase JoinSession {} state {} key {} DoDisconnect",
                   inserted, ToNetStateStr(this->state_), this->GetHashKey());
@@ -185,6 +223,15 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
     this->socket_.lowest_layer().shutdown(asio::socket_base::shutdown_both,
                                           s_ec_ignore);
     this->socket_.lowest_layer().close(s_ec_ignore);
+  }
+
+  TPN_INLINE void HandleDisconnect(const std::error_code &ec,
+                                   std::shared_ptr<Derived> this_ptr) {
+    NET_DEBUG("HandleDisconnect state {} key {} error: {}",
+              ToNetStateStr(this->state_), this->GetHashKey(), ec);
+    IgnoreUnused(ec, this_ptr);
+
+    this->GetDerivedObj().DoStop(ec);
   }
 
   TPN_INLINE auto &GetReadAllocator() { return this->rallocator_; }

@@ -87,6 +87,8 @@ class TPN_COMMON_API ByteBuffer {
 
   size_t GetSize() const;
 
+  size_t GetRemainingSpace() const;
+
   bool IsEmpty() const;
 
   void Resize(size_t new_size);

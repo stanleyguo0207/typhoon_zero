@@ -26,6 +26,7 @@
 #include "net_common.h"
 #include "client.h"
 #include "tcp_keepalive.h"
+#include "tcp_send_wrap.h"
 
 namespace tpn {
 
@@ -45,7 +46,8 @@ struct TemplateArgsTcpClient {
 
 template <typename Derived, typename ArgsType>
 class TcpClientBase : public ClientBase<Derived, ArgsType>,
-                      public TcpKeepAlive<Derived, ArgsType> {
+                      public TcpKeepAlive<Derived, ArgsType>,
+                      public TcpSendWrap<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_CLIENT_CLASS
@@ -59,7 +61,8 @@ class TcpClientBase : public ClientBase<Derived, ArgsType>,
       size_t buffer_max     = (std::numeric_limits<size_t>::max)(),
       size_t buffer_prepare = kTcpFrameSize)
       : Super(1, buffer_max, buffer_prepare),
-        TcpKeepAlive<Derived, ArgsType>(this->socket_) {
+        TcpKeepAlive<Derived, ArgsType>(this->socket_),
+        TcpSendWrap<Derived, ArgsType>() {
     this->SetConnectTimeout(MilliSeconds(kTcpConnectTimeout));
   };
 
@@ -77,6 +80,11 @@ class TcpClientBase : public ClientBase<Derived, ArgsType>,
     NET_DEBUG("TcpClientBase async Start {}:{}", host, port);
     return this->GetDerivedObj().template DoConnect<true>(
         std::forward<String>(host), std::forward<StrOrInt>(port));
+  }
+
+  TPN_INLINE bool DoSend(ByteBuffer &&packet) {
+    NET_DEBUG("TcpClientBase DoSend state {}", ToNetStateStr(this->state_));
+    return this->GetDerivedObj().TcpSend(std::move(packet));
   }
 
   TPN_INLINE void Stop() {

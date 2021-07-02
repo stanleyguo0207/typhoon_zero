@@ -52,16 +52,16 @@ class Socket {
 
   /// 获取socket对象引用
   ///  @return Socket<Derived,Stream>::socket_type
-  inline socket_type &GetSocket() { return this->socket_; }
+  TPN_INLINE socket_type &GetSocket() { return this->socket_; }
 
   /// 获取stream对象引用
   ///  @return Socket<Derived,Stream>::socket_type
-  inline socket_type &GetStream() { return this->socket_; }
+  TPN_INLINE socket_type &GetStream() { return this->socket_; }
 
   /// 获取本地地址
   ///  @throw   异常被SetLastError截获 @ref SetLastError
   ///  @return 本地地址
-  inline std::string GetLocalAddress() {
+  TPN_INLINE std::string GetLocalAddress() {
     try {
       return this->socket_.lowest_layer()
           .local_endpoint()
@@ -76,7 +76,7 @@ class Socket {
   /// 获取本地端口
   ///  @throw   异常被SetLastError截获 @ref SetLastError
   ///  @return 本地端口
-  inline unsigned short GetLocalPort() {
+  TPN_INLINE unsigned short GetLocalPort() {
     try {
       return this->socket_.lowest_layer().local_endpoint().port();
     } catch (std::system_error &e) {
@@ -88,7 +88,7 @@ class Socket {
   /// 获取远端地址
   ///  @throw   异常被SetLastError截获 @ref SetLastError
   ///  @return 远端地址
-  inline std::string GetRemoteAddress() {
+  TPN_INLINE std::string GetRemoteAddress() {
     try {
       return this->socket_.lowest_layer()
           .remote_endpoint()
@@ -103,7 +103,7 @@ class Socket {
   /// 获取远端端口
   ///  @throw   异常被SetLastError截获 @ref SetLastError
   ///  @return 远端端口
-  inline unsigned short GetRemotePort() {
+  TPN_INLINE unsigned short GetRemotePort() {
     try {
       return this->socket_.lowest_layer().remote_endpoint().port();
     } catch (std::system_error &e) {
@@ -117,7 +117,7 @@ class Socket {
   ///  @param[in]   val     要设置的缓冲区大小
   ///  @throw   异常被 SetLastError 截获 @ref SetLastError
   ///  @return CRTP对象自身引用 用于链式调用
-  inline Derived &SetSendBufferSize(int val) {
+  TPN_INLINE Derived &SetSendBufferSize(int val) {
     try {
       this->socket_.lowest_layer().set_option(
           asio::socket_base::send_buffer_size(val));
@@ -131,7 +131,7 @@ class Socket {
   /// Implements the SOL_SOCKET/SO_SNDBUF socket option.
   ///  @throw   异常被 SetLastError 截获 @ref SetLastError
   ///  @return 发送缓冲区大小
-  inline int GetSendBufferSize() const {
+  TPN_INLINE int GetSendBufferSize() const {
     try {
       asio::socket_base::send_buffer_size option;
       this->socket_.lowest_layer().get_option(option);
@@ -147,7 +147,7 @@ class Socket {
   ///  @param[in]   val     要设置的缓存区大小
   ///  @throw   异常被 SetLastError 截获 @ref SetLastError
   ///  @return CRTP对象自身引用 用于链式调用
-  inline Derived &SetReceiveBufferSize(int val) {
+  TPN_INLINE Derived &SetReceiveBufferSize(int val) {
     try {
       this->socket_.lowest_layer().set_option(
           asio::socket_base::receive_buffer_size(val));
@@ -161,7 +161,7 @@ class Socket {
   /// Implements the SOL_SOCKET/SO_RCVBUF socket option.
   ///  @throw  异常被 SetLastError 截获 @ref SetLastError
   ///  @return 接受缓冲区大小
-  inline int GetReceiveBufferSize() const {
+  TPN_INLINE int GetReceiveBufferSize() const {
     try {
       asio::socket_base::receive_buffer_size option;
       this->socket_.lowest_layer().get_option(option);
@@ -177,7 +177,7 @@ class Socket {
   ///  @param[in]  val     是否保持连接标志
   ///  @throw  异常被 SetLastError 截获 @ref SetLastError
   ///  @return CRTP对象自身引用 用于链式调用
-  inline Derived &SetKeepAlive(int val) {
+  TPN_INLINE Derived &SetKeepAlive(int val) {
     try {
       this->socket_.lowest_layer().set_option(
           asio::socket_base::keep_alive(val));
@@ -191,7 +191,7 @@ class Socket {
   /// Implements the SOL_SOCKET/SO_KEEPALIVE socket option.
   ///  @throw  异常被 SetLastError 截获 @ref SetLastError
   ///  @return 是否保持连接
-  inline bool IsKeepAlive() const {
+  TPN_INLINE bool IsKeepAlive() const {
     try {
       asio::socket_base::keep_alive option;
       this->socket_.lowest_layer().get_option(option);
@@ -207,7 +207,7 @@ class Socket {
   ///  @param[in]  val     是否复用标志
   ///  @throw  异常被 SetLastError 截获 @ref SetLastError
   ///  @return CRTP对象自身引用 用于链式调用
-  inline Derived &ReuseAddress(bool val) {
+  TPN_INLINE Derived &ReuseAddress(bool val) {
     try {
       this->socket_.lowest_layer().set_option(
           asio::socket_base::reuse_address(val));
@@ -221,7 +221,7 @@ class Socket {
   /// Implements the SOL_SOCKET/SO_REUSEADDR socket option.
   ///  @throw  异常被 SetLastError 截获 @ref SetLastError
   ///  @return CRTP对象自身引用 用于链式调用
-  inline bool IsReuseAddress() const {
+  TPN_INLINE bool IsReuseAddress() const {
     try {
       asio::socket_base::reuse_address option;
       this->socket_.lowest_layer().get_option(option);
@@ -239,7 +239,7 @@ class Socket {
   ///  @return CRTP对象自身引用 用于链式调用
   /// @note
   ///    只对tcp有效 非tcp不做任何事情
-  inline Derived &SetNoDelay(bool val) {
+  TPN_INLINE Derived &SetNoDelay(bool val) {
     try {
       if constexpr (std::is_same_v<typename socket_type::protocol_type,
                                    asio::ip::tcp>) {
@@ -260,7 +260,7 @@ class Socket {
   ///  @return CRTP对象自身引用 用于链式调用
   /// @note
   ///    只对tcp有效 非tcp不做任何事情
-  inline bool IsNodelay() const {
+  TPN_INLINE bool IsNodelay() const {
     try {
       if constexpr (std::is_same_v<typename socket_type::protocol_type,
                                    asio::ip::tcp>) {
