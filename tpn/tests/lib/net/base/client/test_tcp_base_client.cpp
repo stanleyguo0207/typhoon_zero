@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 
   LOG_INFO("Tcp base client start init...");
 
-  client.AutoReconnect(true, MilliSeconds(1000));
+  // client.AutoReconnect(true, MilliSeconds(1000));
 
   client.BindConnect([&](std::error_code ec) {
     protocol::SearchRequest request;
@@ -93,7 +93,12 @@ int main(int argc, char *argv[]) {
     packet.WriteCompleted(request.GetCachedSize());
     request.SerializeToArray(ptr, request.GetCachedSize());
 
-    client.Send(std::move(packet));
+    // client.Send(std::move(packet));
+
+    for (int i = 0; i < 100; ++i) {
+      ByteBuffer tmp = packet;
+      client.Send(std::move(tmp));
+    }
   });
 
   client.Start(host, port);
