@@ -30,12 +30,12 @@
 namespace tpn {
 
 /// 消息缓冲
-class MessageBuffer {
+class TPN_COMMON_API MessageBuffer {
+ public:
   using storage_type = std::vector<uint8_t>;
   using size_type    = storage_type::size_type;
   using pointer      = storage_type::pointer;
 
- public:
   /// 构造函数
   /// 默认大小为4096
   MessageBuffer();
@@ -58,7 +58,7 @@ class MessageBuffer {
 
   /// 重置读写
   /// 只重置读写位置 内存不会变化
-  void Rset();
+  void Reset();
 
   /// 重置缓冲区
   ///  @param[in]   bytes     重置后的大小

@@ -61,7 +61,7 @@ MessageBuffer &MessageBuffer::operator=(MessageBuffer &&other) {
   return *this;
 }
 
-void MessageBuffer::Rset() {
+void MessageBuffer::Reset() {
   wpos_ = 0;
   rpos_ = 0;
 }
@@ -101,7 +101,7 @@ void MessageBuffer::Normalize() {
     if (rpos_ != wpos_) {
       memmove(GetBasePointer(), GetReadPointer(), GetActiveSize());
     }
-    wpos_ = rpos_;
+    wpos_ -= rpos_;
     rpos_ = 0;
   }
 }

@@ -28,10 +28,7 @@
 #include "byte_converter.h"
 #include "platform.h"
 #include "log.h"
-#include "buffer_wrap.h"
-#include "asio_wrap.h"
-#include "linear_buffer.h"
-#include "traits_hub.h"
+#include "message_buffer.h"
 
 namespace tpn {
 
@@ -50,14 +47,12 @@ ByteBuffer::ByteBuffer(size_t size, ResizeFlag)
   storage_.resize(size);
 }
 
-template <typename BufferType, bool b>
-ByteBuffer::ByteBuffer(BufferWrap<BufferType, b> &buffer)
-    : rpos_{0}, wpos_{0}, bitpos_{kInitialBitPos}, cur_bit_val_{0} {
-  if (buffer.size()) {
-    Append(buffer.data().data(), buffer.size());
-    buffer.consume(buffer.size());
-  }
-}
+ByteBuffer::ByteBuffer(MessageBuffer &&buffer)
+    : rpos_{0},
+      wpos_{0},
+      bitpos_{kInitialBitPos},
+      cur_bit_val_{0},
+      storage_(buffer.Move()) {}
 
 ByteBuffer::storage_type &&ByteBuffer::Move() noexcept {
   rpos_        = 0;
@@ -134,26 +129,14 @@ const uint8_t *ByteBuffer::GetContents() const {
   return storage_.data();
 }
 
-uint8_t *ByteBuffer::GetBasePointer() { return storage_.data(); }
-
-uint8_t *ByteBuffer::GetReadPointer() { return GetBasePointer() + rpos_; }
-
-uint8_t *ByteBuffer::GetWritePointer() { return GetBasePointer() + wpos_; }
-
-void ByteBuffer::ReadCompleted(size_t bytes) { rpos_ += bytes; }
-
-void ByteBuffer::WriteCompleted(size_t bytes) { wpos_ += bytes; }
-
 size_t ByteBuffer::GetSize() const { return storage_.size(); }
-
-size_t ByteBuffer::GetRemainingSpace() const { return storage_.size() - wpos_; }
 
 bool ByteBuffer::IsEmpty() const { return storage_.empty(); }
 
 void ByteBuffer::Resize(size_t new_size) {
   storage_.resize(new_size, 0);
   rpos_ = 0;
-  wpos_ = 0;
+  wpos_ = GetSize();
 }
 
 void ByteBuffer::Reserve(size_t res_size) {
@@ -332,7 +315,7 @@ ByteBuffer &ByteBuffer::operator<<(const std::string &value) {
   return *this;
 }
 
-ByteBuffer &ByteBuffer::operator<<(std::string_view &value) {
+ByteBuffer &ByteBuffer::operator<<(std::string_view value) {
   if (size_t len = value.length()) {
     Append(reinterpret_cast<const uint8_t *>(value.data()), len);
   }

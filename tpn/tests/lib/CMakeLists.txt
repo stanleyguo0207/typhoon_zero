@@ -22,5 +22,5 @@
 
 add_subdirectory(common)
 add_subdirectory(logger)
-add_subdirectory(proto)
-add_subdirectory(net)
+# add_subdirectory(proto)
+# add_subdirectory(net)
