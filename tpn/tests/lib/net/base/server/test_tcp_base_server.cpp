@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
   std::string_view host = "0.0.0.0";
   std::string_view port = "9990";
 
-  net::TcpServer server;
+  net::TcpServer server(4, 200, 100);
 
   LOG_INFO("Tcp base server start init...");
 
