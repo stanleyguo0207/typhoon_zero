@@ -44,7 +44,7 @@ install(TARGETS test_tcp_base_client DESTINATION ${BIN_DIR}/tests/net)
 
 if(WIN32)
   add_custom_command(TARGET
-		test_logger
+    test_tcp_base_client
     POST_BUILD
       COMMAND
 			${CMAKE_COMMAND} -E copy

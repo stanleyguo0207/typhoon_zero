@@ -234,7 +234,7 @@ IoPool::IoPool(
 
 IoPool::~IoPool() {}
 
-bool IoPool::IoPoolStart() { this->io_pool_uptr_->Start(); }
+bool IoPool::IoPoolStart() { return this->io_pool_uptr_->Start(); }
 
 void IoPool::IoPoolStop() { this->io_pool_uptr_->Stop(); }
 

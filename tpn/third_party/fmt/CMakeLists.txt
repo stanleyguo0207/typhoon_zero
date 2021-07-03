@@ -37,7 +37,6 @@ set(FMT_SOURCES
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/core.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format-inl.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/format.h
-	${CMAKE_CURRENT_SOURCE_DIR}/fmt/locale.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/ostream.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/printf.h
 	${CMAKE_CURRENT_SOURCE_DIR}/fmt/ranges.h
