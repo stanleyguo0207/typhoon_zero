@@ -323,13 +323,13 @@ TEST_CASE("byte_buffer2", "[common]") {
       buffer.data().size());
   fmt::print("buffer data: {} size: {}\n", strv, buffer.data().size());
 
-  ByteBuffer bbuffer(buffer);
-  std::string b_str;
-  bbuffer >> b_str;
-  fmt::print("b_str: {}\n", b_str);
-  fmt::print("buffer size: {}\n", buffer.data().size());
-  auto now = SystemClock::now();
-  bbuffer.AppendPackedTime(SystemClock::to_time_t(now));
-  uint32_t now_time = bbuffer.ReadPackedTime();
-  fmt::print("now time: {}\n", now_time);
+  // ByteBuffer bbuffer(buffer);
+  // std::string b_str;
+  // bbuffer >> b_str;
+  // fmt::print("b_str: {}\n", b_str);
+  // fmt::print("buffer size: {}\n", buffer.data().size());
+  // auto now = SystemClock::now();
+  // bbuffer.AppendPackedTime(SystemClock::to_time_t(now));
+  // uint32_t now_time = bbuffer.ReadPackedTime();
+  // fmt::print("now time: {}\n", now_time);
 }

@@ -593,7 +593,7 @@ void ByteBuffer::Append(const T *src, size_t cnt) {
 
 template <typename T>
 void ByteBuffer::Append(T value) {
-  static_assert(std::is_trivially_copyable<T>::value,
+  static_assert(std::is_trivially_copyable_v<T>,
                 "Append(T) must be used with trivially copyable types");
   tpn::EndianRefMakeLittle(value);
   Append(reinterpret_cast<uint8_t *>(&value), sizeof(value));
@@ -714,9 +714,5 @@ void ByteBuffer::Hexlike() const {
   fmt::print(os, " ");
   LOG_TRACE("BYTEBUFFER PRINT\n{}\n", os.str().c_str());
 }
-
-template TPN_COMMON_API ByteBuffer::ByteBuffer(BufferWrap<LinearBuffer> &);
-
-template TPN_COMMON_API ByteBuffer::ByteBuffer(BufferWrap<asio::streambuf> &);
 
 }  // namespace tpn

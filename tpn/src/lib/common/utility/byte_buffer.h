@@ -289,33 +289,64 @@ class TPN_COMMON_API ByteBuffer {
   ///  @param[in]   len     要写入的字符串长度
   void WriteString(const char *str, size_t len);
 
+  /// 字节流中添加无符号字节数据
+  ///  @param[in]   src     插入数据地址
+  ///  @param[in]   cnt     插入数据字节个数
   void Append(const uint8_t *src, size_t cnt);
 
+  /// 字节流中添加有符号字节数据
+  ///  @param[in]   src     插入数据地址
+  ///  @param[in]   cnt     插入数据字节个数
   void Append(const char *src, size_t cnt);
 
+  /// 字节流中添加T类型数据
+  ///  @param[in]   src     插入数据地址
+  ///  @param[in]   cnt     插入数据字节个数
   template <typename T>
   void Append(const T *src, size_t cnt);
 
+  /// 字节流中添加T类型数据，要求T类型是可平凡复制对象
+  ///  @tparam      T       T类型时可平凡复制对象
+  ///  @param[in]   value   T类型数据
   template <typename T>
   void Append(T value);
 
+  /// 字节流中添加字节流
+  ///  @param[in]   buf     字节流
   void Append(const ByteBuffer &buf);
 
+  /// 字节流中追加stl array数据
+  ///  @param[in]   arr     要插入的字节流数据
   template <size_t Size>
   void Append(const std::array<uint8_t, Size> &arr);
 
+  /// 字节流添加时间
+  ///  @param[in]   time    时间数据
   void AppendPackedTime(time_t time);
 
+  /// 字节流中添加 xyz类型坐标数据
   void AppendPackXYZ(float x, float y, float z);
 
+  /// 打包64位数据
+  ///  @param[in]   value   64位数据
+  ///  @param[out]  mask    掩码
+  ///  @param[out]  result  结果
+  ///  @return 结果大小
   static size_t PackUInt64(uint64_t value, uint8_t *mask, uint8_t *result);
 
+  /// 字节流中添加64位数据
   void AppendPackedUInt64(uint64_t guid);
 
+  /// 打印字节流数据
+  /// 日志模式打开 并且允许TRACE模式本函数有效
   void PrintStorage() const;
 
+  /// 字符形式打印字节流数据
+  /// 日志模式打开 并且允许TRACE模式本函数有效
   void Textlike() const;
 
+  /// 十六进制形式打印字节流数据
+  /// 日志模式打开 并且允许TRACE模式本函数有效
   void Hexlike() const;
 
  private:
