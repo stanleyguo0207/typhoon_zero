@@ -277,26 +277,26 @@ TEST_CASE("file_helper", "[common]") {
   fmt::print("extension: {}\n", path_file.extension());
 }
 
-// buffer_warp
-#include <cstring>
-
-#include "buffer_wrap.h"
-#include "linear_buffer.h"
-
-TEST_CASE("buffer_wrap", "[common]") {
-  BufferWrap<LinearBuffer> buffer(4096, 1024);
-  string str = "hello world!";
-  int len    = str.length() + 1;
-  std::memcpy(buffer.prepare(str.length() + 1).data(), str.data(), len);
-  buffer.commit(len);
-
-  std::string_view strv(
-      reinterpret_cast<std::string_view::const_pointer>(buffer.data().data()),
-      buffer.data().size());
-  fmt::print("buffer data: {} size: {}\n", strv, buffer.data().size());
-  buffer.consume(buffer.data().size());
-  fmt::print("buffer size: {}\n", buffer.data().size());
-}
+// // buffer_warp
+// #include <cstring>
+//
+// #include "buffer_wrap.h"
+// #include "linear_buffer.h"
+//
+// TEST_CASE("buffer_wrap", "[common]") {
+//   BufferWrap<LinearBuffer> buffer(4096, 1024);
+//   string str = "hello world!";
+//   int len    = str.length() + 1;
+//   std::memcpy(buffer.prepare(str.length() + 1).data(), str.data(), len);
+//   buffer.commit(len);
+//
+//   std::string_view strv(
+//       reinterpret_cast<std::string_view::const_pointer>(buffer.data().data()),
+//       buffer.data().size());
+//   fmt::print("buffer data: {} size: {}\n", strv, buffer.data().size());
+//   buffer.consume(buffer.data().size());
+//   fmt::print("buffer size: {}\n", buffer.data().size());
+// }
 
 // byte_buffer
 #include "byte_buffer.h"
@@ -311,25 +311,25 @@ TEST_CASE("byte_buffer", "[common]") {
   fmt::print("now time: {}\n", now_time);
 }
 
-TEST_CASE("byte_buffer2", "[common]") {
-  // BufferWrap<LinearBuffer> buffer(4096, 1024);
-  BufferWrap<asio::streambuf> buffer(4096, 1024);
-  string str = "hello world!";
-  int len    = str.length() + 1;
-  std::memcpy(buffer.prepare(str.length() + 1).data(), str.data(), len);
-  buffer.commit(len);
-  std::string_view strv(
-      reinterpret_cast<std::string_view::const_pointer>(buffer.data().data()),
-      buffer.data().size());
-  fmt::print("buffer data: {} size: {}\n", strv, buffer.data().size());
-
-  // ByteBuffer bbuffer(buffer);
-  // std::string b_str;
-  // bbuffer >> b_str;
-  // fmt::print("b_str: {}\n", b_str);
-  // fmt::print("buffer size: {}\n", buffer.data().size());
-  // auto now = SystemClock::now();
-  // bbuffer.AppendPackedTime(SystemClock::to_time_t(now));
-  // uint32_t now_time = bbuffer.ReadPackedTime();
-  // fmt::print("now time: {}\n", now_time);
-}
+// TEST_CASE("byte_buffer2", "[common]") {
+//   // BufferWrap<LinearBuffer> buffer(4096, 1024);
+//   BufferWrap<asio::streambuf> buffer(4096, 1024);
+//   string str = "hello world!";
+//   int len    = str.length() + 1;
+//   std::memcpy(buffer.prepare(str.length() + 1).data(), str.data(), len);
+//   buffer.commit(len);
+//   std::string_view strv(
+//       reinterpret_cast<std::string_view::const_pointer>(buffer.data().data()),
+//       buffer.data().size());
+//   fmt::print("buffer data: {} size: {}\n", strv, buffer.data().size());
+//
+//   // ByteBuffer bbuffer(buffer);
+//   // std::string b_str;
+//   // bbuffer >> b_str;
+//   // fmt::print("b_str: {}\n", b_str);
+//   // fmt::print("buffer size: {}\n", buffer.data().size());
+//   // auto now = SystemClock::now();
+//   // bbuffer.AppendPackedTime(SystemClock::to_time_t(now));
+//   // uint32_t now_time = bbuffer.ReadPackedTime();
+//   // fmt::print("now time: {}\n", now_time);
+// }

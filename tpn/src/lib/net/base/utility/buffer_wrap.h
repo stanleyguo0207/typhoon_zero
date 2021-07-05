@@ -20,8 +20,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_BUFFER_WRAP_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_BUFFER_WRAP_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_BUFFER_WRAP_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_BUFFER_WRAP_H_
 
 #include <limits>
 #include <memory>
@@ -31,6 +31,8 @@
 #include "asio_wrap.h"
 
 namespace tpn {
+
+namespace net {
 
 /// 空缓冲区
 /// 接口参考 @see asio::basic_streambuf
@@ -299,6 +301,8 @@ class BufferWrap<EmptyBuffer, false> : public EmptyBuffer {
   TPN_DEFAULT_MOVE(BufferWrap)
 };
 
+}  // namespace net
+
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_BUFFER_WRAP_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_BUFFER_WRAP_H_

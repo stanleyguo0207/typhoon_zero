@@ -58,6 +58,7 @@ target_link_libraries(net
     typhoon-core-interface
   PUBLIC
     common
+    proto
   )
 
 # export

@@ -31,6 +31,102 @@
 #include "log.h"
 #include "net_error.h"
 
+// base
+#define TPN_NET_BASE_CLASS_DECL(Keyword)   \
+  TEMPLATE_DECL_2 Keyword Connect;         \
+  TEMPLATE_DECL_2 Keyword Disconnect;      \
+  TEMPLATE_DECL_2 Keyword EventQueue;      \
+  TEMPLATE_DECL_2 Keyword EventQueueGuard; \
+  TEMPLATE_DECL_2 Keyword LocalEndpoint;   \
+  TEMPLATE_DECL_2 Keyword AliveTime;       \
+  TEMPLATE_DECL_2 Keyword ConnectTime;     \
+  TEMPLATE_DECL_2 Keyword ConnectTimeout;  \
+  TEMPLATE_DECL_2 Keyword ReconnectTimer;  \
+  TEMPLATE_DECL_2 Keyword SilenceTimer;    \
+  TEMPLATE_DECL_2 Keyword UserTimer;       \
+  TEMPLATE_DECL_2 Keyword PostWrap;        \
+  TEMPLATE_DECL_2 Keyword Socket;          \
+  TEMPLATE_DECL_1 Keyword SessionMgr;
+
+// tcp base
+#define TPN_NET_TCP_BASE_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword TcpKeepAlive;      \
+  TEMPLATE_DECL_2 Keyword TcpRecv;           \
+  TEMPLATE_DECL_2_BOOL Keyword SslContext;   \
+  TEMPLATE_DECL_2 Keyword SslStream;
+
+// tcp client
+#define TPN_NET_TCP_CLIENT_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword ClientBase;          \
+  TEMPLATE_DECL_2 Keyword TcpClientBase;       \
+  TEMPLATE_DECL_2 Keyword TcpSslClientBase;
+
+// tcp server
+#define TPN_NET_TCP_SERVER_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword ServerBase;          \
+  TEMPLATE_DECL_2 Keyword TcpServerBase;       \
+  TEMPLATE_DECL_2 Keyword TcpSslServerBase;
+
+// tcp session
+#define TPN_NET_TCP_SESSION_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword SessionBase;          \
+  TEMPLATE_DECL_2 Keyword TcpSessionBase;       \
+  TEMPLATE_DECL_2 Keyword TcpSslSessionBase;
+
+// udp base
+#define TPN_NET_UDP_BASE_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword KcpStream;         \
+  TEMPLATE_DECL_2 Keyword UdpSendWrap;
+
+// udp client
+#define TPN_NET_UDP_CLIENT_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword ClientBase;          \
+  TEMPLATE_DECL_2 Keyword UdpClientBase;
+
+// udp server
+#define TPN_NET_UDP_SERVER_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword ServerBase;          \
+  TEMPLATE_DECL_2 Keyword UdpServerBase;
+
+// udp session
+#define TPN_NET_UDP_SESSION_CLASS_DECL(Keyword) \
+  TEMPLATE_DECL_2 Keyword SessionBase;          \
+  TEMPLATE_DECL_2 Keyword UdpSessionBase;
+
+// clang-format off
+
+// base class forward
+#define TPN_NET_FORWARD_DECL_BASE_CLASS         TPN_NET_BASE_CLASS_DECL(class)
+
+// base class friend
+#define TPN_NET_FRIEND_DECL_BASE_CLASS          TPN_NET_BASE_CLASS_DECL(friend class)
+
+// tcp class forward
+#define TPN_NET_FORWARD_DECL_TCP_BASE_CLASS     TPN_NET_TCP_BASE_CLASS_DECL(class)
+#define TPN_NET_FORWARD_DECL_TCP_CLIENT_CLASS   TPN_NET_TCP_CLIENT_CLASS_DECL(class)
+#define TPN_NET_FORWARD_DECL_TCP_SERVER_CLASS   TPN_NET_TCP_SERVER_CLASS_DECL(class)
+#define TPN_NET_FORWARD_DECL_TCP_SESSION_CLASS  TPN_NET_TCP_SESSION_CLASS_DECL(class)
+
+// tcp class friend
+#define TPN_NET_FRIEND_DECL_TCP_BASE_CLASS      TPN_NET_TCP_BASE_CLASS_DECL(friend class)
+#define TPN_NET_FRIEND_DECL_TCP_CLIENT_CLASS    TPN_NET_TCP_CLIENT_CLASS_DECL(friend class)
+#define TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS    TPN_NET_TCP_SERVER_CLASS_DECL(friend class)
+#define TPN_NET_FRIEND_DECL_TCP_SESSION_CLASS   TPN_NET_TCP_SESSION_CLASS_DECL(friend class)
+
+// udp class forward
+#define TPN_NET_FORWARD_DECL_UDP_BASE_CLASS     TPN_NET_UDP_BASE_CLASS_DECL(class)
+#define TPN_NET_FORWARD_DECL_UDP_CLIENT_CLASS   TPN_NET_UDP_CLIENT_CLASS_DECL(class)
+#define TPN_NET_FORWARD_DECL_UDP_SERVER_CLASS   TPN_NET_UDP_SERVER_CLASS_DECL(class)
+#define TPN_NET_FORWARD_DECL_UDP_SESSION_CLASS  TPN_NET_UDP_SESSION_CLASS_DECL(class)
+
+// udp class friend
+#define TPN_NET_FRIEND_DECL_UDP_BASE_CLASS      TPN_NET_UDP_BASE_CLASS_DECL(friend class)
+#define TPN_NET_FRIEND_DECL_UDP_CLIENT_CLASS    TPN_NET_UDP_CLIENT_CLASS_DECL(friend class)
+#define TPN_NET_FRIEND_DECL_UDP_SERVER_CLASS    TPN_NET_UDP_SERVER_CLASS_DECL(friend class)
+#define TPN_NET_FRIEND_DECL_UDP_SESSION_CLASS   TPN_NET_UDP_SESSION_CLASS_DECL(friend class)
+
+// clang-format on
+
 namespace tpn {
 
 namespace net {

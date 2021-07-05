@@ -25,7 +25,21 @@
 
 namespace tpn {
 
-namespace net {}  // namespace net
+namespace net {
+
+TPN_NET_FORWARD_DECL_BASE_CLASS
+
+/// 网络层服务器基类
+///  @tparam  Derived     服务器子类
+///  @tparam  SessionType 网络层会话类型
+template <typename Derived, typename SessionType>
+class ServerBase : public CRTPObject<Derived, false> {
+  TPN_NET_FRIEND_DECL_BASE_CLASS
+ public:
+ protected:
+};
+
+}  // namespace net
 
 }  // namespace tpn
 
