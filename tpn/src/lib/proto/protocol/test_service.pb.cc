@@ -902,15 +902,15 @@ void TestService1::ProcessClientRequest11(const ::tpn::protocol::SearchRequest *
 void TestService1::ProcessClientRequest12(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client /*= false*/, bool server /*= false*/) {
   LOG_DEBUG("{} Server called client method TestService1.ProcessClientRequest12(tpn.protocol.SearchRequest{{ {} }})",
     GetCallerInfo(), request->ShortDebugString());
-  std::function<void(ByteBuffer)> callback = [response_callback](ByteBuffer buffer) -> void {
+  std::function<void(MessageBuffer)> callback = [response_callback](MessageBuffer buffer) -> void {
     ::tpn::protocol::SearchResponse response;
-    if (response.ParseFromArray(buffer.GetContents(), buffer.GetSize()))
+    if (response.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize()))
       response_callback(&response);
   };
   SendRequest(service_hash_, 2 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request, std::move(callback));
 }
 
-void TestService1::CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer /*buffer*/) {
+void TestService1::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer /*buffer*/) {
   LOG_ERROR("{} Server tried to call server method {}",
     GetCallerInfo(), method_id);
 }
@@ -928,11 +928,11 @@ const google::protobuf::ServiceDescriptor *TestService2::descriptor() {
   return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[1];
 }
 
-void TestService2::CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer buffer) {
+void TestService2::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) {
   switch(method_id & 0x3FFFFFFF) {
     case 1: {
       ::tpn::protocol::SearchRequest request;
-      if (!request.ParseFromArray(buffer.GetContents(), buffer.GetSize())) {
+      if (!request.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize())) {
         LOG_DEBUG("{} Failed to parse request for TestService2.ProcessClientRequest21 server method call.", GetCallerInfo());
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
@@ -946,7 +946,7 @@ void TestService2::CallServerMethod(uint32_t token, uint32_t method_id, ByteBuff
     }
     case 2: {
       ::tpn::protocol::SearchRequest request;
-      if (!request.ParseFromArray(buffer.GetContents(), buffer.GetSize())) {
+      if (!request.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize())) {
         LOG_DEBUG("{} Failed to parse request for TestService2.ProcessClientRequest22 server method call.", GetCallerInfo());
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
@@ -1011,19 +1011,19 @@ void TestService3::ProcessClientRequest31(const ::tpn::protocol::SearchRequest *
 void TestService3::ProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client /*= false*/, bool server /*= false*/) {
   LOG_DEBUG("{} Server called client method TestService3.ProcessClientRequest32(tpn.protocol.SearchRequest{{ {} }})",
     GetCallerInfo(), request->ShortDebugString());
-  std::function<void(ByteBuffer)> callback = [response_callback](ByteBuffer buffer) -> void {
+  std::function<void(MessageBuffer)> callback = [response_callback](MessageBuffer buffer) -> void {
     ::tpn::protocol::SearchResponse response;
-    if (response.ParseFromArray(buffer.GetContents(), buffer.GetSize()))
+    if (response.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize()))
       response_callback(&response);
   };
   SendRequest(service_hash_, 2 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request, std::move(callback));
 }
 
-void TestService3::CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer buffer) {
+void TestService3::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) {
   switch(method_id & 0x3FFFFFFF) {
     case 1: {
       ::tpn::protocol::SearchRequest request;
-      if (!request.ParseFromArray(buffer.GetContents(), buffer.GetSize())) {
+      if (!request.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize())) {
         LOG_DEBUG("{} Failed to parse request for TestService3.ProcessClientRequest31 server method call.", GetCallerInfo());
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
@@ -1037,7 +1037,7 @@ void TestService3::CallServerMethod(uint32_t token, uint32_t method_id, ByteBuff
     }
     case 2: {
       ::tpn::protocol::SearchRequest request;
-      if (!request.ParseFromArray(buffer.GetContents(), buffer.GetSize())) {
+      if (!request.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize())) {
         LOG_DEBUG("{} Failed to parse request for TestService3.ProcessClientRequest32 server method call.", GetCallerInfo());
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;

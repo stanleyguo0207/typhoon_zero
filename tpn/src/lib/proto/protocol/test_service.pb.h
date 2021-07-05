@@ -34,7 +34,7 @@
 #include <google/protobuf/unknown_field_set.h>
 #include "type/rpc_type.pb.h"
 #include "service_base.h"
-#include "byte_buffer.h"
+#include "message_buffer.h"
 #include <functional>
 #include <type_traits>
 // @@protoc_insertion_point(includes)
@@ -596,7 +596,7 @@ class TestService1 : public ServiceBase {
   void ProcessClientRequest11(const ::tpn::protocol::SearchRequest *request, bool client = false, bool server = false);
   void ProcessClientRequest12(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client = false, bool server = false);
 
-  void CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer buffer) final;
+  void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
  private:
   uint32_t service_hash_{0};
 
@@ -615,7 +615,7 @@ class TestService2 : public ServiceBase {
 
   static const google::protobuf::ServiceDescriptor *descriptor();
 
-  void CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer buffer) final;
+  void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
  protected:
   // server methods --------------------------------------------------
   virtual uint32_t HandleProcessClientRequest21(const ::tpn::protocol::SearchRequest *request);
@@ -643,7 +643,7 @@ class TestService3 : public ServiceBase {
   void ProcessClientRequest31(const ::tpn::protocol::SearchRequest *request, bool client = false, bool server = false);
   void ProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client = false, bool server = false);
 
-  void CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer buffer) final;
+  void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
  protected:
   // server methods --------------------------------------------------
   virtual uint32_t HandleProcessClientRequest31(const ::tpn::protocol::SearchRequest *request);

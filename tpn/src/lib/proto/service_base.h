@@ -27,7 +27,7 @@
 #include <functional>
 
 #include "define.h"
-#include "byte_buffer.h"
+#include "message_buffer.h"
 
 namespace google {
 
@@ -52,7 +52,7 @@ class TPN_PROTO_API ServiceBase {
   ///  @param[in]   method_id   对应服务中的方法编号
   ///  @param[in]   buffer      RPC数据
   virtual void CallServerMethod(uint32_t token, uint32_t method_id,
-                                ByteBuffer buffer) = 0;
+                                MessageBuffer buffer) = 0;
 
  protected:
   /// 请求
@@ -62,7 +62,7 @@ class TPN_PROTO_API ServiceBase {
   ///  @param[in]   callback        回应回调
   virtual void SendRequest(uint32_t service_hash, uint32_t method_id,
                            const google::protobuf::Message *request,
-                           std::function<void(ByteBuffer)> callback) = 0;
+                           std::function<void(MessageBuffer)> callback) = 0;
 
   /// 请求
   ///  @param[in]   service_hash    服务key

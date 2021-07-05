@@ -111,7 +111,7 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
   }
 
   printer->Print(
-      "void CallServerMethod(uint32_t token, uint32_t method_id, ByteBuffer "
+      "void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer "
       "buffer) final;");
 
   // server
@@ -177,7 +177,7 @@ void ServiceGenerator::GenerateImplementation(io::Printer *printer) {
     printer->Print(
         vars_,
         "void $classname$::CallServerMethod(uint32_t token, uint32_t "
-        "method_id, ByteBuffer /*buffer*/) {\n"
+        "method_id, MessageBuffer /*buffer*/) {\n"
         "  LOG_ERROR(\"{} Server tried to call server method {}\",\n"
         "    GetCallerInfo(), method_id);\n"
         "}\n"
@@ -268,11 +268,11 @@ void ServiceGenerator::GenerateClientMethodImplementations(
           "  LOG_DEBUG(\"{} Server called client method "
           "$full_name$($input_type_name${{ {} }})\",\n"
           "    GetCallerInfo(), request->ShortDebugString());\n"
-          "  std::function<void(ByteBuffer)> callback = "
-          "[response_callback](ByteBuffer buffer) -> void {\n"
+          "  std::function<void(MessageBuffer)> callback = "
+          "[response_callback](MessageBuffer buffer) -> void {\n"
           "    $output_type$ response;\n"
-          "    if (response.ParseFromArray(buffer.GetContents(), "
-          "buffer.GetSize()))\n"
+          "    if (response.ParseFromArray(buffer.GetReadPointer(), "
+          "buffer.GetActiveSize()))\n"
           "      response_callback(&response);\n"
           "  };\n"
           "  SendRequest(service_hash_, $method_id$ | (client ? 0x40000000 : "
@@ -298,7 +298,7 @@ void ServiceGenerator::GenerateClientMethodImplementations(
 void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
   printer->Print(vars_,
                  "void $classname$::CallServerMethod(uint32_t token, uint32_t "
-                 "method_id, ByteBuffer buffer) {\n"
+                 "method_id, MessageBuffer buffer) {\n"
                  "  switch(method_id & 0x3FFFFFFF) {\n");
 
   for (int i = 0; i < descriptor_->method_count(); i++) {
@@ -320,8 +320,8 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
     printer->Print(sub_vars,
                    "    case $method_id$: {\n"
                    "      $input_type$ request;\n"
-                   "      if (!request.ParseFromArray(buffer.GetContents(), "
-                   "buffer.GetSize())) {\n"
+                   "      if (!request.ParseFromArray(buffer.GetReadPointer(), "
+                   "buffer.GetActiveSize())) {\n"
                    "        LOG_DEBUG(\"{} Failed to parse request for "
                    "$full_name$ server method call.\", GetCallerInfo());\n"
                    "        SendResponse(service_hash_, method_id, token, "
