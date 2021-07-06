@@ -31,6 +31,8 @@ namespace tpn {
 
 namespace net {
 
+/// 延迟任务包裹
+/// 析构时自动调用注册的延迟任务
 class DeferWrap {
  public:
   DeferWrap() = default;
@@ -41,6 +43,11 @@ class DeferWrap {
     }
   }
 
+  /// 构造函数
+  ///  @tparam      Func    任务函数类型
+  ///  @tparam      Args... 任务函数所需参数类型
+  ///  @param[in]   func    任务函数
+  ///  @param[in]   args... 任务函数所需参数
   template <typename Func, typename... Args>
   explicit DeferWrap(Func &&func, Args &&...args) {
     this->task_ =

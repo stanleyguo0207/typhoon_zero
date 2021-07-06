@@ -32,20 +32,20 @@
 #include "net_error.h"
 
 // base
-#define TPN_NET_BASE_CLASS_DECL(Keyword)   \
-  TEMPLATE_DECL_2 Keyword Connect;         \
-  TEMPLATE_DECL_2 Keyword Disconnect;      \
-  TEMPLATE_DECL_2 Keyword EventQueue;      \
-  TEMPLATE_DECL_2 Keyword EventQueueGuard; \
-  TEMPLATE_DECL_2 Keyword LocalEndpoint;   \
-  TEMPLATE_DECL_2 Keyword AliveTime;       \
-  TEMPLATE_DECL_2 Keyword ConnectTime;     \
-  TEMPLATE_DECL_2 Keyword ConnectTimeout;  \
-  TEMPLATE_DECL_2 Keyword ReconnectTimer;  \
-  TEMPLATE_DECL_2 Keyword SilenceTimer;    \
-  TEMPLATE_DECL_2 Keyword UserTimer;       \
-  TEMPLATE_DECL_2 Keyword PostWrap;        \
-  TEMPLATE_DECL_2 Keyword Socket;          \
+#define TPN_NET_BASE_CLASS_DECL(Keyword)       \
+  TEMPLATE_DECL_2 Keyword Connect;             \
+  TEMPLATE_DECL_2 Keyword Disconnect;          \
+  TEMPLATE_DECL_2 Keyword EventQueue;          \
+  TEMPLATE_DECL_2 Keyword EventQueueGuard;     \
+  TEMPLATE_DECL_2 Keyword LocalEndpoint;       \
+  TEMPLATE_DECL_2 Keyword AliveTime;           \
+  TEMPLATE_DECL_2 Keyword ConnectTime;         \
+  TEMPLATE_DECL_2 Keyword ConnectTimeoutTimer; \
+  TEMPLATE_DECL_2 Keyword ReconnectTimer;      \
+  TEMPLATE_DECL_2 Keyword SilenceTimer;        \
+  TEMPLATE_DECL_2 Keyword UserTimer;           \
+  TEMPLATE_DECL_2 Keyword PostWrap;            \
+  TEMPLATE_DECL_2 Keyword Socket;              \
   TEMPLATE_DECL_1 Keyword SessionMgr;
 
 // tcp base

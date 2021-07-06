@@ -20,8 +20,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_LOCAL_ENDPOINT_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_LOCAL_ENDPOINT_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_LOCAL_EDNPOINT_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_LOCAL_EDNPOINT_H_
 
 #include "net_common.h"
 
@@ -102,4 +102,4 @@ class LocalEndpoint {
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_LOCAL_ENDPOINT_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_LOCAL_EDNPOINT_H_

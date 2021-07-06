@@ -23,6 +23,18 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_SERVER_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_SERVER_H_
 
+#include <atomic>
+#include <memory>
+#include <functional>
+#include <type_traits>
+
+#include "crtp_object.h"
+#include "net_common.h"
+#include "io_pool.h"
+#include "session_mgr.h"
+#include "custom_allocator.h"
+#include "post_wrap.h"
+
 namespace tpn {
 
 namespace net {
@@ -33,10 +45,144 @@ TPN_NET_FORWARD_DECL_BASE_CLASS
 ///  @tparam  Derived     服务器子类
 ///  @tparam  SessionType 网络层会话类型
 template <typename Derived, typename SessionType>
-class ServerBase : public CRTPObject<Derived, false> {
+class ServerBase : public CRTPObject<Derived, false>,
+                   public IoPool,
+                   public PostWrap<Derived> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
+
  public:
+  using Super = CRTPObject<Derived, false>;
+  using Self  = ServerBase<Derived, SessionType>;
+
+  /// 构造函数
+  ///  @param[in]   concurrency_hint    io对象池大小 默认 cpu个数 x2
+  explicit ServerBase(
+      size_t concurrency_hint = std::thread::hardware_concurrency() * 2)
+      : Super(),
+        IoPool(concurrency_hint),
+        PostWrap<Derived>(),
+        io_handle_(GetIoHandleByIndex(0)),
+        session_mgr_(io_handle_),
+        rallocator_(),
+        wallocator_() {}
+
+  ~ServerBase() = default;
+
+  /// 基类服务器启动
+  TPN_INLINE bool Start() {
+    NET_DEBUG("ServerBase Start state {}", ToNetStateStr(this->state_));
+    return true;
+  }
+
+  /// 基类服务器关闭
+  TPN_INLINE void Stop() {
+    if (!this->io_handle_.GetStrand().running_in_this_thread()) {
+      NET_DEBUG(
+          "ServerBase Stop not running in this thread PostWrap to strand io");
+      this->GetDerivedObj().Post(
+          [this, this_ptr = this->GetSelfSptr()]() mutable { this->Stop(); });
+      return;
+    }
+
+    NET_DEBUG("ServerBase Stop state {}", ToNetStateStr(this->state_));
+
+    // 停止所有post中的任务
+    this->StopAllPostedTasks();
+  }
+
+  /// 服务器是否启动
+  ///  @return 启动返回true
+  TPN_INLINE bool IsStarted() {
+    return NetState::kNetStateStarted == this->state_;
+  }
+
+  /// 服务器是否关闭
+  ///  @return 关闭返回true
+  TPN_INLINE bool IsStopped() {
+    return NetState::kNetStateStopped == this->state_;
+  }
+
+  /// 获取服务器中注册的网络会话数量
+  ///  @return 服务器中注册的网络会话数量
+  TPN_INLINE size_t GetSessionCount() { return this->session_mgr_.GetSize(); }
+
+  /// 对注册的网络会话进行函数操作
+  ///  @param[in]   fn      函数操作 函数签名 void(std::shared_ptr<SessionType> &)
+  ///  @return CRTP调用链对象
+  TPN_INLINE Derived &ApplyAllSession(
+      const std::function<void(std::shared_ptr<SessionType> &)> &fn) {
+    this->session_mgr_.ApplyAll(fn);
+    return this->GetDerivedObj();
+  }
+
+  /// 对注册过的网络会话进行条件查找
+  ///  @param[in]   fn      函数操作 函数签名 void(std::shared_ptr<SessionType> &)
+  ///  @return 满足条件的对象，找不到返回空对象
+  TPN_INLINE std::shared_ptr<SessionType> FindSessionIf(
+      const std::function<void(std::shared_ptr<SessionType> &)> &fn) {
+    return std::shared_ptr<SessionType>(this->session_mgr_.FindIf(fn));
+  }
+
+  /// 获取网络接受器
+  ///  @return 网络接受器
+  TPN_INLINE auto &GetAcceptor() { return this->GetDerivedObj().GetAcceptor(); }
+
+  /// 获取网络监听地址
+  ///  @return 网络监听地址
+  TPN_INLINE std::string GetListenAddress() {
+    try {
+      return this->GetAcceptor().local_endpoint().address().to_string();
+    } catch (std::system_error &e) {
+      NET_ERROR("ServerBase GetListenAddress error {}", e.code());
+      SetLastError(e);
+    }
+
+    return std::string();
+  }
+
+  /// 获取网络监听端口
+  ///  @return 网络监听端口
+  TPN_INLINE unsigned short GetListenPort() {
+    try {
+      return this->GetAcceptor().local_endpoint().port();
+    } catch (std::system_error &e) {
+      NET_ERROR("ServerBase GetListenPort error {}", e.code());
+      SetLastError(e);
+    }
+
+    return static_cast<unsigned short>(0);
+  }
+
+  /// 获取io句柄
+  TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }
+
  protected:
+  /// 获取网络状态
+  ///  @return 当前服务器网络状态
+  TPN_INLINE std::atomic<NetState> &GetNetState() { return this->state_; }
+
+  /// 获取服务器会话管理器
+  ///  @return 服务器会话管理器
+  TPN_INLINE SessionMgr<SessionType> &GetSessionMgr() {
+    return this->session_mgr_;
+  }
+
+  /// 获取用于 acceptor 的内存分配器
+  TPN_INLINE auto &GetReadAllocator() { return this->rallocator_; }
+
+  /// 获取用于 send/write/post 的内存分配器
+  TPN_INLINE auto &GetWriteAllocator() { return this->wallocator_; }
+
+ protected:
+  IoHandle &io_handle_;  ///< 包含(io_context和strand)，用来处理接受事件
+  std::atomic<NetState> state_ = NetState::kNetStateStopped;  ///< 服务状态
+  SessionMgr<SessionType> session_mgr_;  ///< 会话管理器
+  std::shared_ptr<void>
+      counter_sptr_;  ///< 用来确保服务器在所有会话停止后才停止
+  HandlerMemory<SizeOp<>, std::false_type>
+      rallocator_;  ///< 用户自定义内存用来处理 acceptor
+  HandlerMemory<SizeOp<>, std::true_type>
+      wallocator_;  ///< 用户自定义内存用来处理 send/write/post
 };
 
 }  // namespace net

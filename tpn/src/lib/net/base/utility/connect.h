@@ -60,8 +60,8 @@ class ConnectBase<Derived, ArgsType, false> {
   using endpoints_iterator = typename endpoints_type::iterator;  ///< 端点迭代器
 
  protected:
-  std::string host_;          ///<  地址
-  std::string port_;          ///<  端口
+  std::string host_;          ///<  远端地址
+  std::string port_;          ///<  远端端口
   endpoints_type endpoints_;  ///<  端点
 };
 

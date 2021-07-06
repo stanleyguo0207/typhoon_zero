@@ -20,43 +20,47 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_CONNECT_TIME_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_CONNECT_TIME_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_SESSION_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_SESSION_H_
 
 #include "net_common.h"
-#include "chrono_wrap.h"
+#include "session.h"
 
 namespace tpn {
 
 namespace net {
 
-template <typename Derived, typename ArgsType = void>
-class ConnectTime {
+TPN_NET_FORWARD_DECL_BASE_CLASS
+TPN_NET_FORWARD_DECL_TCP_BASE_CLASS
+TPN_NET_FORWARD_DECL_TCP_SERVER_CLASS
+TPN_NET_FORWARD_DECL_TCP_SESSION_CLASS
+
+struct TemplateArgsTcpSession {
+  static constexpr bool is_session = true;
+  static constexpr bool is_client  = false;
+
+  using socket_type = asio::ip::tcp::socket;
+  using buffer_type = asio::streambuf;
+};
+
+template <typename Derived, typename ArgsType>
+class TcpSessionBase : public SessionBase<Derived, ArgsType> {
+  TPN_NET_FRIEND_DECL_BASE_CLASS
+  TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
+  TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS
+  TPN_NET_FRIEND_DECL_TCP_SESSION_CLASS
+
  public:
-  ConnectTime()  = default;
-  ~ConnectTime() = default;
+  explicit TcpSessionBase() {}
+};
 
-  TPN_INLINE SystemClock::time_point GetConnectTime() const {
-    return this->connect_time_;
-  }
-
-  TPN_INLINE Derived &ResetConnectTime() {
-    this->connect_time_ = SystemClock::now();
-    NET_DEBUG("reset connect time");
-    return (CRTP_CAST(this));
-  }
-
-  TPN_INLINE SystemClock::duration GetConnectDuration() const {
-    return std::chrono::duration_cast<SystemClock::duration>(
-        SystemClock::now() - this->connect_time_);
-  }
-
- protected:
-  SystemClock::time_point connect_time_{SystemClock::now()};  ///<  连接时间点
+class TcpSession : public TcpSessionBase<TcpSession, TemplateArgsTcpSession> {
+ public:
+  using TcpSessionBase<TcpSession, TemplateArgsTcpSession>::TcpSessionBase;
 };
 
 }  // namespace net
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_CONNECT_TIME_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_SESSION_H_

@@ -20,36 +20,40 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "net_error.h"
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_CLIENT_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_CLIENT_H_
+
+#include "net_common.h"
+#include "client.h"
 
 namespace tpn {
 
 namespace net {
 
-namespace {
+struct TemplateArgsTcpClient {
+  static constexpr bool is_session = false;
+  static constexpr bool is_client  = true;
 
-thread_local static std::error_code s_ec_last;
+  using socket_type = asio::ip::tcp::socket;
+  using buffer_type = asio::streambuf;
+};
 
-}  // namespace
+template <typename Derived, typename ArgsType>
+class TcpClientBase : public ClientBase<Derived, ArgsType> {
+  TPN_NET_FRIEND_DECL_BASE_CLASS
+  TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
+  TPN_NET_FRIEND_DECL_TCP_CLIENT_CLASS
+ public:
+  explicit TcpClientBase() {}
+};
 
-void SetLastError(int ec) { s_ec_last.assign(ec, std::system_category()); }
-
-void SetLastError(int ec, const std::error_category &ecat) {
-  s_ec_last.assign(ec, ecat);
-}
-
-void SetLastError(const std::error_code &ec) { s_ec_last = ec; }
-
-void SetLastError(const std::system_error &e) { s_ec_last = e.code(); }
-
-void ClearLastError() { s_ec_last.clear(); }
-
-std::error_code &GetLastError() { return s_ec_last; }
-
-int GetLastErrorVal() { return s_ec_last.value(); }
-
-std::string GetLastErrorMsg() { return s_ec_last.message(); }
+class TcpClient : public TcpClientBase<TcpClient, TemplateArgsTcpClient> {
+ public:
+  using TcpClientBase<TcpClient, TemplateArgsTcpClient>::TcpClientBase;
+};
 
 }  // namespace net
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_CLIENT_H_

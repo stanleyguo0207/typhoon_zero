@@ -20,9 +20,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_ALIVE_TIME_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_ALIVE_TIME_H_
-
 #include "net_common.h"
 #include "chrono_wrap.h"
 
@@ -30,34 +27,36 @@ namespace tpn {
 
 namespace net {
 
+/// 连接时间
 template <typename Derived, typename ArgsType = void>
-class AliveTime {
+class ConnectTime {
  public:
-  AliveTime()  = default;
-  ~AliveTime() = default;
+  ConnectTime()  = default;
+  ~ConnectTime() = default;
 
-  TPN_INLINE SystemClock::time_point GetLastAliveTime() const {
-    return this->last_alive_time_;
+  /// 获取连接时间点
+  ///  @return 连接时间点
+  TPN_INLINE SystemClock::time_point GetConnectTime() const {
+    return this->connect_time_;
   }
 
-  TPN_INLINE Derived &UpdateAliveTime() {
-    this->last_alive_time_ = SystemClock::now();
-    NET_DEBUG("update alive time");
+  /// 重置连接时间点
+  TPN_INLINE Derived &ResetConnectTime() {
+    this->connect_time_ = SystemClock::now();
+    NET_DEBUG("reset connect time");
     return (CRTP_CAST(this));
   }
 
-  TPN_INLINE SystemClock::duration GetSilenceDuration() const {
+  /// 获取连接时长
+  TPN_INLINE SystemClock::duration GetConnectDuration() const {
     return std::chrono::duration_cast<SystemClock::duration>(
-        SystemClock::now() - this->last_alive_time_);
+        SystemClock::now() - this->connect_time_);
   }
 
  protected:
-  SystemClock::time_point last_alive_time_{
-      SystemClock::now()};  ///<  上次存活时间点
+  SystemClock::time_point connect_time_{SystemClock::now()};  ///<  连接时间点
 };
 
 }  // namespace net
 
 }  // namespace tpn
-
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_ALIVE_TIME_H_

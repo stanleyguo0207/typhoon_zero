@@ -34,30 +34,47 @@ namespace tpn {
 
 namespace net {
 
+/// 静默定时器 收包间隔
+///  @tparam  Derived
+///  @tparam  ArgsType
 template <typename Derived, typename ArgsType = void>
 class SilenceTimer {
  public:
-  explicit SilenceTimer(IoHandle &silence_timer_io_handle)
-      : silence_timer_(silence_timer_io_handle.GetIoContext()) {
+  /// 构造函数
+  ///  @param[in]  io_handle    timer执行的io句柄
+  explicit SilenceTimer(IoHandle &io_handle)
+      : silence_timer_(io_handle.GetIoContext()) {
     this->silence_timer_canceled_.clear();
   }
 
   ~SilenceTimer() = default;
 
-  TPN_INLINE SteadyClock::duration GetSilenceTimeout() const {
+  /// 获取静默时长持续时间
+  ///  @return 静默时长持续时间
+  TPN_INLINE SteadyClock::duration GetSilenceTimeoutDuration() const {
     return this->silence_timeout_;
   }
 
+  /// 设置静默持续时间 默认60分钟g
+  ///  @tapram      Rep
+  ///  @tapram      Period
+  ///  @param[in]   timeout     超时持续时间
+  ///  @return CRTP调用链对象
   template <typename Rep, typename Period>
-  TPN_INLINE Derived &SetSilenceTimeout(
-      std::chrono::duration<Rep, Period> duration) {
-    NET_DEBUG("SilenceTimer SetSilenceTimeout session {} timeout {}",
-              CRTP_CAST(this).GetHashKey(), duration);
-    this->silence_timeout_ = duration;
+  TPN_INLINE Derived &SetSilenceTimeoutDuration(
+      std::chrono::duration<Rep, Period> timeout) {
+    NET_DEBUG("SilenceTimer SetSilenceTimeout session key:{} timeout {}",
+              CRTP_CAST(this).GetHashKey(), time_out);
+    this->silence_timeout_ = time_out;
     return (CRTP_CAST(this));
   }
 
  protected:
+  /// 提交一个静默定时器
+  ///  @tapram      Rep
+  ///  @tapram      Period
+  ///  @param[in]   duration    超时持续时间
+  ///  @param[in]   this_ptr    延长生命周期的智能指针
   template <typename Rep, typename Period>
   TPN_INLINE void PostSilenceTimer(std::chrono::duration<Rep, Period> duration,
                                    std::shared_ptr<Derived> this_ptr) {
@@ -80,22 +97,21 @@ class SilenceTimer {
     }
   }
 
+  /// 处理静默定时器
+  ///  @param[in]   ec          错误码
+  ///  @param[in]   this_ptr    延长生命周期的智能指针
   TPN_INLINE void HandleSilenceTimer(const std::error_code &ec,
                                      std::shared_ptr<Derived> this_ptr) {
-    if (this_ptr) {
-      NET_DEBUG("SilenceTimer HandleSilenceTimer session {} error {}",
-                this_ptr->GetHashKey(), ec);
-    } else {
-      NET_DEBUG("SilenceTimer HandleSilenceTimer error {}", ec);
-    }
+    Derived &derive = CRTP_CAST(this);
+
+    NET_DEBUG("SilenceTimer HandleSilenceTimer session {} error {}",
+              this_ptr->GetHashKey(), ec);
 
     if (asio::error::operation_aborted == ec ||
         this->silence_timer_canceled_.test_and_set()) {
       NET_WARN("SilenceTimer HandleSilenceTimer error {} or canceled", ec);
       return;
     }
-
-    Derived &derive = CRTP_CAST(this);
 
     this->silence_timer_canceled_.clear();
 
@@ -118,6 +134,7 @@ class SilenceTimer {
     }
   }
 
+  /// 停止静默定时器
   TPN_INLINE void StopSilenceTimer() {
     NET_DEBUG("SilenceTimer StopSilenceTimer");
     this->silence_timer_canceled_.test_and_set();

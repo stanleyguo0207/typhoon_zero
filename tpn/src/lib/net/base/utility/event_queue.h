@@ -27,9 +27,9 @@
 #include <functional>
 #include <queue>
 
+#include "debug_hub.h"
 #include "net_common.h"
 #include "io_pool.h"
-#include "debug_hub.h"
 
 namespace tpn {
 
@@ -37,6 +37,9 @@ namespace net {
 
 TEMPLATE_DECL_2 class EventQueue;
 
+/// 事件队列守护
+///  @tparam  Derived
+///  @tparam  ArgsType
 template <typename Derived, typename ArgsType = void>
 class EventQueueGuard {
   TEMPLATE_DECL_2 friend class EventQueue;
@@ -46,6 +49,7 @@ class EventQueueGuard {
       : derive(other.derive),
         derive_sptr_(std::move(other.derive_sptr_)),
         valid_(other.valid_) {
+    // 移动后的事件无效
     const_cast<EventQueueGuard &>(other).valid_ = !other.valid_;
   }
 
@@ -53,11 +57,12 @@ class EventQueueGuard {
       : derive(other.derive),
         derive_sptr_(std::move(other.derive_sptr_)),
         valid_(other.valid_) {
+    // 移动后的事件无效
     other.valid_ = !other.valid_;
   }
 
-  void operator=(const EventQueueGuard &other) = delete;
-  void operator=(EventQueueGuard &&other) = delete;
+  TPN_INLINE void operator=(const EventQueueGuard &other) = delete;
+  TPN_INLINE void operator=(EventQueueGuard &&other) = delete;
 
   /// 处理下一个事件
   ~EventQueueGuard() {
@@ -79,18 +84,23 @@ class EventQueueGuard {
   bool valid_{false};                              ///<  是否有效
 };
 
+/// 事件队列
+///  @tparam  Derived
+///  @tparam  ArgsType
 template <typename Derived, typename ArgsType = void>
 class EventQueue {
  public:
   EventQueue()  = default;
   ~EventQueue() = default;
 
+  /// 事件入队
+  ///  @tparam      Callback    事件函数类型
+  ///  @param[in]   callback    事件回调
   template <typename Callback>
   TPN_INLINE Derived &EventEnqueue(Callback &&callback) {
     Derived &derive = CRTP_CAST(this);
 
-    // NET_DEBUG("EventQueue enqueue {}", typeid(callback).name());
-
+    // 必须确保在strand上运行，否则不能保证串行
     if (derive.GetIoHandle().GetStrand().running_in_this_thread()) {
       bool empty = this->events_.empty();
       this->events_.emplace(std::forward<Callback>(callback));
@@ -100,7 +110,8 @@ class EventQueue {
       return derive;
     }
 
-    derive.Post([this, &derive, self = derive.GetSelfSptr(),
+    // 非strand 提交到对应的strand上运行
+    derive.Post([this, &derive, self_ptr = derive.GetSelfSptr(),
                  callback = std::forward<Callback>(callback)]() mutable {
       bool empty = this->events_.empty();
       this->events_.emplace(std::move(callback));
@@ -113,12 +124,12 @@ class EventQueue {
   }
 
  protected:
+  /// 事件链上处理下一个事件
   template <typename = void>
   TPN_INLINE Derived &NextEvent() {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("EventQueue next event");
-
+    // 必须确保在strand上运行，否则不能保证串行
     if (derive.GetIoHandle().GetStrand().running_in_this_thread()) {
       TPN_ASSERT(!this->events_.empty(), "EventQueue events empty");
       if (!this->events_.empty()) {
@@ -130,7 +141,8 @@ class EventQueue {
       return derive;
     }
 
-    derive.Post([this, &derive, self = derive.GetSelfSptr()]() mutable {
+    // 非strand 提交到对应的strand上运行
+    derive.Post([this, &derive, self_ptr = derive.GetSelfSptr()]() mutable {
       TPN_ASSERT(!this->events_.empty(), "EventQueue events empty");
       if (!this->events_.empty()) {
         this->events_.pop();

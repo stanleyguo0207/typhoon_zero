@@ -20,8 +20,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_SCOKET_WRAP_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_SCOKET_WRAP_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_SOCKET_WRAP_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_SOCKET_WRAP_H_
 
 #include <string>
 
@@ -31,7 +31,7 @@ namespace tpn {
 
 namespace net {
 
-/// 套接字封装
+/// 套接字封
 ///  @tparam  Derived     CRTP类型
 ///  @tparam  ArgsType    套接字模板参数 需要提供 socket_type类型定义
 ///
@@ -285,4 +285,4 @@ class Socket {
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_SCOKET_WRAP_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_SOCKET_WRAP_H_

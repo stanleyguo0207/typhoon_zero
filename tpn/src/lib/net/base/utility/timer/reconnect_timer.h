@@ -34,17 +34,29 @@ namespace tpn {
 
 namespace net {
 
+/// 重新连接定时器
+/// 这个定时器只有客户端使用
+///  @tparam  Derived
+///  @tparam  ArgsType
 template <typename Derived, typename ArgsType = void>
 class ReconnectTimer {
  public:
-  explicit ReconnectTimer(IoHandle &reconnect_timer_io_handle)
-      : reconnect_timer_(reconnect_timer_io_handle.GetIoContext()) {
+  /// 构造函数
+  ///  @param[in]  io_handle    timer执行的io句柄
+  explicit ReconnectTimer(IoHandle &io_handle)
+      : reconnect_timer_(io_handle.GetIoContext()) {
     this->reconnect_timer_canceled_.clear();
     this->reconnect_is_running_.clear();
   }
 
   ~ReconnectTimer() = default;
 
+  /// 自动连接
+  ///  @tapram      Rep
+  ///  @tapram      Period
+  ///  @param[in]   enable    重连定时器是否可用
+  ///  @param[in]   delay     重连定时器生效持续时间，enable为false时，无效
+  ///  @return CRTP调用链对象
   template <typename Rep, typename Period>
   TPN_INLINE Derived &AutoReconnect(bool enable,
                                     std::chrono::duration<Rep, Period> delay) {
@@ -54,6 +66,9 @@ class ReconnectTimer {
     return (CRTP_CAST(this));
   }
 
+  /// 自动连接
+  ///  @param[in]   enable    重连定时器是否可用
+  ///  @return CRTP调用链对象
   template <typename = void>
   TPN_INLINE Derived &AutoReconnect(bool enable) {
     NET_DEBUG("ReconnectTimer AutoReconnect {}", enable);
@@ -62,6 +77,10 @@ class ReconnectTimer {
   }
 
  protected:
+  /// 创建一个重连定时器
+  ///  @tparam      Callback    重连定时器触发回调函数类型
+  ///  @param[in]   this_ptr    延长生命周期的智能指针
+  ///  @param[in]   callback    重连定时触发回调
   template <typename Callback>
   TPN_INLINE void MakeReconnectTimer(std::shared_ptr<Derived> this_ptr,
                                      Callback &&callback) {
@@ -72,14 +91,18 @@ class ReconnectTimer {
 
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("ReconnectTimer MakeReconnectTimer callback {}",
-              typeid(callback).name());
+    NET_DEBUG("ReconnectTimer MakeReconnectTimer callback");
 
     derive.PostReconnectTimer(std::move(this_ptr),
                               std::forward<Callback>(callback),
-                              NanoSeconds::max());
+                              NanoSeconds::max());  // 292 年
   }
 
+  /// 处理重连定时器
+  ///  @tparam      Callback    重连定时器触发回调函数类型
+  ///  @param[in]   ec          错误码
+  ///  @param[in]   this_ptr    延长生命周期的智能指针
+  ///  @param[in]   callback    重连定时触发回调
   template <typename Callback>
   TPN_INLINE void HandleReconnectTimer(const std::error_code &ec,
                                        std::shared_ptr<Derived> this_ptr,
@@ -93,8 +116,7 @@ class ReconnectTimer {
 
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("ReconnectTimer HandleReconnectTimer error {} callback {}", ec,
-              typeid(callback).name());
+    NET_DEBUG("ReconnectTimer HandleReconnectTimer error {} callback", ec);
 
     this->reconnect_timer_canceled_.clear();
 
@@ -116,12 +138,14 @@ class ReconnectTimer {
     }
   }
 
+  /// 停止重连定时器
   TPN_INLINE void StopReconnectTimer() {
     NET_DEBUG("ReconnectTimer StopReconnectTimer");
     this->reconnect_timer_canceled_.test_and_set();
     this->reconnect_timer_.cancel(s_ec_ignore);
   }
 
+  /// 唤醒重连定时器
   TPN_INLINE void WakeReconnectTimer() {
     NET_DEBUG("ReconnectTimer WakeReconnectTimer enable {}",
               this->reconnect_enable_);
@@ -131,14 +155,20 @@ class ReconnectTimer {
   }
 
  private:
+  /// 提交一个重连定时器
+  ///  @tapram      Rep
+  ///  @tapram      Period
+  ///  @tparam      Callback    重连定时器触发回调函数类型
+  ///  @param[in]   this_ptr    延长生命周期的智能指针
+  ///  @param[in]   callback    重连定时触发回调
+  ///  @param[in]   delay       重连定时器生效持续时间，enable为false时，无效
   template <class Rep, class Period, class Callback>
   TPN_INLINE void PostReconnectTimer(std::shared_ptr<Derived> this_ptr,
                                      Callback &&callback,
                                      std::chrono::duration<Rep, Period> delay) {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("ReconnectTimer PostReconnectTimer delay {} callback {}", delay,
-              typeid(callback).name());
+    NET_DEBUG("ReconnectTimer PostReconnectTimer delay {} callback", delay);
 
     this->reconnect_timer_.expires_after(delay);
     this->reconnect_timer_.async_wait(

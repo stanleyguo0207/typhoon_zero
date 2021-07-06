@@ -36,8 +36,8 @@ namespace tpn {
 namespace net {
 
 /// asio::post封装
-///  @tparam  Derived     CRTP对象
-///  @tparam  ArgsType    占位
+///  @tparam  Derived
+///  @tparam  ArgsType
 template <typename Derived, typename ArgsType = void>
 class PostWrap {
  public:
@@ -51,10 +51,8 @@ class PostWrap {
   ///  @param[in]   func    异步提交的函数
   /// @sa asio::post
   template <typename Func>
-  inline Derived &Post(Func &&func) {
+  TPN_INLINE Derived &Post(Func &&func) {
     Derived &derive = CRTP_CAST(this);
-
-    NET_DEBUG("PostWrap Post");
 
     asio::post(
         derive.GetIoHandle().GetStrand(),
@@ -72,10 +70,9 @@ class PostWrap {
   ///  @param[in]   delay   延迟周期
   /// @sa asio::post
   template <typename Func, typename Rep, typename Period>
-  inline Derived &Post(Func &&func, std::chrono::duration<Rep, Period> delay) {
+  TPN_INLINE Derived &Post(Func &&func,
+                           std::chrono::duration<Rep, Period> delay) {
     Derived &derive = CRTP_CAST(this);
-
-    NET_DEBUG("PostWrap Post delay {}", delay);
 
     auto timer = std::make_unique<asio::steady_timer>(
         derive.GetIoHandle().GetIoContext());
@@ -113,7 +110,7 @@ class PostWrap {
   ///  @tparam      Allocator   分配器 用来将来调用分配内存使用
   ///  @param[in]   func        任务函数
   template <typename Func, typename Allocator>
-  inline decltype(auto) Post(Func &&func, asio::use_future_t<Allocator>) {
+  TPN_INLINE decltype(auto) Post(Func &&func, asio::use_future_t<Allocator>) {
     using ReturnType = std::invoke_result_t<Func>;
 
     Derived &derive = CRTP_CAST(this);
@@ -142,9 +139,9 @@ class PostWrap {
   ///  @param[in]   func        任务函数
   ///  @param[in]   delay       延迟周期
   template <typename Func, typename Rep, typename Period, typename Allocator>
-  inline decltype(auto) Post(Func &&func,
-                             std::chrono::duration<Rep, Period> delay,
-                             asio::use_future_t<Allocator>) {
+  TPN_INLINE decltype(auto) Post(Func &&func,
+                                 std::chrono::duration<Rep, Period> delay,
+                                 asio::use_future_t<Allocator>) {
     using ReturnType = std::invoke_result_t<Func>;
 
     Derived &derive = CRTP_CAST(this);
@@ -191,7 +188,7 @@ class PostWrap {
   ///  @tparam      Func    异步提交的函数类型
   ///  @param[in]   func    异步提交的函数
   template <typename Func>
-  inline Derived &Dispatch(Func &&func) {
+  TPN_INLINE Derived &Dispatch(Func &&func) {
     Derived &derive = CRTP_CAST(this);
 
     NET_DEBUG("PostWrap Dispatch");
@@ -210,7 +207,8 @@ class PostWrap {
   ///  @tparam      Allocator   分配器 用来将来调用分配内存使用
   ///  @param[in]   func        异步提交的函数
   template <typename Func, typename Allocator>
-  inline decltype(auto) Dispatch(Func &&func, asio::use_future_t<Allocator>) {
+  TPN_INLINE decltype(auto) Dispatch(Func &&func,
+                                     asio::use_future_t<Allocator>) {
     using ReturnType = std::invoke_result_t<Func>;
 
     Derived &derive = CRTP_CAST(this);
@@ -233,7 +231,7 @@ class PostWrap {
   }
 
   /// 停止所有计划的定时器
-  inline Derived &StopAllPostedTasks() {
+  TPN_INLINE Derived &StopAllPostedTasks() {
     Derived &derive = CRTP_CAST(this);
 
     if (!derive.GetIoHandle().GetStrand().running_in_this_thread()) {
