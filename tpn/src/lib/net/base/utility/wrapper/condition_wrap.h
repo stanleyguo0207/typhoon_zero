@@ -32,14 +32,14 @@ namespace tpn {
 namespace net {
 
 /// tcp拆包条件
-class TyphoonTcpMatchCondition {
+class TcpMatchCondition {
  public:
-  TyphoonTcpMatchCondition() = default;
+  TcpMatchCondition() = default;
 
   /// asio底层拆包
   template <typename Iterator>
   std::pair<Iterator, bool> operator()(Iterator begin, Iterator end) const {
-    if (end - begin < 2) {  // 包头长度最大允许2个字节
+    if (end - begin < kHeaderBytes) {  // 包头长度最大允许2个字节
       return std::pair(begin, false);
     }
 
@@ -53,7 +53,7 @@ class TyphoonTcpMatchCondition {
         }
       }
 
-      iter += 2;
+      iter += kHeaderBytes;
       if (end - iter < header_len_) {  // 包头需要数据长度不满足
         break;
       }
@@ -93,14 +93,14 @@ class TyphoonTcpMatchCondition {
   }
 
  private:
-  mutable uint32_t header_len_{0};  ///< 协议包头长度
+  mutable uint16_t header_len_{0};  ///< 协议包头长度
   mutable uint32_t packet_len_{0};  ///< 协议包体长度
 };
 
 /// udp拆包条件
-class TyphoonKcpMatchCondition {
+class KcpMatchCondition {
  public:
-  TyphoonKcpMatchCondition();
+  KcpMatchCondition();
 
   TPN_INLINE decltype(auto) operator()() { return cond_; }
 

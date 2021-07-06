@@ -141,7 +141,7 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
       }
 
       // 监听器通知启动事件
-      // derive.FireInit();
+      derive.FireInit();
 
       // 端口绑定
       socket.bind(derive.GetLocalEndpoint());
@@ -401,7 +401,7 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
             NET_DEBUG("DoneConnect started state {}",
                       ToNetStateStr(derive.GetNetState()));
             // 连接成功时才通知
-            // derive.FireConnect(this_ptr);
+            derive.FireConnect(this_ptr);
           }
         }
       } else {  // 网络层客户端
@@ -411,7 +411,7 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
           TPN_ASSERT(ec, "DoneConnect error {}", ec);
           NET_DEBUG("DoneConnect starting state {}",
                     ToNetStateStr(derive.GetNetState()));
-          // derive.FireConnect(this_ptr, ec);
+          derive.FireConnect(this_ptr, ec);
         } else {
           expected = NetState::kNetStateStarted;
           if (derive.GetNetState().compare_exchange_strong(
@@ -419,7 +419,7 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
             TPN_ASSERT(!ec, "DoneConnect error {}", ec);
             NET_DEBUG("DoneConnect started state {}",
                       ToNetStateStr(derive.GetNetState()));
-            // derive.FireConnect(this_ptr, ec);
+            derive.FireConnect(this_ptr, ec);
           }
         }
       }

@@ -186,7 +186,7 @@ class Disconnect {
             derive.GetLocalEndpoint().port(), ToNetStateStr(old_state), ec);
         if (old_state == NetState::kNetStateStarted) {
           // 如果已经启动 通知断开连接处理
-          // derive.FireDisconnect(this_ptr, ec);
+          derive.FireDisconnect(this_ptr, ec);
         }
 
         // 处理断开连接
@@ -267,8 +267,8 @@ class Disconnect {
                 expected, NetState::kNetStateStopped)) {
           if (NetState::kNetStateStarted == old_state) {
             // 如果已经启动 通知关闭事件
-            // derive.FireDisconnect(
-            //     const_cast<std::shared_ptr<Derived> &>(this_ptr));
+            derive.FireDisconnect(
+                const_cast<std::shared_ptr<Derived> &>(this_ptr));
           } else {
             TPN_ASSERT(false, "Disconnect session NetState error");
           }

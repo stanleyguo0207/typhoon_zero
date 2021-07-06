@@ -201,6 +201,9 @@ static constexpr size_t kUdpFrameSize = 1024;
 /// http帧大小
 static constexpr size_t kHttpFrameSize = 1536;
 
+/// 协议头长度固定2字节
+static constexpr uint32_t kHeaderBytes = 2;
+
 }  // namespace net
 
 }  // namespace tpn
