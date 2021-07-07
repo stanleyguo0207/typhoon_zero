@@ -123,12 +123,36 @@ class TcpClientTest
     packet2.WriteCompleted(address_book.GetCachedSize());
     address_book.SerializeToArray(ptr, address_book.GetCachedSize());
 
-    // Send(std::move(packet2));
+    Send(std::move(packet2));
   }
 
   void FireConnect(std::shared_ptr<TcpClientTest> &this_ptr,
                    std::error_code ec) {
     LOG_INFO("TcpClientTest connect server");
+
+    tutorial::AddressBook address_book;
+    auto people = address_book.add_people();
+    people->set_id(RandI32());
+    people->set_email("123@123.com");
+    people->set_name("张三" + ToString(RandU32()));
+
+    protocol::Header header;
+    header.set_size(address_book.ByteSizeLong());
+
+    uint16_t header_size = (uint16_t)header.ByteSizeLong();
+    EndianRefMakeLittle(header_size);
+
+    MessageBuffer packet(sizeof(header_size) + header.GetCachedSize() +
+                         address_book.GetCachedSize());
+    packet.Write(&header_size, sizeof(header_size));
+    uint8_t *ptr = packet.GetWritePointer();
+    packet.WriteCompleted(header.GetCachedSize());
+    header.SerializePartialToArray(ptr, header.GetCachedSize());
+    ptr = packet.GetWritePointer();
+    packet.WriteCompleted(address_book.GetCachedSize());
+    address_book.SerializeToArray(ptr, address_book.GetCachedSize());
+
+    Send(std::move(packet));
   }
 
  private:
@@ -162,32 +186,6 @@ int main(int argc, char *argv[]) {
   client.AutoReconnect(true, MilliSeconds(1000));
 
   client.Start(host, port);
-
-  std::this_thread::sleep_for(2s);
-
-  tutorial::AddressBook address_book;
-  auto people = address_book.add_people();
-  people->set_id(RandI32());
-  people->set_email("123@123.com");
-  people->set_name("张三" + ToString(RandU32()));
-
-  protocol::Header header;
-  header.set_size(address_book.ByteSizeLong());
-
-  uint16_t header_size = (uint16_t)header.ByteSizeLong();
-  EndianRefMakeLittle(header_size);
-
-  MessageBuffer packet(sizeof(header_size) + header.GetCachedSize() +
-                       address_book.GetCachedSize());
-  packet.Write(&header_size, sizeof(header_size));
-  uint8_t *ptr = packet.GetWritePointer();
-  packet.WriteCompleted(header.GetCachedSize());
-  header.SerializePartialToArray(ptr, header.GetCachedSize());
-  ptr = packet.GetWritePointer();
-  packet.WriteCompleted(address_book.GetCachedSize());
-  address_book.SerializeToArray(ptr, address_book.GetCachedSize());
-
-  client.Send(std::move(packet));
 
   while (std::getchar() != '\n')
     ;

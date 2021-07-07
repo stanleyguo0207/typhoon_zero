@@ -68,7 +68,10 @@ class TcpSessionTestBase : public TcpSessionBase<Derived, ArgsType> {
 
   using Super::Send;
 
-  TcpSessionTestBase() : Super() {}
+  explicit TcpSessionTestBase(IoHandle &io_handle,
+                              SessionMgr<Derived> &session_mgr,
+                              size_t buffer_max, size_t buffer_prepare)
+      : Super(io_handle, session_mgr, buffer_max, buffer_prepare) {}
 
   ~TcpSessionTestBase() = default;
 
@@ -102,7 +105,7 @@ class TcpSessionTestBase : public TcpSessionBase<Derived, ArgsType> {
     packet2.WriteCompleted(address_book.GetCachedSize());
     address_book.SerializeToArray(ptr, address_book.GetCachedSize());
 
-    // derive.Send(std::move(packet2));
+    derive.Send(std::move(packet2));
   }
 };
 
@@ -135,6 +138,11 @@ int main(int argc, char *argv[]) {
   tpn::log::Init();
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
+
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  std::shared_ptr<void> protobuf_handle(
+      nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
 
   std::string_view host = "0.0.0.0";
   std::string_view port = "9990";

@@ -45,6 +45,7 @@
   TEMPLATE_DECL_2 Keyword SilenceTimer;        \
   TEMPLATE_DECL_2 Keyword UserTimer;           \
   TEMPLATE_DECL_2 Keyword PostWrap;            \
+  TEMPLATE_DECL_2 Keyword SendWrap;            \
   TEMPLATE_DECL_2 Keyword Socket;              \
   TEMPLATE_DECL_1 Keyword SessionMgr;
 
@@ -52,6 +53,7 @@
 #define TPN_NET_TCP_BASE_CLASS_DECL(Keyword) \
   TEMPLATE_DECL_2 Keyword TcpKeepAlive;      \
   TEMPLATE_DECL_2 Keyword TcpRecv;           \
+  TEMPLATE_DECL_2 Keyword TcpSendWrap;       \
   TEMPLATE_DECL_2_BOOL Keyword SslContext;   \
   TEMPLATE_DECL_2 Keyword SslStream;
 

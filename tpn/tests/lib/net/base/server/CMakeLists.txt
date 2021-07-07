@@ -26,6 +26,7 @@ project(test_tcp_base_server CXX)
 
 add_executable(test_tcp_base_server
   "test_tcp_base_server.cpp"
+  "../../../../third_party/protobuf/addressbook.pb.cc"
 )
 
 set_property(TARGET
