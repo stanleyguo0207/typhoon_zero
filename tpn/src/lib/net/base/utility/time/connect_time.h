@@ -20,6 +20,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_CONNECT_TIME_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_CONNECT_TIME_H_
+
 #include "net_common.h"
 #include "chrono_wrap.h"
 
@@ -28,6 +31,8 @@ namespace tpn {
 namespace net {
 
 /// 连接时间
+///  @tparam  Derived
+///  @tparam  ArgsType
 template <typename Derived, typename ArgsType = void>
 class ConnectTime {
  public:
@@ -60,3 +65,5 @@ class ConnectTime {
 }  // namespace net
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_TIME_CONNECT_TIME_H_

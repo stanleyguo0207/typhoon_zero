@@ -37,6 +37,7 @@
 #include "connect_timeout_timer.h"
 #include "silence_timer.h"
 #include "event_queue.h"
+#include "send_wrap.h"
 #include "socket_wrap.h"
 #include "buffer_wrap.h"
 
@@ -59,6 +60,7 @@ class SessionBase : public CRTPObject<Derived>,
                     public ConnectTimeoutTimer<Derived, ArgsType>,
                     public SilenceTimer<Derived, ArgsType>,
                     public EventQueue<Derived, ArgsType>,
+                    public SendWrap<Derived, ArgsType>,
                     public Socket<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
 
@@ -87,6 +89,7 @@ class SessionBase : public CRTPObject<Derived>,
         ConnectTimeoutTimer<Derived, ArgsType>(io_handle),
         SilenceTimer<Derived, ArgsType>(io_handle),
         EventQueue<Derived, ArgsType>(),
+        SendWrap<Derived, ArgsType>(),
         Socket<Derived, ArgsType>(std::forward<Args>(args)...),
         io_handle_(io_handle),
         session_mgr_(session_mgr),

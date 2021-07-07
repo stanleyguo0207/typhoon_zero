@@ -62,10 +62,10 @@ class SilenceTimer {
   ///  @return CRTP调用链对象
   template <typename Rep, typename Period>
   TPN_INLINE Derived &SetSilenceTimeoutDuration(
-      std::chrono::duration<Rep, Period> timeout) {
+      std::chrono::duration<Rep, Period> duration) {
     NET_DEBUG("SilenceTimer SetSilenceTimeout session key:{} timeout {}",
-              CRTP_CAST(this).GetHashKey(), time_out);
-    this->silence_timeout_ = time_out;
+              CRTP_CAST(this).GetHashKey(), duration);
+    this->silence_timeout_ = duration;
     return (CRTP_CAST(this));
   }
 

@@ -208,7 +208,7 @@ class Disconnect {
 
       NET_DEBUG("Disconnect client {}:{} post disconnect event queue",
                 derive.GetLocalEndpoint().address().to_string(),
-                derive.GetLocalEndpoint().port();
+                derive.GetLocalEndpoint().port());
       derive.Post(std::move(task));
       return true;
     });
@@ -259,7 +259,7 @@ class Disconnect {
             derive.GetHashKey(), ToNetStateStr(old_state),
             ToNetStateStr(derive.GetNetState()), ec);
 
-        SetLastError(e);
+        SetLastError(ec);
 
         NetState expected = NetState::kNetStateStopping;
 

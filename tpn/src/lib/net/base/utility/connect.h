@@ -155,7 +155,7 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
               derive.GetLocalEndpoint().port());
 
           derive.PostConnectTimeoutTimer(
-              derive.GetConnectTimeout(), this_ptr,
+              derive.GetConnectTimeoutDuration(), this_ptr,
               [&derive, this_ptr](const std::error_code &ec) mutable {
                 IgnoreUnused(this_ptr);
 
@@ -187,7 +187,7 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
                     derive.GetLocalEndpoint().address().to_string(),
                     derive.GetLocalEndpoint().port());
           derive.PostConnectTimeoutTimer(
-              derive.GetConnectTimeout(), this_ptr,
+              derive.GetConnectTimeoutDuration(), this_ptr,
               [&derive, this_ptr, promise = std::move(promise)](
                   const std::error_code &ec) mutable {
                 IgnoreUnused(this_ptr);
@@ -301,13 +301,13 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
       std::shared_ptr<Derived> this_ptr) {
     Derived &derive = CRTP_CAST(this);
 
-    NET_DEBUG("PostConnect client {}:{} => {}:{} error {}",
+    NET_DEBUG("ClientPostConnect client {}:{} => {}:{} error {}",
               derive.GetLocalEndpoint().address().to_string(),
               derive.GetLocalEndpoint().port(), this->host_, this->port_, ec);
 
     try {
       if (iter == this->endpoints_.end()) {
-        NET_DEBUG("PostConnect client {}:{} => {}:{} host unreachable",
+        NET_DEBUG("ClientPostConnect client {}:{} => {}:{} host unreachable",
                   derive.GetLocalEndpoint().address().to_string(),
                   derive.GetLocalEndpoint().port(), this->host_, this->port_);
         // 没有更多的端点可以尝试，关闭客户端
@@ -322,20 +322,21 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
               MakeAllocator(
                   derive.GetReadAllocator(),
                   [&derive, iter, this_ptr](const std::error_code &ec) mutable {
-                    NET_DEBUG("PostConnect client {}:{} async connect error {}",
-                              derive.GetLocalEndpoint().address().to_string(),
-                              derive.GetLocalEndpoint().port(), ec);
+                    NET_DEBUG(
+                        "ClientPostConnect client {}:{} async connect error {}",
+                        derive.GetLocalEndpoint().address().to_string(),
+                        derive.GetLocalEndpoint().port(), ec);
                     SetLastError(ec);
                     if (ec && ec != asio::error::operation_aborted) {
                       // 连接错误 尝试下一个端点
-                      derive.PostConnect(ec, ++iter, std::move(this_ptr));
+                      derive.ClientPostConnect(ec, ++iter, std::move(this_ptr));
                     } else {
                       // 连接成功 处理连接成功
                       derive.HandleConnect(ec, std::move(this_ptr));
                     }
                   })));
     } catch (std::system_error &e) {
-      NET_DEBUG("PostConnect client {}:{} exception error {}",
+      NET_DEBUG("ClientPostConnect client {}:{} exception error {}",
                 derive.GetLocalEndpoint().address().to_string(),
                 derive.GetLocalEndpoint().port(), e.code());
       SetLastError(e);

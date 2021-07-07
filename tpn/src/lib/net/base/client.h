@@ -25,6 +25,7 @@
 
 #include <atomic>
 
+#include "crtp_object.h"
 #include "net_common.h"
 #include "io_pool.h"
 #include "post_wrap.h"
@@ -35,6 +36,7 @@
 #include "connect_timeout_timer.h"
 #include "reconnect_timer.h"
 #include "event_queue.h"
+#include "send_wrap.h"
 #include "local_endpoint.h"
 #include "socket_wrap.h"
 #include "custom_allocator.h"
@@ -60,6 +62,7 @@ class ClientBase : public CRTPObject<Derived, false>,
                    public ConnectTimeoutTimer<Derived, ArgsType>,
                    public ReconnectTimer<Derived, ArgsType>,
                    public EventQueue<Derived, ArgsType>,
+                   public SendWrap<Derived, ArgsType>,
                    public LocalEndpoint<Derived, ArgsType>,
                    public Socket<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
@@ -89,6 +92,7 @@ class ClientBase : public CRTPObject<Derived, false>,
         ConnectTimeoutTimer<Derived, ArgsType>(GetIoHandleByIndex(0)),
         ReconnectTimer<Derived, ArgsType>(GetIoHandleByIndex(0)),
         EventQueue<Derived, ArgsType>(),
+        SendWrap<Derived, ArgsType>(),
         LocalEndpoint<Derived, ArgsType>(),
         Socket<Derived, ArgsType>(GetIoHandleByIndex(0).GetIoContext(),
                                   std::forward<Args>(args)...),

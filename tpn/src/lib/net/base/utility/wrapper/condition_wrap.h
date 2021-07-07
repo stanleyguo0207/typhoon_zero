@@ -47,7 +47,7 @@ class TcpMatchCondition {
     while (iter != end) {
       if (0 == header_len_) {
         header_len_ = *(reinterpret_cast<const uint16_t *>(iter.operator->()));
-        tpn::EndianConvert(header_len_);
+        tpn::EndianRefMakeLittle(header_len_);
         if (0 == header_len_) {
           return std::pair(begin, true);
         }
@@ -111,5 +111,13 @@ class KcpMatchCondition {
 }  // namespace net
 
 }  // namespace tpn
+
+namespace asio {
+
+template <>
+struct is_match_condition<tpn::net::TcpMatchCondition> : public std::true_type {
+};
+
+}  // namespace asio
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_NET_BASE_UTILITY_WRAPPER_CONDITION_WRAP_H_

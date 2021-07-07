@@ -24,10 +24,12 @@
 #define TYPHOON_ZERO_TPN_SRC_LIB_NET_TCP_TCP_SESSION_H_
 
 #include "message_buffer.h"
+#include "rpc_type.pb.h"
 #include "net_common.h"
 #include "session.h"
 #include "tcp_keepalive.h"
 #include "tcp_recv.h"
+#include "tcp_send_wrap.h"
 
 namespace tpn {
 
@@ -49,11 +51,12 @@ struct TemplateArgsTcpSession {
 
 /// tcp网络会话基类
 ///  @tparam  Derived     tcp服务器子类
-///  @tparam  SessionType 网络层会话类型
+///  @tparam  ArgsType    网络会话模板参数
 template <typename Derived, typename ArgsType>
 class TcpSessionBase : public SessionBase<Derived, ArgsType>,
                        public TcpKeepAlive<Derived, ArgsType>,
-                       public TcpRecv<Derived, ArgsType> {
+                       public TcpRecv<Derived, ArgsType>,
+                       public TcpSendWrap<Derived, ArgsType> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
   TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS
@@ -66,6 +69,8 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
   using Super = SessionBase<Derived, ArgsType>;
   using Self  = TcpSessionBase<Derived, ArgsType>;
 
+  using Super::Send;
+
   /// 构造函数
   ///  @param[in]   io_handle       io句柄
   ///  @param[in]   session_mgr     所在的会话管理器引用
@@ -73,10 +78,11 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
   ///  @param[in]   buffer_prepare  缓冲区准备长度
   explicit TcpSessionBase(IoHandle &io_handle, SessionMgr<Derived> &session_mgr,
                           size_t buffer_max, size_t buffer_prepare)
-      : Super(io_handle, listener, session_mgr, buffer_max, buffer_prepare,
+      : Super(io_handle, session_mgr, buffer_max, buffer_prepare,
               io_handle.GetIoContext()),
         TcpKeepAlive<Derived, ArgsType>(this->socket_),
         TcpRecv<Derived, ArgsType>(),
+        TcpSendWrap<Derived, ArgsType>(),
         rallocator_(),
         wallocator_() {
     this->SetSilenceTimeoutDuration(MilliSeconds(kTcpSilenceTimeout));
@@ -258,29 +264,49 @@ class TcpSessionBase : public SessionBase<Derived, ArgsType>,
   ///  @param[in]   this_ptr    延长生命周期的智能指针
   TPN_INLINE void HandleDisconnect(const std::error_code &ec,
                                    std::shared_ptr<Derived> this_ptr) {
-    NET_DEBUG("HandleDisconnect state {} key {} error: {}",
+    NET_DEBUG("TcpSessionBase HandleDisconnect state {} key {} error: {}",
               ToNetStateStr(this->state_), this->GetHashKey(), ec);
     IgnoreUnused(ec, this_ptr);
 
     this->GetDerivedObj().DoStop(ec);
   }
 
+  /// 发送数据
+  ///  @tparam      Callback  发送数据完回调类型
+  ///  @param[in]   buffer    调用需要保证buffer满足底层拆包逻辑
+  ///  @param[in]   callback  发送数据回调
+  ///  @return 发送成功返回true
+  template <typename Callback>
+  TPN_INLINE bool DoSend(MessageBuffer &&buffer, Callback &&callback) {
+    NET_DEBUG("TcpSessionBase DoSend state {} key {}",
+              ToNetStateStr(this->state_), this->GetHashKey());
+
+    return this->GetDerivedObj().TcpSend(std::move(buffer),
+                                         std::forward<Callback>(callback));
+  }
+
   /// tcp会话通知接收数据
   ///  @param[in]   this_ptr    延长生命周期的智能指针
-  TPN_INLINE void FireRecv(std::shared_ptr<Derived> &this_ptr,
-                           protocol::Header &&header, MessageBuffer &&packet) {}
+  ///  @param[in]   header      协议头
+  ///  @param[in]   packet      协议体
+  TPN_INLINE void [[maybe_unused]] FireRecv(std::shared_ptr<Derived> &this_ptr,
+                                            protocol::Header &&header,
+                                            MessageBuffer &&packet) {}
 
   /// tcp会话通知接收
   ///  @param[in]   this_ptr    延长生命周期的智能指针
-  TPN_INLINE void FireAccept(std::shared_ptr<Derived> &this_ptr) {}
+  TPN_INLINE void
+      [[maybe_unused]] FireAccept(std::shared_ptr<Derived> &this_ptr) {}
 
   /// tcp会话通知连接
   ///  @param[in]   this_ptr    延长生命周期的智能指针
-  TPN_INLINE void FireConnect(std::shared_ptr<Derived> &this_ptr) {}
+  TPN_INLINE void
+      [[maybe_unused]] FireConnect(std::shared_ptr<Derived> &this_ptr) {}
 
   /// tcp会话通知断开连接
   ///  @param[in]   this_ptr    延长生命周期的智能指针
-  TPN_INLINE void FireDisconnect(std::shared_ptr<Derived> &this_ptr) {}
+  TPN_INLINE void
+      [[maybe_unused]] FireDisconnect(std::shared_ptr<Derived> &this_ptr) {}
 
   /// 获取用于 recv/read 的内存分配器
   TPN_INLINE auto &GetReadAllocator() { return this->rallocator_; }

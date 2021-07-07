@@ -38,7 +38,7 @@ namespace net {
 /// 只支持固定格式的拆包方式不接收其他形式的包
 ///  @tparam  Derived
 ///  @tparam  ArgsType
-template <typename Derived, typename ArgsType>
+template <typename Derived, typename ArgsType = void>
 class TcpRecv {
  public:
   /// 构造函数
@@ -47,9 +47,7 @@ class TcpRecv {
 
  protected:
   /// 获取tcp拆包组件
-  TyphoonKcpMatchCondition &GetMatchCondition() {
-    return this->match_condition_;
-  }
+  TcpMatchCondition &GetMatchCondition() { return this->match_condition_; }
 
   /// tcp提交接收数据
   ///  @param[in]   this_ptr    延长生命周期句柄
@@ -101,7 +99,7 @@ class TcpRecv {
     SetLastError(ec);
 
     if (0 == bytes_recvd) {  // tcp拆包错误
-      TPN_ERROR("TcpRecv TcpHandleRecv bytes_recvd error");
+      NET_ERROR("TcpRecv TcpHandleRecv bytes_recvd error");
       derive.Stop();
       return;
     }
@@ -117,7 +115,7 @@ class TcpRecv {
       tpn::EndianRefMakeLittle(header_length);
       if ((0 == header_length) || (header_length + kHeaderBytes >= bytes_recvd))
           [[unlikely]] {
-        TPN_ERROR("TcpRecv TcpHandleRecv header_length {} error",
+        NET_ERROR("TcpRecv TcpHandleRecv header_length {} error",
                   header_length);
         derive.Stop();
         return;
@@ -126,7 +124,7 @@ class TcpRecv {
       protocol::Header header;
       if (!header.ParseFromArray(buffer + kHeaderBytes, header_length))
           [[unlikely]] {
-        TPN_ERROR("TcpRecv TcpHandleRecv header parse header_length {} error",
+        NET_ERROR("TcpRecv TcpHandleRecv header parse header_length {} error",
                   header_length);
         derive.Stop();
         return;
@@ -135,7 +133,7 @@ class TcpRecv {
       if ((0 == header.size()) ||
           (header.size() + header_length + kHeaderBytes > bytes_recvd))
           [[unlikely]] {
-        TPN_ERROR(
+        NET_ERROR(
             "TcpRecv TcpHandleRecv header_length {} packet_length {} error",
             header_length, header.size());
         derive.Stop();

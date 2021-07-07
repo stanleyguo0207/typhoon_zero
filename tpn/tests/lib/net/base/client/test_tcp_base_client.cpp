@@ -66,40 +66,7 @@ int main(int argc, char *argv[]) {
 
   LOG_INFO("Tcp base client start init...");
 
-  // client.AutoReconnect(true, MilliSeconds(1000));
-
-  client.BindConnect([&](std::error_code ec) {
-    protocol::SearchRequest request;
-    request.set_query("hello world");
-    request.set_page_number(300);
-    request.set_result_per_page(112);
-
-    protocol::Header header;
-    header.set_size(static_cast<uint32_t>(request.ByteSizeLong()));
-
-    uint16_t header_size = static_cast<uint16_t>(header.ByteSizeLong());
-
-    EndianRefMakeLittle(header_size);
-
-    ByteBuffer packet(
-        sizeof(header_size) + header.GetCachedSize() + request.GetCachedSize(),
-        ByteBuffer::ResizeFlag{});
-
-    packet << header_size;
-    uint8_t *ptr = packet.GetWritePointer();
-    packet.WriteCompleted(header.GetCachedSize());
-    header.SerializeToArray(ptr, header.GetCachedSize());
-    ptr = packet.GetWritePointer();
-    packet.WriteCompleted(request.GetCachedSize());
-    request.SerializeToArray(ptr, request.GetCachedSize());
-
-    // client.Send(std::move(packet));
-
-    for (int i = 0; i < 100; ++i) {
-      ByteBuffer tmp = packet;
-      client.Send(std::move(tmp));
-    }
-  });
+  client.AutoReconnect(true, MilliSeconds(1000));
 
   client.Start(host, port);
 

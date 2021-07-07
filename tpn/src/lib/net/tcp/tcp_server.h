@@ -443,13 +443,15 @@ class TcpServerBase : public ServerBase<Derived, SessionType> {
   }
 
   /// tcp服务器初始化通知
-  TPN_INLINE void FireInit() {}
+  TPN_INLINE [[maybe_unused]] void FireInit() {}
 
   /// tcp服务器启动通知
-  TPN_INLINE void FireStart(std::error_code ec) {}
+  ///  @param[in]   ec    错误码
+  TPN_INLINE [[maybe_unused]] void FireStart(std::error_code ec) {}
 
   /// tcp服务器停止通知
-  TPN_INLINE void FireStop(std::error_code ec) {}
+  ///  @param[in]   ec    错误码
+  TPN_INLINE [[maybe_unused]] void FireStop(std::error_code ec) {}
 
  protected:
   asio::ip::tcp::acceptor acceptor_;   ///< 接受者
