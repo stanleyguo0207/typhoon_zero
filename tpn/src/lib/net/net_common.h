@@ -47,7 +47,8 @@
   TEMPLATE_DECL_2 Keyword PostWrap;            \
   TEMPLATE_DECL_2 Keyword SendWrap;            \
   TEMPLATE_DECL_2 Keyword Socket;              \
-  TEMPLATE_DECL_1 Keyword SessionMgr;
+  TEMPLATE_DECL_1 Keyword SessionMgr;          \
+  TEMPLATE_DECL_1 Keyword ServiceMgr;
 
 // tcp base
 #define TPN_NET_TCP_BASE_CLASS_DECL(Keyword) \

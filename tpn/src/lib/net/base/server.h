@@ -29,11 +29,14 @@
 #include <type_traits>
 
 #include "crtp_object.h"
+#include "message_buffer.h"
 #include "net_common.h"
 #include "io_pool.h"
 #include "session_mgr.h"
 #include "custom_allocator.h"
 #include "post_wrap.h"
+#include "service.h"
+#include "service_mgr.h"
 
 namespace tpn {
 
@@ -123,6 +126,19 @@ class ServerBase : public CRTPObject<Derived, false>,
     return std::shared_ptr<SessionType>(this->session_mgr_.FindIf(fn));
   }
 
+  /// 服务分发
+  ///  @param[in]   session_sptr
+  ///  @param[in]   service_hash
+  ///  @param[in]   token
+  ///  @param[in]   method_id
+  ///  @param[in]   buffer
+  TPN_INLINE void ServiceDispath(std::shared_ptr<SessionType> session_sptr,
+                                 uint32_t service_hash, uint32_t token,
+                                 uint32_t method_id, MessageBuffer buffer) {
+    this->service_mgr_.Dispatch(session_sptr, service_hash, token, method_id,
+                                std::move(buffer));
+  }
+
   /// 获取网络接受器
   ///  @return 网络接受器
   TPN_INLINE auto &GetAcceptor() { return this->GetDerivedObj().GetAcceptor(); }
@@ -156,6 +172,12 @@ class ServerBase : public CRTPObject<Derived, false>,
   /// 获取io句柄
   TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }
 
+  /// 获取服务器服务管理器
+  ///  @return 服务器服务管理器
+  TPN_INLINE ServiceMgr<SessionType> &GetServiceMgr() {
+    return this->service_mgr_;
+  }
+
  protected:
   /// 获取网络状态
   ///  @return 当前服务器网络状态
@@ -177,6 +199,7 @@ class ServerBase : public CRTPObject<Derived, false>,
   IoHandle &io_handle_;  ///< 包含(io_context和strand)，用来处理接受事件
   std::atomic<NetState> state_ = NetState::kNetStateStopped;  ///< 服务状态
   SessionMgr<SessionType> session_mgr_;  ///< 会话管理器
+  ServiceMgr<SessionType> service_mgr_;  ///< 服务管理器
   std::shared_ptr<void>
       counter_sptr_;  ///< 用来确保服务器在所有会话停止后才停止
   HandlerMemory<SizeOp<>, std::false_type>
