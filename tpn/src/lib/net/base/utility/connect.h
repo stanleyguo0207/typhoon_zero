@@ -180,44 +180,34 @@ class Connect : public ConnectBase<Derived, ArgsType, ArgsType::is_session> {
         std::promise<std::error_code> promise;
         std::future<std::error_code> future = promise.get_future();
 
+        NET_DEBUG("Connect client {}:{} sync post connect timeout timer",
+                  derive.GetLocalEndpoint().address().to_string(),
+                  derive.GetLocalEndpoint().port());
+
         // 开启一个超时定时器
-        derive.Post([&derive, this_ptr,
-                     promise = std::move(promise)]() mutable {
-          NET_DEBUG("Connect client {}:{} sync post connect timeout timer",
-                    derive.GetLocalEndpoint().address().to_string(),
-                    derive.GetLocalEndpoint().port());
-          derive.PostConnectTimeoutTimer(
-              derive.GetConnectTimeoutDuration(), this_ptr,
-              [&derive, this_ptr, promise = std::move(promise)](
-                  const std::error_code &ec) mutable {
-                IgnoreUnused(this_ptr);
+        derive.Post(
+            [&derive, this_ptr, promise = std::move(promise)]() mutable {
+              derive.PostConnectTimeoutTimer(
+                  derive.GetConnectTimeoutDuration(), this_ptr,
+                  [&derive, this_ptr, promise = std::move(promise)](
+                      const std::error_code &ec) mutable {
+                    IgnoreUnused(this_ptr);
 
-                NET_DEBUG(
-                    "Connect client [async {}] {}:{} connect timeout timer "
-                    "callback error_code: {}",
-                    IsAsync, derive.GetLocalEndpoint().address().to_string(),
-                    derive.GetLocalEndpoint().port(), ec);
+                    // 没有错误表明连接超时
+                    if (!ec) {
+                      // 关闭套接字，async_connect将会返回 operation_aborted
+                      derive.GetSocket().lowest_layer().close(s_ec_ignore);
+                    }
 
-                // 没有错误表明连接超时
-                if (!ec) {
-                  // 关闭套接字，async_connect将会返回 operation_aborted
-                  derive.GetSocket().lowest_layer().close(s_ec_ignore);
-                }
-
-                promise.set_value(derive.GetConnectErrorCode()
-                                      ? derive.GetConnectErrorCode()
-                                      : (ec ? ec : asio::error::timed_out));
-              });
-        });
+                    promise.set_value(derive.GetConnectErrorCode()
+                                          ? derive.GetConnectErrorCode()
+                                          : (ec ? ec : asio::error::timed_out));
+                  });
+            });
 
         derive.ClientPostResolve(std::move(this_ptr));
 
         if (!derive.GetIoHandle().GetStrand().running_in_this_thread()) {
-          NET_DEBUG(
-              "Connect client [async {}] {}:{} connect timeout timer "
-              "callback error_code: {}",
-              IsAsync, derive.GetLocalEndpoint().address().to_string(),
-              derive.GetLocalEndpoint().port(), future.get());
           SetLastError(future.get());
         } else {
           TPN_ASSERT(false, "Connect client PostResolve faile");
