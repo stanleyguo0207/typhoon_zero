@@ -67,8 +67,10 @@ class TcpMatchCondition {
         }
 
         packet_len_ = header.size();
-        if (0 == packet_len_) {
-          return std::pair(begin, true);
+        if (0 == packet_len_) {  // 如果没有包体也可以解析
+          auto packet_pair = std::pair(iter + header_len_, true);
+          this->Reset();
+          return std::move(packet_pair);
         }
       }
 

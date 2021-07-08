@@ -32,6 +32,9 @@ namespace net {
 /// 回调辅助类
 struct CallbackHelper {
   /// 处理Func(size_t)
+  ///  @tparam      Func          发送回调函数类型
+  ///  @param[in]   func          发送回调函数
+  ///  @param[in]   bytes_sent    发送了多少字节
   template <typename Func>
   static TPN_INLINE std::enable_if_t<std::is_same_v<
       decltype(std::declval<Func>()(size_t(0)), std::true_type()),
@@ -41,6 +44,8 @@ struct CallbackHelper {
   }
 
   /// 处理Func()
+  ///  @tparam      Func          发送回调函数类型
+  ///  @param[in]   func          发送回调函数
   template <typename Func>
   static TPN_INLINE std::enable_if_t<std::is_same_v<
       decltype(std::declval<Func>()(), std::true_type()), std::true_type>>

@@ -99,8 +99,8 @@ class TcpRecv {
     SetLastError(ec);
 
     if (0 == bytes_recvd) {  // tcp拆包错误
-      NET_ERROR("TcpRecv TcpHandleRecv bytes_recvd error");
-      derive.Stop();
+      NET_WARN("TcpRecv TcpHandleRecv bytes_recvd error");
+      derive.DoDisconnect(asio::error::message_size);
       return;
     }
 
@@ -108,40 +108,54 @@ class TcpRecv {
       // 更新收到包的时间
       derive.UpdateAliveTime();
 
-      const uint8_t *buffer =
-          static_cast<const uint8_t *>(derive.GetBuffer().data().data());
-
-      uint16_t header_length = *(reinterpret_cast<const uint16_t *>(buffer));
-      tpn::EndianRefMakeLittle(header_length);
-      if ((0 == header_length) || (header_length + kHeaderBytes >= bytes_recvd))
-          [[unlikely]] {
-        NET_ERROR("TcpRecv TcpHandleRecv header_length {} error",
-                  header_length);
-        derive.Stop();
-        return;
-      }
-
       protocol::Header header;
-      if (!header.ParseFromArray(buffer + kHeaderBytes, header_length))
-          [[unlikely]] {
-        NET_ERROR("TcpRecv TcpHandleRecv header parse header_length {} error",
-                  header_length);
-        derive.Stop();
-        return;
-      }
+      MessageBuffer packet;
 
-      if ((0 == header.size()) ||
-          (header.size() + header_length + kHeaderBytes > bytes_recvd))
-          [[unlikely]] {
-        NET_ERROR(
-            "TcpRecv TcpHandleRecv header_length {} packet_length {} error",
-            header_length, header.size());
-        derive.Stop();
-        return;
-      }
+      do {
+        const uint8_t *buffer =
+            static_cast<const uint8_t *>(derive.GetBuffer().data().data());
 
-      MessageBuffer packet(header.size());  // 消息包
-      packet.Write(buffer + kHeaderBytes + header_length, header.size());
+        // 解析包头长度
+        uint16_t header_length = *(reinterpret_cast<const uint16_t *>(buffer));
+        tpn::EndianRefMakeLittle(header_length);
+        // 允许不发包体 所以header_length + kHeaderBytes > bytes_recvd这里没有=
+        if ((0 == header_length) ||
+            (header_length + kHeaderBytes > bytes_recvd)) [[unlikely]] {
+          NET_ERROR("TcpRecv TcpHandleRecv header_length {} error",
+                    header_length);
+          derive.DoDisconnect(asio::error::message_size);
+          return;
+        }
+
+        // 解析包头
+        if (!header.ParseFromArray(buffer + kHeaderBytes, header_length))
+            [[unlikely]] {
+          NET_ERROR("TcpRecv TcpHandleRecv header parse header_length {} error",
+                    header_length);
+          derive.DoDisconnect(asio::error::message_size);
+          return;
+        }
+
+        // 只有包头 包体无数据情况
+        if (0 == header.size()) {
+          packet.Resize(0);
+          packet.Reset();
+          break;
+        }
+
+        if (header.size() + header_length + kHeaderBytes > bytes_recvd)
+            [[unlikely]] {
+          NET_ERROR(
+              "TcpRecv TcpHandleRecv header_length {} packet_length {} error",
+              header_length, header.size());
+          derive.DoDisconnect(asio::error::message_size);
+          return;
+        }
+
+        packet.Resize(header.size());
+        packet.Reset();
+        packet.Write(buffer + kHeaderBytes + header_length, header.size());
+      } while (0);
 
       // 通知会话拆包后的数据
       derive.FireRecv(this_ptr, std::move(header), std::move(packet));

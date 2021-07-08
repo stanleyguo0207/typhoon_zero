@@ -35,8 +35,6 @@
 #include "session_mgr.h"
 #include "custom_allocator.h"
 #include "post_wrap.h"
-// #include "service.h"
-// #include "service_mgr.h"
 
 namespace tpn {
 
@@ -172,12 +170,6 @@ class ServerBase : public CRTPObject<Derived, false>,
   /// 获取io句柄
   TPN_INLINE IoHandle &GetIoHandle() { return this->io_handle_; }
 
-  /// 获取服务器服务管理器
-  ///  @return 服务器服务管理器
-  // TPN_INLINE ServiceMgr<SessionType> &GetServiceMgr() {
-  //   return this->service_mgr_;
-  // }
-
  protected:
   /// 获取网络状态
   ///  @return 当前服务器网络状态
@@ -199,7 +191,6 @@ class ServerBase : public CRTPObject<Derived, false>,
   IoHandle &io_handle_;  ///< 包含(io_context和strand)，用来处理接受事件
   std::atomic<NetState> state_ = NetState::kNetStateStopped;  ///< 服务状态
   SessionMgr<SessionType> session_mgr_;  ///< 会话管理器
-  // ServiceMgr<SessionType> service_mgr_;  ///< 服务管理器
   std::shared_ptr<void>
       counter_sptr_;  ///< 用来确保服务器在所有会话停止后才停止
   HandlerMemory<SizeOp<>, std::false_type>

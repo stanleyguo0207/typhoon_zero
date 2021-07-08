@@ -93,7 +93,7 @@ class TcpServerBase : public ServerBase<Derived, SessionType> {
                                          std::forward<StrOrInt>(service));
   }
 
-  /// 关闭tco服务器
+  /// 关闭tcp服务器
   TPN_INLINE void Stop() {
     NET_DEBUG("TcpServerBase Stop state {}", ToNetStateStr(this->state_));
     this->GetDerivedObj().DoStop(asio::error::operation_aborted);
