@@ -35,9 +35,28 @@ using namespace tpn::protocol;
 
 namespace net {
 
+/// 自定义服务类
+/// 继承自rpc的服务类型 注册到dispatcher用
+///  @tparam  SessionType     会话类型
+///  @tparam  ServiceType     服务类型
+/// @note SessionType需要实现以下接口
+/// @code
+/// void SendRequest(uint32_t service_hash, uint32_t method_id,
+///                  const google::protobuf::Message *request,
+///                  std::function<void(MessageBuffer)> callback)
+/// void SendRequest(uint32_t service_hash, uint32_t method_id,
+///                  const google::protobuf::Message *request)
+/// void SendResponse(uint32_t service_hash, uint32_t method_id,
+///                   uint32_t token, uint32_t status)
+/// void SendResponse(uint32_t service_hash, uint32_t method_id,
+///                   uint32_t token, const google::protobuf::Message *response)
+/// std::string GetCallerInfo() const
+/// @endcode
 template <typename SessionType, typename ServiceType>
 class Service : public ServiceType {
  public:
+  /// 构造函数
+  ///  @param[in]   session_sptr    会话，用来调用响应的服务
   Service(std::shared_ptr<SessionType> session_sptr)
       : ServiceType(), session_sptr_(session_sptr) {}
 
@@ -92,7 +111,7 @@ class Service : public ServiceType {
   }
 
  protected:
-  std::shared_ptr<SessionType> session_sptr_;
+  std::shared_ptr<SessionType> session_sptr_;  ///< 服务会话
 };
 
 }  // namespace net

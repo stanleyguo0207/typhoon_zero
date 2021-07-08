@@ -33,18 +33,32 @@ namespace tpn {
 
 namespace net {
 
+/// 服务管理基类
+/// 各服务器需要继承本类，打开AddService接口
+///  @tapram  SessionType     会话类型
 template <typename SessionType>
 class ServiceMgr {
  public:
   ServiceMgr()  = default;
   ~ServiceMgr() = default;
 
+  /// 注册服务
+  ///  @tparam  ServiceType     服务类型
   template <typename ServiceType>
   TPN_INLINE void AddService() {
     dispatchers_[ServiceType::ServiceHash::value] =
         &ServiceMgr::Dispatch<ServiceType>;
   }
 
+  /// 分发协议
+  /// 如何确定调用的是对端的哪个方法呢？
+  /// 1. 通过service_hash找到对应的服务，对端需要注册对应的服务
+  /// 2. 通过method_id找到对应服务中的方法，不同服务中的相同方法id没有影响
+  ///  @param[in]   session_sptr    会话
+  ///  @param[in]   service_hash    服务索引
+  ///  @param[in]   token           对端的令牌
+  ///  @param[in]   method_id       服务内的方法id
+  ///  @param[in]   buffer          协议数据
   TPN_INLINE void Dispatch(std::shared_ptr<SessionType> session_sptr,
                            uint32_t service_hash, uint32_t token,
                            uint32_t method_id, MessageBuffer buffer) {
@@ -59,6 +73,13 @@ class ServiceMgr {
   }
 
  protected:
+  /// 内部分发
+  ///  @tparam      ServiceType     服务类型
+  ///  @param[in]   session_sptr    会话
+  ///  @param[in]   service_hash    服务索引
+  ///  @param[in]   token           对端的令牌
+  ///  @param[in]   method_id       服务内的方法id
+  ///  @param[in]   buffer          协议数据
   template <typename ServiceType>
   static void Dispatch(std::shared_ptr<SessionType> session_sptr,
                        uint32_t service_hash, uint32_t token,
@@ -68,6 +89,7 @@ class ServiceMgr {
   }
 
  protected:
+  /// 服务方法签名
   using ServiceMethod = void (*)(std::shared_ptr<SessionType>, uint32_t,
                                  uint32_t, uint32_t, MessageBuffer);
 
