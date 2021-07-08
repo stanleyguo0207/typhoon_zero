@@ -23,6 +23,8 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_PROTO_PCH_PCH_PROTO_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_PROTO_PCH_PCH_PROTO_H_
 
+#include <limits>
+#include <string>
 #include <functional>
 #include <type_traits>
 
@@ -35,12 +37,16 @@
 #include <google/protobuf/metadata_lite.h>
 #include <google/protobuf/generated_message_reflection.h>
 #include <google/protobuf/generated_enum_reflection.h>
+#include <google/protobuf/message.h>
 #include <google/protobuf/service.h>
+#include <google/protobuf/unknown_field_set.h>
+#include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/unknown_field_set.h>
 
 #include "define.h"
 #include "log.h"
-#include "byte_buffer.h"
+#include "message_buffer.h"
 #include "service_base.h"
+#include "type/rpc_type.pb.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_PROTO_PCH_PCH_PROTO_H_

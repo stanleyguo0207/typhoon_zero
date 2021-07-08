@@ -34,10 +34,12 @@
 #include <cstddef>
 #include <cinttypes>
 
+#include <bit>
 #include <set>
 #include <list>
 #include <mutex>
 #include <queue>
+#include <tuple>
 #include <array>
 #include <vector>
 #include <string>
@@ -47,6 +49,7 @@
 #include <random>
 #include <memory>
 #include <atomic>
+#include <sstream>
 #include <utility>
 #include <optional>
 #include <exception>
@@ -58,6 +61,7 @@
 #include <type_traits>
 #include <unordered_set>
 #include <unordered_map>
+#include <initializer_list>
 #include <condition_variable>
 
 // rapidjson
@@ -66,6 +70,7 @@
 #include <rapidjson/filereadstream.h>
 
 // fmt
+#include <fmt/args.h>
 #include <fmt/chrono.h>
 #include <fmt/color.h>
 #include <fmt/core.h>
@@ -74,6 +79,7 @@
 #include <fmt/printf.h>
 #include <fmt/ranges.h>
 #include <fmt/compile.h>
+#include <fmt/xchar.h>
 
 // sfmt
 #include <sfmt/sfmt.h>
@@ -81,7 +87,12 @@
 // utfcpp
 #include <utfcpp/utf8.h>
 
+// asio
+#include <asio.hpp>
+
 #include "define.h"
+#include "log_fwd.h"
 #include "common.h"
+#include "log_common.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_PCH_PCH_COMMON_H_
