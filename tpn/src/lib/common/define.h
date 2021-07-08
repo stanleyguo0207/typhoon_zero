@@ -77,6 +77,17 @@
 #  if !defined(_GLIBCXX_USE_NANOSLEEP)
 #    define _GLIBCXX_USE_NANOSLEEP
 #  endif
+#  if defined(HELGRIND)
+#    include <valgrind/helgrind.h>
+#    undef _GLIBCXX_SYNCHRONIZATION_HAPPENS_BEFORE
+#    undef _GLIBCXX_SYNCHRONIZATION_HAPPENS_AFTER
+#    define _GLIBCXX_SYNCHRONIZATION_HAPPENS_BEFORE(A) \
+      ANNOTATE_HAPPENS_BEFORE(A)
+#    define _GLIBCXX_SYNCHRONIZATION_HAPPENS_AFTER(A) ANNOTATE_HAPPENS_AFTER(A)
+#  endif
+#  if defined(VALGRIND)
+#    include <valgrind/memcheck.h>
+#  endif
 #endif
 
 // inline

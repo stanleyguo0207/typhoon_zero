@@ -20,14 +20,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if(SERVERS)
-	add_subdirectory(fmt)
-	add_subdirectory(sfmt)
-	add_subdirectory(threads)
-	add_subdirectory(utfcpp)
-	add_subdirectory(rapidjson)
-	add_subdirectory(asio)
-	add_subdirectory(zlib)
-	add_subdirectory(protobuf)
-	add_subdirectory(valgrind)
-endif()
+# library
+add_library(valgrind
+	INTERFACE
+	)
+
+# include
+target_include_directories(valgrind
+	INTERFACE
+    ${VALGRIND_INCLUDE_DIR}
+	)

@@ -113,3 +113,15 @@ set_property(CACHE WITH_SOURCE_TREE PROPERTY STRINGS no flat hierarchical hierar
 
 # git
 option(WITHOUT_GIT "Disable the GIT testsing routines" OFF)
+
+# valgrind
+option(WITH_VALGRIND "Enable Valgrind" OFF)
+if(WITH_VALGRIND)
+  add_definitions(-DJEMALLOC_VALGRIND -DVALGRIND)
+endif()
+
+# helgrind
+option(WITH_HELGRIND "Enable Helgrind" OFF)
+if(WITH_HELGRIND)
+  add_definitions(-DHELGRIND)
+endif()

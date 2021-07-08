@@ -173,4 +173,34 @@ else()
   message(STATUS "Build the source tree for IDE's.                   : OFF (default)")
 endif()
 
+# git
+if(WITHOUT_GIT)
+  message(STATUS "Use git                                            : OFF")
+else()
+  message(STATUS "Use git                                            : ON (default)")
+endif()
+
+# valgrind
+if(WITH_VALGRIND)
+  message(STATUS "Use valgrind                                       : ON")
+  message(STATUS " *** VALGRIND - WARNING!")
+  message(STATUS " *** jemalloc will be configured to support Valgrind")
+  message(STATUS " *** Please specify the valgrind include directory in VALGRIND_INCLUDE_DIR option if you get build errors")
+  message(STATUS " *** Please note that this is for DEBUGGING WITH VALGRIND only!")
+  message(STATUS "")
+else()
+  message(STATUS "Use valgrind                                       : OFF (default)")
+endif()
+
+# helgrind
+if(WITH_HELGRIND)
+  message(STATUS "Use helgrind                                       : ON")
+  message(STATUS " *** HELGRIND - WARNING!")
+  message(STATUS " *** Please specify the valgrind include directory in VALGRIND_INCLUDE_DIR option if you get build errors")
+  message(STATUS " *** Please note that this is for DEBUGGING WITH HELGRIND only!")
+  message(STATUS "")
+else()
+  message(STATUS "Use helgrind                                       : OFF (default)")
+endif()
+
 message(STATUS "--------------------------------------------------------------------------")

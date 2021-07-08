@@ -1,14 +1,14 @@
 {cmake}
 [project-generate:debug]
-command=python3 .task/task.py "Generate" "Debug" "-DCMAKE_INSTALL_PREFIX=install/Debug"
+command=python3 .task/task.py "Generate" "Debug" "-DCMAKE_INSTALL_PREFIX=install/Debug -DWITH_VALGRIND=ON -DWITH_HELGRIND=ON"
 cwd=<root>
 
 [project-generate:release]
-command=python3 .task/task.py "Generate" "Release" "-DCMAKE_INSTALL_PREFIX=install/Release"
+command=python3 .task/task.py "Generate" "Release" "-DCMAKE_INSTALL_PREFIX=install/Release -DWITH_VALGRIND=ON -DWITH_HELGRIND=ON"
 cwd=<root>
 
 [project-generate:relwithdebinfo]
-command=python3 .task/task.py "Generate" "RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=install/RelWithDebInfo"
+command=python3 .task/task.py "Generate" "RelWithDebInfo" "-DCMAKE_INSTALL_PREFIX=install/RelWithDebInfo -DWITH_VALGRIND=ON -DWITH_HELGRIND=ON"
 cwd=<root>
 
 [project-build:debug]
