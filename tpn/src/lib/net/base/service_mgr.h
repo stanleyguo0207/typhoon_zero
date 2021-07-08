@@ -50,7 +50,8 @@ class ServiceMgr {
                            uint32_t method_id, MessageBuffer buffer) {
     auto iter = dispatchers_.find(service_hash);
     if (dispatchers_.end() != iter) {
-      iter->second(session_sptr, token, method_id, std::move(buffer));
+      iter->second(session_sptr, service_hash, token, method_id,
+                   std::move(buffer));
     } else {
       NET_DEBUG("{} tried to call invalid service {:#x}",
                 session_sptr->GetCallerInfo(), service_hash);

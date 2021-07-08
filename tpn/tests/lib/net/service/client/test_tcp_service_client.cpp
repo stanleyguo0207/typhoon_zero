@@ -37,42 +37,13 @@
 #include "random_hub.h"
 #include "utils.h"
 
-#include "../../../../third_party/protobuf/addressbook.pb.h"
-
-#ifndef _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE
-#  define _TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE \
-    "config_net_base_client_test.json"
+#ifndef _TPN_NET_SERVICE_CLIENT_CONFIG_TEST_FILE
+#  define _TPN_NET_SERVICE_CLIENT_CONFIG_TEST_FILE \
+    "config_net_service_client_test.json"
 #endif
 
 using namespace tpn;
 using namespace tpn::net;
-
-void ListPeople(const tutorial::AddressBook &address_book) {
-  for (auto &&person : address_book.people()) {
-    LOG_INFO("Person ID: {}\n", person.id());
-    LOG_INFO("\tName: {}\n", person.name());
-    if (!person.email().empty()) {
-      LOG_INFO("\tE-mail address: {}\n", person.email());
-    }
-    for (auto &&phone : person.phones()) {
-      switch (phone.type()) {
-        case tutorial::Person::MOBILE: {
-          LOG_INFO("\tMobile phone #:");
-        } break;
-        case tutorial::Person::HOME: {
-          LOG_INFO("\tHome phone #:");
-        } break;
-        case tutorial::Person::WORK: {
-          LOG_INFO("\tWork phone #:");
-        } break;
-        default: {
-          LOG_INFO("\tUnkown phone #:");
-        } break;
-      }
-      LOG_INFO("{}\n", phone.number());
-    }
-  }
-}
 
 /// tcp客户端
 class TcpClientTest
@@ -86,71 +57,37 @@ class TcpClientTest
 
   void FireRecv(std::shared_ptr<TcpClientTest> &this_ptr,
                 protocol::Header &&header, MessageBuffer &&packet) {
-    ++count_;
-    if (count_ > 10) {
-      Stop();
-      return;
-    }
-    std::this_thread::sleep_for(1s);
-
-    tutorial::AddressBook address_book;
-    if (!address_book.ParseFromArray(packet.GetBasePointer(),
-                                     packet.GetBufferSize())) {
-      LOG_ERROR("TcpClientTest FireRecv error");
-      Stop();
-      return;
-    }
-
-    ListPeople(address_book);
-
-    auto people = address_book.add_people();
-    people->set_id(RandI32());
-    people->set_email("123@123.com");
-    people->set_name("张三" + ToString(RandU32()));
-
-    header.set_size(address_book.ByteSizeLong());
-
-    uint16_t header_size = (uint16_t)header.ByteSizeLong();
-    EndianRefMakeLittle(header_size);
-
-    MessageBuffer packet2(sizeof(header_size) + header.GetCachedSize() +
-                          address_book.GetCachedSize());
-    packet2.Write(&header_size, sizeof(header_size));
-    uint8_t *ptr = packet2.GetWritePointer();
-    packet2.WriteCompleted(header.GetCachedSize());
-    header.SerializePartialToArray(ptr, header.GetCachedSize());
-    ptr = packet2.GetWritePointer();
-    packet2.WriteCompleted(address_book.GetCachedSize());
-    address_book.SerializeToArray(ptr, address_book.GetCachedSize());
-
-    Send(std::move(packet2));
+    LOG_INFO("TcpClientTest recv data");
   }
 
   void FireConnect(std::shared_ptr<TcpClientTest> &this_ptr,
                    std::error_code ec) {
     LOG_INFO("TcpClientTest connect server");
 
-    tutorial::AddressBook address_book;
-    auto people = address_book.add_people();
-    people->set_id(RandI32());
-    people->set_email("123@123.com");
-    people->set_name("张三" + ToString(RandU32()));
+    protocol::SearchRequest request;
+    request.set_query("QUERY_{}"_format(RandU32()));
+    request.set_page_number(RandI32(100, 1000));
+    request.set_result_per_page(RandI32(0, 100));
 
     protocol::Header header;
-    header.set_size(address_book.ByteSizeLong());
+    header.set_service_id(0);
+    header.set_service_hash(0x512656A2u);
+    header.set_method_id(0x40000001);
+    header.set_size(request.ByteSizeLong());
+    header.set_token(count_++);
 
     uint16_t header_size = (uint16_t)header.ByteSizeLong();
     EndianRefMakeLittle(header_size);
 
     MessageBuffer packet(sizeof(header_size) + header.GetCachedSize() +
-                         address_book.GetCachedSize());
+                         request.GetCachedSize());
     packet.Write(&header_size, sizeof(header_size));
     uint8_t *ptr = packet.GetWritePointer();
     packet.WriteCompleted(header.GetCachedSize());
     header.SerializePartialToArray(ptr, header.GetCachedSize());
     ptr = packet.GetWritePointer();
-    packet.WriteCompleted(address_book.GetCachedSize());
-    address_book.SerializeToArray(ptr, address_book.GetCachedSize());
+    packet.WriteCompleted(request.GetCachedSize());
+    request.SerializeToArray(ptr, request.GetCachedSize());
 
     Send(std::move(packet));
   }
@@ -165,7 +102,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   std::string config_error;
-  if (!g_config->Load(_TPN_NET_BASE_CLIENT_CONFIG_TEST_FILE,
+  if (!g_config->Load(_TPN_NET_SERVICE_CLIENT_CONFIG_TEST_FILE,
                       std::vector<std::string>(argv, argv + argc),
                       config_error)) {
     printf("Error in config file: %s\n", config_error.c_str());

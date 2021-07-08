@@ -37,6 +37,8 @@
 #include "byte_converter.h"
 #include "random_hub.h"
 #include "utils.h"
+#include "service.h"
+#include "service_mgr.h"
 
 #ifndef _TPN_NET_SERVICE_SERVER_CONFIG_TEST_FILE
 #  define _TPN_NET_SERVICE_SERVER_CONFIG_TEST_FILE \
@@ -45,6 +47,17 @@
 
 using namespace tpn;
 using namespace tpn::net;
+
+class TcpServiceSession;
+
+class TcpServiceDispatcher : public ServiceMgr<TcpServiceSession> {
+ public:
+  TPN_SINGLETON_DECL(TcpServiceDispatcher)
+};
+
+TPN_SINGLETON_IMPL(TcpServiceDispatcher)
+
+#define test_dispather TcpServiceDispatcher::Instance()
 
 namespace tpn {
 
@@ -76,18 +89,26 @@ class TcpServiceSessionBase : public TcpSessionBase<Derived, ArgsType> {
 
   void SendRequest(uint32_t service_hash, uint32_t method_id,
                    const google::protobuf::Message *request,
-                   std::function<void(MessageBuffer)> callback) {}
+                   std::function<void(MessageBuffer)> callback) {
+    NET_DEBUG("TcpServiceSessionBase SendRequest callback");
+  }
 
   void SendRequest(uint32_t service_hash, uint32_t method_id,
-                   const google::protobuf::Message *request) {}
+                   const google::protobuf::Message *request) {
+    NET_DEBUG("TcpServiceSessionBase SendRequest");
+  }
 
   void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
-                    uint32_t status) {}
+                    uint32_t status) {
+    NET_DEBUG("TcpServiceSessionBase SendResponse status");
+  }
 
   void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
-                    const google::protobuf::Message *response) {}
+                    const google::protobuf::Message *response) {
+    NET_DEBUG("TcpServiceSessionBase SendResponse response");
+  }
 
-  std::string GetCallerInfo() const { return ""; }
+  std::string GetCallerInfo() const { return "TcpServiceSessionBase"; }
 
  protected:
   void FireRecv(std::shared_ptr<Derived> &this_ptr, protocol::Header &&header,
@@ -96,9 +117,9 @@ class TcpServiceSessionBase : public TcpSessionBase<Derived, ArgsType> {
 
     LOG_INFO("FireRecv recv data");
 
-    server.ServiceDispatch(derive.GetSelfPtr(), header.service_hash(),
-                           header.token(), header.method_id(),
-                           std::move(packet));
+    test_dispather->Dispatch(derive.GetSelfSptr(), header.service_hash(),
+                             header.token(), header.method_id(),
+                             std::move(packet));
   }
 };
 
@@ -142,12 +163,12 @@ int main(int argc, char *argv[]) {
 
   TcpServiceServer server;
 
-  server.GetServiceMgr()
-      .AddService<Service<TcpServiceSession, protocol::TestService1>>();
-  server.GetServiceMgr()
-      .AddService<Service<TcpServiceSession, protocol::TestService2>>();
-  server.GetServiceMgr()
-      .AddService<Service<TcpServiceSession, protocol::TestService3>>();
+  test_dispather
+      ->AddService<net::Service<TcpServiceSession, protocol::TestService1>>();
+  test_dispather
+      ->AddService<net::Service<TcpServiceSession, protocol::TestService2>>();
+  test_dispather
+      ->AddService<net::Service<TcpServiceSession, protocol::TestService3>>();
 
   LOG_INFO("Tcp base server start init...");
 
