@@ -58,6 +58,47 @@ class TcpClientTest
   void FireRecv(std::shared_ptr<TcpClientTest> &this_ptr,
                 protocol::Header &&header, MessageBuffer &&packet) {
     LOG_INFO("TcpClientTest recv data");
+
+    if (count_ > 10) {
+      Stop();
+      return;
+    }
+
+    std::this_thread::sleep_for(1s);
+
+    protocol::SearchRequest request;
+    if (!request.ParseFromArray(packet.GetReadPointer(),
+                                packet.GetActiveSize())) {
+      LOG_ERROR("TcpClientTest FireRecv error");
+      Stop();
+      return;
+    }
+
+    request.set_query("QUERY_{}"_format(RandU32()));
+    request.set_page_number(RandI32(100, 1000));
+    request.set_result_per_page(RandI32(0, 100));
+
+    header.set_service_id(0);
+    header.set_service_hash(0x512656A2u);
+    header.set_method_id(0x40000001);
+    header.set_size(request.ByteSizeLong());
+    header.set_token(count_++);
+
+    uint16_t header_size = (uint16_t)header.ByteSizeLong();
+    EndianRefMakeLittle(header_size);
+
+    packet.Resize(sizeof(header_size) + header.GetCachedSize() +
+                  request.GetCachedSize());
+    packet.Reset();
+    packet.Write(&header_size, sizeof(header_size));
+    uint8_t *ptr = packet.GetWritePointer();
+    packet.WriteCompleted(header.GetCachedSize());
+    header.SerializePartialToArray(ptr, header.GetCachedSize());
+    ptr = packet.GetWritePointer();
+    packet.WriteCompleted(request.GetCachedSize());
+    request.SerializeToArray(ptr, request.GetCachedSize());
+
+    Send(std::move(packet));
   }
 
   void FireConnect(std::shared_ptr<TcpClientTest> &this_ptr,

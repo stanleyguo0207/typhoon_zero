@@ -39,6 +39,7 @@
 #include "utils.h"
 #include "service.h"
 #include "service_mgr.h"
+#include "error_code.pb.h"
 
 #ifndef _TPN_NET_SERVICE_SERVER_CONFIG_TEST_FILE
 #  define _TPN_NET_SERVICE_SERVER_CONFIG_TEST_FILE \
@@ -96,6 +97,27 @@ class TcpServiceSessionBase : public TcpSessionBase<Derived, ArgsType> {
   void SendRequest(uint32_t service_hash, uint32_t method_id,
                    const google::protobuf::Message *request) {
     NET_DEBUG("TcpServiceSessionBase SendRequest");
+
+    protocol::Header header;
+    header.set_service_id(0);
+    header.set_service_hash(0x512656A2u);
+    header.set_method_id(0x80000001);
+    header.set_size(request->ByteSizeLong());
+
+    uint16_t header_size = (uint16_t)header.ByteSizeLong();
+    EndianRefMakeLittle(header_size);
+
+    MessageBuffer packet(sizeof(header_size) + header.GetCachedSize() +
+                         request->GetCachedSize());
+    packet.Write(&header_size, sizeof(header_size));
+    uint8_t *ptr = packet.GetWritePointer();
+    packet.WriteCompleted(header.GetCachedSize());
+    header.SerializePartialToArray(ptr, header.GetCachedSize());
+    ptr = packet.GetWritePointer();
+    packet.WriteCompleted(request->GetCachedSize());
+    request->SerializeToArray(ptr, request->GetCachedSize());
+
+    Send(std::move(packet));
   }
 
   void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
@@ -136,6 +158,28 @@ class TcpServiceSession
 
 using TcpServiceServer = TcpServerBridge<TcpServiceSession>;
 
+class TcpTestService3
+    : public net::Service<TcpServiceSession, protocol::TestService3> {
+  using TestService3 = net::Service<TcpServiceSession, protocol::TestService3>;
+
+ public:
+  TcpTestService3(std::shared_ptr<TcpServiceSession> session_sptr)
+      : TestService3(session_sptr) {}
+
+  uint32_t HandleProcessClientRequest31(
+      const ::tpn::protocol::SearchRequest *request) override {
+    LOG_INFO("query: {} page_number: {} per_page: {}", request->query(),
+             request->page_number(), request->result_per_page());
+
+    protocol::SearchRequest req;
+    req.set_query("{}_{}"_format(request->query(), RandU32()));
+
+    ProcessClientRequest31(&req);
+
+    return kErrorCodeOk;
+  }
+};
+
 int main(int argc, char *argv[]) {
 #if (TPN_PLATFORM == TPN_PLATFORM_WIN)
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -167,8 +211,9 @@ int main(int argc, char *argv[]) {
       ->AddService<net::Service<TcpServiceSession, protocol::TestService1>>();
   test_dispather
       ->AddService<net::Service<TcpServiceSession, protocol::TestService2>>();
-  test_dispather
-      ->AddService<net::Service<TcpServiceSession, protocol::TestService3>>();
+  // test_dispather
+  //     ->AddService<net::Service<TcpServiceSession, protocol::TestService3>>();
+  test_dispather->AddService<TcpTestService3>();
 
   LOG_INFO("Tcp base server start init...");
 
