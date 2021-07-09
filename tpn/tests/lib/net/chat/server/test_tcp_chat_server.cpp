@@ -40,12 +40,15 @@
 #include "service.h"
 #include "service_mgr.h"
 
+#include "chat_server.hpp"
+
 #ifndef _TPN_NET_CHAT_SERVER_CONFIG_TEST_FILE
 #  define _TPN_NET_CHAT_SERVER_CONFIG_TEST_FILE \
     "config_net_chat_server_test.json"
 #endif
 
 using namespace tpn;
+using namespace test;
 
 int main(int argc, char *argv[]) {
 #if (TPN_PLATFORM == TPN_PLATFORM_WIN)
@@ -72,7 +75,14 @@ int main(int argc, char *argv[]) {
   std::string_view host = "0.0.0.0";
   std::string_view port = "9990";
 
+  net::TcpChatServer server;
+
   LOG_INFO("Tcp chat server start init...");
+
+  server.Start(host, port);
+
+  while (std::getchar() != '\n')
+    ;
 
   LOG_INFO("Tcp chat server shutdown in 5s...");
   std::this_thread::sleep_for(5s);

@@ -26,9 +26,11 @@ project(test_tcp_chat_server CXX)
 
 add_executable(test_tcp_chat_server
   "test_tcp_chat_server.cpp"
+  "chat_participant.hpp"
   "chat_room.hpp"
   "chat_server.hpp"
   "chat_service.hpp"
+  "chat_service_dispather.hpp"
   "chat_session.hpp"
 )
 

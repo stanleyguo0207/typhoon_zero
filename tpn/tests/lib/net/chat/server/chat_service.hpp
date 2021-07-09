@@ -29,14 +29,15 @@
 #include "chat_session.hpp"
 #include "chat_room.hpp"
 
-using namespace tpn;
-
 namespace test {
+
+using namespace tpn;
+using namespace tpn::net;
 
 class TcpChatService
     : public net::Service<TcpChatSession, protocol::TChatService> {
  public:
-  using TChatService = net::Service<TcpChatSession, protocol::TChatService>;
+  using TChatService = Service<TcpChatSession, protocol::TChatService>;
 
   TcpChatService(std::shared_ptr<TcpChatSession> session_sptr)
       : TChatService(session_sptr) {}

@@ -27,6 +27,7 @@
 #include <deque>
 #include <string>
 
+#include "log.h"
 #include "test_service.pb.h"
 #include "chat_participant.hpp"
 
@@ -40,7 +41,12 @@ class ChatRoom {
   using ChatMessageQueue = std::deque<std::string>;
 
  public:
+  ChatRoom() {}
+  ~ChatRoom() {}
+
   void Join(std::shared_ptr<ChatParticipant> participant) {
+    NET_INFO("Join a new participant");
+
     users_.emplace(participant);
     for (auto &&msg : recent_msg_) {
       participant->Deliver(msg);
@@ -48,6 +54,7 @@ class ChatRoom {
   }
 
   void Leave(std::shared_ptr<ChatParticipant> participant) {
+    NET_INFO("Leave a participant");
     users_.erase(participant);
   }
 
@@ -63,8 +70,8 @@ class ChatRoom {
   }
 
  private:
-  std::set<std::shared_ptr<ChatParticipant>> users_;
-  ChatMessageQueue recent_msg_;
+  std::set<std::shared_ptr<ChatParticipant>> users_;  ///<  聊天室内会话
+  ChatMessageQueue recent_msg_;                       ///< 消息
 };
 
 }  // namespace test
