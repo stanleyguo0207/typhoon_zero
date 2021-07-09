@@ -22,3 +22,4 @@
 
 add_subdirectory(base)
 add_subdirectory(service)
+add_subdirectory(chat)

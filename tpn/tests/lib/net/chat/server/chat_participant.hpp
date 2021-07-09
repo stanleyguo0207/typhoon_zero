@@ -20,31 +20,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-syntax = "proto3";
+#ifndef TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_PARTICIPANT_H_
+#define TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_PARTICIPANT_H_
 
-import public "pgt_custom/pgt_custom_options.proto";
-import public "error_code.proto";
+#include <string>
 
-package tpn.protocol;
+namespace test {
 
-option optimize_for = SPEED;
-option cc_generic_services = false;
+class ChatParticipant {
+ public:
+  virtual ~ChatParticipant() {}
+  virtual void Deliver(const std::string &msg) = 0;
+};
 
-// 无回应
-message NoResponse {}
+}  // namespace test
 
-// 网络地址
-message Address {
-  string add_ress = 1;  // 地址
-  uint32 port = 2;      // 端口
-}
-
-// 数据包头
-message Header {
-  uint32 service_id = 1;     // 服务器id
-  uint32 token = 2;          // 令牌
-  uint32 size = 3;           // 数据包体大小
-  fixed32 service_hash = 4;  // 服务哈希值
-  uint32 method_id = 5;      // 方法id
-  uint32 status = 6;         // 状态码
-}
+#endif  // TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_PARTICIPANT_H_

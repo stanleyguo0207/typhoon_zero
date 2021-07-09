@@ -4,7 +4,7 @@ command=python3 .task/task.py "Generate" "Debug" "-DCMAKE_INSTALL_PREFIX=install
 cwd=<root>
 
 [project-generate:release]
-command=python3 .task/task.py "Generate" "Release" "-DCMAKE_INSTALL_PREFIX=install/Release -DWITH_VALGRIND=ON -DWITH_HELGRIND=ON"
+command=python3 .task/task.py "Generate" "Release" "-DCMAKE_INSTALL_PREFIX=install/Release"
 cwd=<root>
 
 [project-generate:relwithdebinfo]

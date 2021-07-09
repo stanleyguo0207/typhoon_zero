@@ -20,3 +20,35 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+cmake_minimum_required(VERSION 3.20.0)
+
+project(test_tcp_chat_client CXX)
+
+add_executable(test_tcp_chat_client
+  "test_tcp_chat_client.cpp"
+)
+
+set_property(TARGET
+  test_tcp_chat_client
+  APPEND
+  PROPERTY
+    COMPILE_DEFINITIONS
+    _TPN_NET_ChAT_CLIENT_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_net_chat_client_test.json"
+)
+
+target_link_libraries(test_tcp_chat_client
+  net
+)
+
+install(TARGETS test_tcp_chat_client DESTINATION ${BIN_DIR}/tests/net)
+
+if(WIN32)
+  add_custom_command(TARGET
+    test_tcp_chat_client
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/config_net_chat_client_test.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

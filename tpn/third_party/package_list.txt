@@ -31,3 +31,11 @@ asio (Asio is a cross-platform C++ library for network and low-level I/O program
 protobuf (Protocol Buffers - Google's data interchange format)
   https://github.com/protocolbuffers/protobuf
   Version: v3.17.3 909a0f36a10075c4b4bc70fdee2c7e32dd612a72
+
+Valgrind (Valgrind is an instrumentation framework for building dynamic analysis tools.)
+  https://www.valgrind.org/
+  Version: 3.17.0
+
+libreadline (The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in. )
+  http://tiswww.case.edu/php/chet/readline/rltop.html
+  Version: external

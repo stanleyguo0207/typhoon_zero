@@ -52,7 +52,7 @@ struct TableStruct_protocol_2ftest_5fservice_2eproto {
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::AuxiliaryParseTableField aux[]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
-  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[3]
+  static const ::PROTOBUF_NAMESPACE_ID::internal::ParseTable schema[6]
     PROTOBUF_SECTION_VARIABLE(protodesc_cold);
   static const ::PROTOBUF_NAMESPACE_ID::internal::FieldMetadata field_metadata[];
   static const ::PROTOBUF_NAMESPACE_ID::internal::SerializationTable serialization_table[];
@@ -70,12 +70,24 @@ extern SearchRequestDefaultTypeInternal _SearchRequest_default_instance_;
 class SearchResponse;
 struct SearchResponseDefaultTypeInternal;
 extern SearchResponseDefaultTypeInternal _SearchResponse_default_instance_;
+class TChatNtf;
+struct TChatNtfDefaultTypeInternal;
+extern TChatNtfDefaultTypeInternal _TChatNtf_default_instance_;
+class TChatRequest;
+struct TChatRequestDefaultTypeInternal;
+extern TChatRequestDefaultTypeInternal _TChatRequest_default_instance_;
+class TUpdateInfoRequest;
+struct TUpdateInfoRequestDefaultTypeInternal;
+extern TUpdateInfoRequestDefaultTypeInternal _TUpdateInfoRequest_default_instance_;
 }  // namespace protocol
 }  // namespace tpn
 PROTOBUF_NAMESPACE_OPEN
 template<> ::tpn::protocol::Result* Arena::CreateMaybeMessage<::tpn::protocol::Result>(Arena*);
 template<> ::tpn::protocol::SearchRequest* Arena::CreateMaybeMessage<::tpn::protocol::SearchRequest>(Arena*);
 template<> ::tpn::protocol::SearchResponse* Arena::CreateMaybeMessage<::tpn::protocol::SearchResponse>(Arena*);
+template<> ::tpn::protocol::TChatNtf* Arena::CreateMaybeMessage<::tpn::protocol::TChatNtf>(Arena*);
+template<> ::tpn::protocol::TChatRequest* Arena::CreateMaybeMessage<::tpn::protocol::TChatRequest>(Arena*);
+template<> ::tpn::protocol::TUpdateInfoRequest* Arena::CreateMaybeMessage<::tpn::protocol::TUpdateInfoRequest>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 namespace tpn {
 namespace protocol {
@@ -580,6 +592,448 @@ class Result final :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_protocol_2ftest_5fservice_2eproto;
 };
+// -------------------------------------------------------------------
+
+class TUpdateInfoRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tpn.protocol.TUpdateInfoRequest) */ {
+ public:
+  inline TUpdateInfoRequest() : TUpdateInfoRequest(nullptr) {}
+  ~TUpdateInfoRequest() override;
+  explicit constexpr TUpdateInfoRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TUpdateInfoRequest(const TUpdateInfoRequest& from);
+  TUpdateInfoRequest(TUpdateInfoRequest&& from) noexcept
+    : TUpdateInfoRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline TUpdateInfoRequest& operator=(const TUpdateInfoRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TUpdateInfoRequest& operator=(TUpdateInfoRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TUpdateInfoRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TUpdateInfoRequest* internal_default_instance() {
+    return reinterpret_cast<const TUpdateInfoRequest*>(
+               &_TUpdateInfoRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(TUpdateInfoRequest& a, TUpdateInfoRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TUpdateInfoRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TUpdateInfoRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TUpdateInfoRequest* New() const final {
+    return new TUpdateInfoRequest();
+  }
+
+  TUpdateInfoRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TUpdateInfoRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TUpdateInfoRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const TUpdateInfoRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TUpdateInfoRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "tpn.protocol.TUpdateInfoRequest";
+  }
+  protected:
+  explicit TUpdateInfoRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kNameFieldNumber = 1,
+  };
+  // string name = 1;
+  void clear_name();
+  const std::string& name() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_name(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_name();
+  PROTOBUF_MUST_USE_RESULT std::string* release_name();
+  void set_allocated_name(std::string* name);
+  private:
+  const std::string& _internal_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_name(const std::string& value);
+  std::string* _internal_mutable_name();
+  public:
+
+  // @@protoc_insertion_point(class_scope:tpn.protocol.TUpdateInfoRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr name_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_protocol_2ftest_5fservice_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TChatRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tpn.protocol.TChatRequest) */ {
+ public:
+  inline TChatRequest() : TChatRequest(nullptr) {}
+  ~TChatRequest() override;
+  explicit constexpr TChatRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TChatRequest(const TChatRequest& from);
+  TChatRequest(TChatRequest&& from) noexcept
+    : TChatRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline TChatRequest& operator=(const TChatRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TChatRequest& operator=(TChatRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TChatRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TChatRequest* internal_default_instance() {
+    return reinterpret_cast<const TChatRequest*>(
+               &_TChatRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    4;
+
+  friend void swap(TChatRequest& a, TChatRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TChatRequest* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TChatRequest* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TChatRequest* New() const final {
+    return new TChatRequest();
+  }
+
+  TChatRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TChatRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TChatRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const TChatRequest& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TChatRequest* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "tpn.protocol.TChatRequest";
+  }
+  protected:
+  explicit TChatRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMessageFieldNumber = 1,
+  };
+  // string message = 1;
+  void clear_message();
+  const std::string& message() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_message(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_message();
+  PROTOBUF_MUST_USE_RESULT std::string* release_message();
+  void set_allocated_message(std::string* message);
+  private:
+  const std::string& _internal_message() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_message(const std::string& value);
+  std::string* _internal_mutable_message();
+  public:
+
+  // @@protoc_insertion_point(class_scope:tpn.protocol.TChatRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr message_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_protocol_2ftest_5fservice_2eproto;
+};
+// -------------------------------------------------------------------
+
+class TChatNtf final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:tpn.protocol.TChatNtf) */ {
+ public:
+  inline TChatNtf() : TChatNtf(nullptr) {}
+  ~TChatNtf() override;
+  explicit constexpr TChatNtf(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  TChatNtf(const TChatNtf& from);
+  TChatNtf(TChatNtf&& from) noexcept
+    : TChatNtf() {
+    *this = ::std::move(from);
+  }
+
+  inline TChatNtf& operator=(const TChatNtf& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline TChatNtf& operator=(TChatNtf&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const TChatNtf& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const TChatNtf* internal_default_instance() {
+    return reinterpret_cast<const TChatNtf*>(
+               &_TChatNtf_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(TChatNtf& a, TChatNtf& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(TChatNtf* other) {
+    if (other == this) return;
+    if (GetOwningArena() == other->GetOwningArena()) {
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(TChatNtf* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline TChatNtf* New() const final {
+    return new TChatNtf();
+  }
+
+  TChatNtf* New(::PROTOBUF_NAMESPACE_ID::Arena* arena) const final {
+    return CreateMaybeMessage<TChatNtf>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const TChatNtf& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom(const TChatNtf& from);
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to, const ::PROTOBUF_NAMESPACE_ID::Message&from);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::PROTOBUF_NAMESPACE_ID::uint8* _InternalSerialize(
+      ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(TChatNtf* other);
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "tpn.protocol.TChatNtf";
+  }
+  protected:
+  explicit TChatNtf(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  private:
+  static void ArenaDtor(void* object);
+  inline void RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMessageListFieldNumber = 1,
+  };
+  // repeated string message_list = 1;
+  int message_list_size() const;
+  private:
+  int _internal_message_list_size() const;
+  public:
+  void clear_message_list();
+  const std::string& message_list(int index) const;
+  std::string* mutable_message_list(int index);
+  void set_message_list(int index, const std::string& value);
+  void set_message_list(int index, std::string&& value);
+  void set_message_list(int index, const char* value);
+  void set_message_list(int index, const char* value, size_t size);
+  std::string* add_message_list();
+  void add_message_list(const std::string& value);
+  void add_message_list(std::string&& value);
+  void add_message_list(const char* value);
+  void add_message_list(const char* value, size_t size);
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& message_list() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_message_list();
+  private:
+  const std::string& _internal_message_list(int index) const;
+  std::string* _internal_add_message_list();
+  public:
+
+  // @@protoc_insertion_point(class_scope:tpn.protocol.TChatNtf)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> message_list_;
+  mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  friend struct ::TableStruct_protocol_2ftest_5fservice_2eproto;
+};
 // ===================================================================
 
 class TestService1 : public ServiceBase {
@@ -653,6 +1107,56 @@ class TestService3 : public ServiceBase {
   uint32_t service_hash_{0};
 
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(TestService3);
+};
+
+// -------------------------------------------------------------------
+
+class TChatService : public ServiceBase {
+ public:
+
+  TChatService();
+  virtual ~TChatService();
+
+  using ServiceHash = std::integral_constant<uint32_t, 0xEF00192Cu>;
+
+  static const google::protobuf::ServiceDescriptor *descriptor();
+
+  // client methods --------------------------------------------------
+  void UpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request, bool client = false, bool server = false);
+  void Chat(const ::tpn::protocol::TChatRequest *request, bool client = false, bool server = false);
+
+  void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
+ protected:
+  // server methods --------------------------------------------------
+  virtual uint32_t HandleUpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request);
+  virtual uint32_t HandleChat(const ::tpn::protocol::TChatRequest *request);
+
+ private:
+  uint32_t service_hash_{0};
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(TChatService);
+};
+
+// -------------------------------------------------------------------
+
+class TChatListener : public ServiceBase {
+ public:
+
+  TChatListener();
+  virtual ~TChatListener();
+
+  using ServiceHash = std::integral_constant<uint32_t, 0x7608B2A9u>;
+
+  static const google::protobuf::ServiceDescriptor *descriptor();
+
+  // client methods --------------------------------------------------
+  void ChatNtf(const ::tpn::protocol::TChatNtf *request, bool client = false, bool server = false);
+
+  void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
+ private:
+  uint32_t service_hash_{0};
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(TChatListener);
 };
 
 // ===================================================================
@@ -967,9 +1471,194 @@ Result::mutable_snippets() {
   return &snippets_;
 }
 
+// -------------------------------------------------------------------
+
+// TUpdateInfoRequest
+
+// string name = 1;
+inline void TUpdateInfoRequest::clear_name() {
+  name_.ClearToEmpty();
+}
+inline const std::string& TUpdateInfoRequest::name() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.TUpdateInfoRequest.name)
+  return _internal_name();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void TUpdateInfoRequest::set_name(ArgT0&& arg0, ArgT... args) {
+ 
+ name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:tpn.protocol.TUpdateInfoRequest.name)
+}
+inline std::string* TUpdateInfoRequest::mutable_name() {
+  std::string* _s = _internal_mutable_name();
+  // @@protoc_insertion_point(field_mutable:tpn.protocol.TUpdateInfoRequest.name)
+  return _s;
+}
+inline const std::string& TUpdateInfoRequest::_internal_name() const {
+  return name_.Get();
+}
+inline void TUpdateInfoRequest::_internal_set_name(const std::string& value) {
+  
+  name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* TUpdateInfoRequest::_internal_mutable_name() {
+  
+  return name_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* TUpdateInfoRequest::release_name() {
+  // @@protoc_insertion_point(field_release:tpn.protocol.TUpdateInfoRequest.name)
+  return name_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void TUpdateInfoRequest::set_allocated_name(std::string* name) {
+  if (name != nullptr) {
+    
+  } else {
+    
+  }
+  name_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), name,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:tpn.protocol.TUpdateInfoRequest.name)
+}
+
+// -------------------------------------------------------------------
+
+// TChatRequest
+
+// string message = 1;
+inline void TChatRequest::clear_message() {
+  message_.ClearToEmpty();
+}
+inline const std::string& TChatRequest::message() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.TChatRequest.message)
+  return _internal_message();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void TChatRequest::set_message(ArgT0&& arg0, ArgT... args) {
+ 
+ message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:tpn.protocol.TChatRequest.message)
+}
+inline std::string* TChatRequest::mutable_message() {
+  std::string* _s = _internal_mutable_message();
+  // @@protoc_insertion_point(field_mutable:tpn.protocol.TChatRequest.message)
+  return _s;
+}
+inline const std::string& TChatRequest::_internal_message() const {
+  return message_.Get();
+}
+inline void TChatRequest::_internal_set_message(const std::string& value) {
+  
+  message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, value, GetArenaForAllocation());
+}
+inline std::string* TChatRequest::_internal_mutable_message() {
+  
+  return message_.Mutable(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+}
+inline std::string* TChatRequest::release_message() {
+  // @@protoc_insertion_point(field_release:tpn.protocol.TChatRequest.message)
+  return message_.Release(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), GetArenaForAllocation());
+}
+inline void TChatRequest::set_allocated_message(std::string* message) {
+  if (message != nullptr) {
+    
+  } else {
+    
+  }
+  message_.SetAllocated(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), message,
+      GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set_allocated:tpn.protocol.TChatRequest.message)
+}
+
+// -------------------------------------------------------------------
+
+// TChatNtf
+
+// repeated string message_list = 1;
+inline int TChatNtf::_internal_message_list_size() const {
+  return message_list_.size();
+}
+inline int TChatNtf::message_list_size() const {
+  return _internal_message_list_size();
+}
+inline void TChatNtf::clear_message_list() {
+  message_list_.Clear();
+}
+inline std::string* TChatNtf::add_message_list() {
+  std::string* _s = _internal_add_message_list();
+  // @@protoc_insertion_point(field_add_mutable:tpn.protocol.TChatNtf.message_list)
+  return _s;
+}
+inline const std::string& TChatNtf::_internal_message_list(int index) const {
+  return message_list_.Get(index);
+}
+inline const std::string& TChatNtf::message_list(int index) const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.TChatNtf.message_list)
+  return _internal_message_list(index);
+}
+inline std::string* TChatNtf::mutable_message_list(int index) {
+  // @@protoc_insertion_point(field_mutable:tpn.protocol.TChatNtf.message_list)
+  return message_list_.Mutable(index);
+}
+inline void TChatNtf::set_message_list(int index, const std::string& value) {
+  message_list_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.TChatNtf.message_list)
+}
+inline void TChatNtf::set_message_list(int index, std::string&& value) {
+  message_list_.Mutable(index)->assign(std::move(value));
+  // @@protoc_insertion_point(field_set:tpn.protocol.TChatNtf.message_list)
+}
+inline void TChatNtf::set_message_list(int index, const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  message_list_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:tpn.protocol.TChatNtf.message_list)
+}
+inline void TChatNtf::set_message_list(int index, const char* value, size_t size) {
+  message_list_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:tpn.protocol.TChatNtf.message_list)
+}
+inline std::string* TChatNtf::_internal_add_message_list() {
+  return message_list_.Add();
+}
+inline void TChatNtf::add_message_list(const std::string& value) {
+  message_list_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:tpn.protocol.TChatNtf.message_list)
+}
+inline void TChatNtf::add_message_list(std::string&& value) {
+  message_list_.Add(std::move(value));
+  // @@protoc_insertion_point(field_add:tpn.protocol.TChatNtf.message_list)
+}
+inline void TChatNtf::add_message_list(const char* value) {
+  GOOGLE_DCHECK(value != nullptr);
+  message_list_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:tpn.protocol.TChatNtf.message_list)
+}
+inline void TChatNtf::add_message_list(const char* value, size_t size) {
+  message_list_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:tpn.protocol.TChatNtf.message_list)
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
+TChatNtf::message_list() const {
+  // @@protoc_insertion_point(field_list:tpn.protocol.TChatNtf.message_list)
+  return message_list_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+TChatNtf::mutable_message_list() {
+  // @@protoc_insertion_point(field_mutable_list:tpn.protocol.TChatNtf.message_list)
+  return &message_list_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

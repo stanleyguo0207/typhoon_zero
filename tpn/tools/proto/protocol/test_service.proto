@@ -84,3 +84,48 @@ service TestService3 {
     option (method_options).id = 2;
   }
 }
+
+////////// 聊天
+
+// 更新信息请求
+message TUpdateInfoRequest {
+  string name = 1;  // 名称
+}
+
+// 聊天消息
+message TChatRequest {
+  string message = 1;  // 消息
+}
+
+// 聊天记录通知
+message TChatNtf {
+  repeated string message_list = 1;  // 消息列表
+}
+
+// 聊天服务
+service TChatService {
+  option (service_options).descriptor_name = "tpn.protocol.TChatService";
+  option (service_options).inbound = true;
+  option (service_options).outbound = true;
+
+  // 更新信息
+  rpc UpdateInfo(TUpdateInfoRequest) returns (NoResponse) {
+    option (method_options).id = 1;
+  }
+
+  // 聊天
+  rpc Chat(TChatRequest) returns (NoResponse) {
+    option (method_options).id = 2;
+  }
+}
+
+// 聊天服务
+service TChatListener {
+  option (service_options).descriptor_name = "tpn.protocol.TChatListener";
+  option (service_options).inbound = true;
+
+  // 聊天通知
+  rpc ChatNtf(TChatNtf) returns (NoResponse) {
+    option (method_options).id = 1;
+  }
+}

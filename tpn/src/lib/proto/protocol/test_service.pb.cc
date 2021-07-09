@@ -61,11 +61,47 @@ struct ResultDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ResultDefaultTypeInternal _Result_default_instance_;
+constexpr TUpdateInfoRequest::TUpdateInfoRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : name_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct TUpdateInfoRequestDefaultTypeInternal {
+  constexpr TUpdateInfoRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~TUpdateInfoRequestDefaultTypeInternal() {}
+  union {
+    TUpdateInfoRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TUpdateInfoRequestDefaultTypeInternal _TUpdateInfoRequest_default_instance_;
+constexpr TChatRequest::TChatRequest(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : message_(&::PROTOBUF_NAMESPACE_ID::internal::fixed_address_empty_string){}
+struct TChatRequestDefaultTypeInternal {
+  constexpr TChatRequestDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~TChatRequestDefaultTypeInternal() {}
+  union {
+    TChatRequest _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TChatRequestDefaultTypeInternal _TChatRequest_default_instance_;
+constexpr TChatNtf::TChatNtf(
+  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
+  : message_list_(){}
+struct TChatNtfDefaultTypeInternal {
+  constexpr TChatNtfDefaultTypeInternal()
+    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  ~TChatNtfDefaultTypeInternal() {}
+  union {
+    TChatNtf _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TChatNtfDefaultTypeInternal _TChatNtf_default_instance_;
 }  // namespace protocol
 }  // namespace tpn
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_protocol_2ftest_5fservice_2eproto[3];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_protocol_2ftest_5fservice_2eproto[6];
 static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_protocol_2ftest_5fservice_2eproto = nullptr;
-static const ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor* file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[3];
+static const ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor* file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[5];
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_protocol_2ftest_5fservice_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -90,17 +126,41 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_protocol_2ftest_5fservice_2epr
   PROTOBUF_FIELD_OFFSET(::tpn::protocol::Result, url_),
   PROTOBUF_FIELD_OFFSET(::tpn::protocol::Result, title_),
   PROTOBUF_FIELD_OFFSET(::tpn::protocol::Result, snippets_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::TUpdateInfoRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::TUpdateInfoRequest, name_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::TChatRequest, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::TChatRequest, message_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::TChatNtf, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::TChatNtf, message_list_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::tpn::protocol::SearchRequest)},
   { 8, -1, sizeof(::tpn::protocol::SearchResponse)},
   { 14, -1, sizeof(::tpn::protocol::Result)},
+  { 22, -1, sizeof(::tpn::protocol::TUpdateInfoRequest)},
+  { 28, -1, sizeof(::tpn::protocol::TChatRequest)},
+  { 34, -1, sizeof(::tpn::protocol::TChatNtf)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::tpn::protocol::_SearchRequest_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::tpn::protocol::_SearchResponse_default_instance_),
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::tpn::protocol::_Result_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::tpn::protocol::_TUpdateInfoRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::tpn::protocol::_TChatRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::tpn::protocol::_TChatNtf_default_instance_),
 };
 
 const char descriptor_table_protodef_protocol_2ftest_5fservice_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -110,33 +170,44 @@ const char descriptor_table_protodef_protocol_2ftest_5fservice_2eproto[] PROTOBU
   "\017result_per_page\030\003 \001(\005\"7\n\016SearchResponse"
   "\022%\n\007results\030\001 \003(\0132\024.tpn.protocol.Result\""
   "6\n\006Result\022\013\n\003url\030\001 \001(\t\022\r\n\005title\030\002 \001(\t\022\020\n"
-  "\010snippets\030\003 \003(\t2\347\001\n\014TestService1\022W\n\026Proc"
-  "essClientRequest11\022\033.tpn.protocol.Search"
-  "Request\032\030.tpn.protocol.NoResponse\"\006\202\371+\002\010"
-  "\001\022[\n\026ProcessClientRequest12\022\033.tpn.protoc"
-  "ol.SearchRequest\032\034.tpn.protocol.SearchRe"
-  "sponse\"\006\202\371+\002\010\002\032!\202\371+\035\n\031tpn.protocol.tests"
-  "ervice1\020\0012\350\001\n\014TestService2\022W\n\026ProcessCli"
-  "entRequest21\022\033.tpn.protocol.SearchReques"
-  "t\032\030.tpn.protocol.NoResponse\"\006\202\371+\002\010\001\022[\n\026P"
-  "rocessClientRequest22\022\033.tpn.protocol.Sea"
-  "rchRequest\032\034.tpn.protocol.SearchResponse"
-  "\"\006\202\371+\002\010\002\032\"\202\371+\036\n\032tpn.protocol.testservice"
-  "s2\030\0012\352\001\n\014TestService3\022W\n\026ProcessClientRe"
-  "quest31\022\033.tpn.protocol.SearchRequest\032\030.t"
-  "pn.protocol.NoResponse\"\006\202\371+\002\010\001\022[\n\026Proces"
-  "sClientRequest32\022\033.tpn.protocol.SearchRe"
-  "quest\032\034.tpn.protocol.SearchResponse\"\006\202\371+"
-  "\002\010\002\032$\202\371+ \n\032tpn.protocol.testservices3\020\001\030"
-  "\001B\005H\001\200\001\001b\006proto3"
+  "\010snippets\030\003 \003(\t\"\"\n\022TUpdateInfoRequest\022\014\n"
+  "\004name\030\001 \001(\t\"\037\n\014TChatRequest\022\017\n\007message\030\001"
+  " \001(\t\" \n\010TChatNtf\022\024\n\014message_list\030\001 \003(\t2\347"
+  "\001\n\014TestService1\022W\n\026ProcessClientRequest1"
+  "1\022\033.tpn.protocol.SearchRequest\032\030.tpn.pro"
+  "tocol.NoResponse\"\006\202\371+\002\010\001\022[\n\026ProcessClien"
+  "tRequest12\022\033.tpn.protocol.SearchRequest\032"
+  "\034.tpn.protocol.SearchResponse\"\006\202\371+\002\010\002\032!\202"
+  "\371+\035\n\031tpn.protocol.testservice1\020\0012\350\001\n\014Tes"
+  "tService2\022W\n\026ProcessClientRequest21\022\033.tp"
+  "n.protocol.SearchRequest\032\030.tpn.protocol."
+  "NoResponse\"\006\202\371+\002\010\001\022[\n\026ProcessClientReque"
+  "st22\022\033.tpn.protocol.SearchRequest\032\034.tpn."
+  "protocol.SearchResponse\"\006\202\371+\002\010\002\032\"\202\371+\036\n\032t"
+  "pn.protocol.testservices2\030\0012\352\001\n\014TestServ"
+  "ice3\022W\n\026ProcessClientRequest31\022\033.tpn.pro"
+  "tocol.SearchRequest\032\030.tpn.protocol.NoRes"
+  "ponse\"\006\202\371+\002\010\001\022[\n\026ProcessClientRequest32\022"
+  "\033.tpn.protocol.SearchRequest\032\034.tpn.proto"
+  "col.SearchResponse\"\006\202\371+\002\010\002\032$\202\371+ \n\032tpn.pr"
+  "otocol.testservices3\020\001\030\0012\313\001\n\014TChatServic"
+  "e\022P\n\nUpdateInfo\022 .tpn.protocol.TUpdateIn"
+  "foRequest\032\030.tpn.protocol.NoResponse\"\006\202\371+"
+  "\002\010\001\022D\n\004Chat\022\032.tpn.protocol.TChatRequest\032"
+  "\030.tpn.protocol.NoResponse\"\006\202\371+\002\010\002\032#\202\371+\037\n"
+  "\031tpn.protocol.TChatService\020\001\030\0012x\n\rTChatL"
+  "istener\022C\n\007ChatNtf\022\026.tpn.protocol.TChatN"
+  "tf\032\030.tpn.protocol.NoResponse\"\006\202\371+\002\010\001\032\"\202\371"
+  "+\036\n\032tpn.protocol.TChatListener\020\001B\005H\001\200\001\001b"
+  "\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_protocol_2ftest_5fservice_2eproto_deps[1] = {
   &::descriptor_table_type_2frpc_5ftype_2eproto,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_protocol_2ftest_5fservice_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_protocol_2ftest_5fservice_2eproto = {
-  false, false, 976, descriptor_table_protodef_protocol_2ftest_5fservice_2eproto, "protocol/test_service.proto", 
-  &descriptor_table_protocol_2ftest_5fservice_2eproto_once, descriptor_table_protocol_2ftest_5fservice_2eproto_deps, 1, 3,
+  false, false, 1407, descriptor_table_protodef_protocol_2ftest_5fservice_2eproto, "protocol/test_service.proto", 
+  &descriptor_table_protocol_2ftest_5fservice_2eproto_once, descriptor_table_protocol_2ftest_5fservice_2eproto_deps, 1, 6,
   schemas, file_default_instances, TableStruct_protocol_2ftest_5fservice_2eproto::offsets,
   file_level_metadata_protocol_2ftest_5fservice_2eproto, file_level_enum_descriptors_protocol_2ftest_5fservice_2eproto, file_level_service_descriptors_protocol_2ftest_5fservice_2eproto,
 };
@@ -882,6 +953,601 @@ void Result::InternalSwap(Result* other) {
 
 // ===================================================================
 
+class TUpdateInfoRequest::_Internal {
+ public:
+};
+
+TUpdateInfoRequest::TUpdateInfoRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:tpn.protocol.TUpdateInfoRequest)
+}
+TUpdateInfoRequest::TUpdateInfoRequest(const TUpdateInfoRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_name().empty()) {
+    name_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_name(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:tpn.protocol.TUpdateInfoRequest)
+}
+
+inline void TUpdateInfoRequest::SharedCtor() {
+name_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+TUpdateInfoRequest::~TUpdateInfoRequest() {
+  // @@protoc_insertion_point(destructor:tpn.protocol.TUpdateInfoRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void TUpdateInfoRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  name_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TUpdateInfoRequest::ArenaDtor(void* object) {
+  TUpdateInfoRequest* _this = reinterpret_cast< TUpdateInfoRequest* >(object);
+  (void)_this;
+}
+void TUpdateInfoRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void TUpdateInfoRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void TUpdateInfoRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:tpn.protocol.TUpdateInfoRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  name_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TUpdateInfoRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_name();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "tpn.protocol.TUpdateInfoRequest.name"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TUpdateInfoRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:tpn.protocol.TUpdateInfoRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string name = 1;
+  if (!this->_internal_name().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_name().data(), static_cast<int>(this->_internal_name().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "tpn.protocol.TUpdateInfoRequest.name");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_name(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:tpn.protocol.TUpdateInfoRequest)
+  return target;
+}
+
+size_t TUpdateInfoRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:tpn.protocol.TUpdateInfoRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string name = 1;
+  if (!this->_internal_name().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_name());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TUpdateInfoRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    TUpdateInfoRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TUpdateInfoRequest::GetClassData() const { return &_class_data_; }
+
+void TUpdateInfoRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<TUpdateInfoRequest *>(to)->MergeFrom(
+      static_cast<const TUpdateInfoRequest &>(from));
+}
+
+
+void TUpdateInfoRequest::MergeFrom(const TUpdateInfoRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:tpn.protocol.TUpdateInfoRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_name().empty()) {
+    _internal_set_name(from._internal_name());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void TUpdateInfoRequest::CopyFrom(const TUpdateInfoRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:tpn.protocol.TUpdateInfoRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TUpdateInfoRequest::IsInitialized() const {
+  return true;
+}
+
+void TUpdateInfoRequest::InternalSwap(TUpdateInfoRequest* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &name_, GetArenaForAllocation(),
+      &other->name_, other->GetArenaForAllocation()
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TUpdateInfoRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_protocol_2ftest_5fservice_2eproto_getter, &descriptor_table_protocol_2ftest_5fservice_2eproto_once,
+      file_level_metadata_protocol_2ftest_5fservice_2eproto[3]);
+}
+
+// ===================================================================
+
+class TChatRequest::_Internal {
+ public:
+};
+
+TChatRequest::TChatRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:tpn.protocol.TChatRequest)
+}
+TChatRequest::TChatRequest(const TChatRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+  if (!from._internal_message().empty()) {
+    message_.Set(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, from._internal_message(), 
+      GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:tpn.protocol.TChatRequest)
+}
+
+inline void TChatRequest::SharedCtor() {
+message_.UnsafeSetDefault(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+TChatRequest::~TChatRequest() {
+  // @@protoc_insertion_point(destructor:tpn.protocol.TChatRequest)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void TChatRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  message_.DestroyNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
+}
+
+void TChatRequest::ArenaDtor(void* object) {
+  TChatRequest* _this = reinterpret_cast< TChatRequest* >(object);
+  (void)_this;
+}
+void TChatRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void TChatRequest::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void TChatRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:tpn.protocol.TChatRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  message_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TChatRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string message = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          auto str = _internal_mutable_message();
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "tpn.protocol.TChatRequest.message"));
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TChatRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:tpn.protocol.TChatRequest)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string message = 1;
+  if (!this->_internal_message().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_message().data(), static_cast<int>(this->_internal_message().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "tpn.protocol.TChatRequest.message");
+    target = stream->WriteStringMaybeAliased(
+        1, this->_internal_message(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:tpn.protocol.TChatRequest)
+  return target;
+}
+
+size_t TChatRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:tpn.protocol.TChatRequest)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string message = 1;
+  if (!this->_internal_message().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_message());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TChatRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    TChatRequest::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TChatRequest::GetClassData() const { return &_class_data_; }
+
+void TChatRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<TChatRequest *>(to)->MergeFrom(
+      static_cast<const TChatRequest &>(from));
+}
+
+
+void TChatRequest::MergeFrom(const TChatRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:tpn.protocol.TChatRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_message().empty()) {
+    _internal_set_message(from._internal_message());
+  }
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void TChatRequest::CopyFrom(const TChatRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:tpn.protocol.TChatRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TChatRequest::IsInitialized() const {
+  return true;
+}
+
+void TChatRequest::InternalSwap(TChatRequest* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
+      &message_, GetArenaForAllocation(),
+      &other->message_, other->GetArenaForAllocation()
+  );
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TChatRequest::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_protocol_2ftest_5fservice_2eproto_getter, &descriptor_table_protocol_2ftest_5fservice_2eproto_once,
+      file_level_metadata_protocol_2ftest_5fservice_2eproto[4]);
+}
+
+// ===================================================================
+
+class TChatNtf::_Internal {
+ public:
+};
+
+TChatNtf::TChatNtf(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned),
+  message_list_(arena) {
+  SharedCtor();
+  if (!is_message_owned) {
+    RegisterArenaDtor(arena);
+  }
+  // @@protoc_insertion_point(arena_constructor:tpn.protocol.TChatNtf)
+}
+TChatNtf::TChatNtf(const TChatNtf& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      message_list_(from.message_list_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:tpn.protocol.TChatNtf)
+}
+
+inline void TChatNtf::SharedCtor() {
+}
+
+TChatNtf::~TChatNtf() {
+  // @@protoc_insertion_point(destructor:tpn.protocol.TChatNtf)
+  if (GetArenaForAllocation() != nullptr) return;
+  SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+inline void TChatNtf::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void TChatNtf::ArenaDtor(void* object) {
+  TChatNtf* _this = reinterpret_cast< TChatNtf* >(object);
+  (void)_this;
+}
+void TChatNtf::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
+void TChatNtf::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+
+void TChatNtf::Clear() {
+// @@protoc_insertion_point(message_clear_start:tpn.protocol.TChatNtf)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  message_list_.Clear();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* TChatNtf::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // repeated string message_list = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 10)) {
+          ptr -= 1;
+          do {
+            ptr += 1;
+            auto str = _internal_add_message_list();
+            ptr = ::PROTOBUF_NAMESPACE_ID::internal::InlineGreedyStringParser(str, ptr, ctx);
+            CHK_(::PROTOBUF_NAMESPACE_ID::internal::VerifyUTF8(str, "tpn.protocol.TChatNtf.message_list"));
+            CHK_(ptr);
+            if (!ctx->DataAvailable(ptr)) break;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag == 0) || ((tag & 7) == 4)) {
+          CHK_(ptr);
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* TChatNtf::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:tpn.protocol.TChatNtf)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated string message_list = 1;
+  for (int i = 0, n = this->_internal_message_list_size(); i < n; i++) {
+    const auto& s = this->_internal_message_list(i);
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      s.data(), static_cast<int>(s.length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "tpn.protocol.TChatNtf.message_list");
+    target = stream->WriteString(1, s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:tpn.protocol.TChatNtf)
+  return target;
+}
+
+size_t TChatNtf::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:tpn.protocol.TChatNtf)
+  size_t total_size = 0;
+
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // repeated string message_list = 1;
+  total_size += 1 *
+      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(message_list_.size());
+  for (int i = 0, n = message_list_.size(); i < n; i++) {
+    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+      message_list_.Get(i));
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TChatNtf::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSizeCheck,
+    TChatNtf::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TChatNtf::GetClassData() const { return &_class_data_; }
+
+void TChatNtf::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message*to,
+                      const ::PROTOBUF_NAMESPACE_ID::Message&from) {
+  static_cast<TChatNtf *>(to)->MergeFrom(
+      static_cast<const TChatNtf &>(from));
+}
+
+
+void TChatNtf::MergeFrom(const TChatNtf& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:tpn.protocol.TChatNtf)
+  GOOGLE_DCHECK_NE(&from, this);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  message_list_.MergeFrom(from.message_list_);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void TChatNtf::CopyFrom(const TChatNtf& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:tpn.protocol.TChatNtf)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TChatNtf::IsInitialized() const {
+  return true;
+}
+
+void TChatNtf::InternalSwap(TChatNtf* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  message_list_.InternalSwap(&other->message_list_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata TChatNtf::GetMetadata() const {
+  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+      &descriptor_table_protocol_2ftest_5fservice_2eproto_getter, &descriptor_table_protocol_2ftest_5fservice_2eproto_once,
+      file_level_metadata_protocol_2ftest_5fservice_2eproto[5]);
+}
+
+// ===================================================================
+
 TestService1::TestService1() : service_hash_(ServiceHash::value) {
 }
 
@@ -1080,6 +1746,104 @@ uint32_t TestService3::HandleProcessClientRequest32(const ::tpn::protocol::Searc
   return kErrorCodeNotImplemented;
 }
 
+// ===================================================================
+
+TChatService::TChatService() : service_hash_(ServiceHash::value) {
+}
+
+TChatService::~TChatService() {
+}
+
+const google::protobuf::ServiceDescriptor *TChatService::descriptor() {
+  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[3];
+}
+
+void TChatService::UpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request, bool client /*= false*/, bool server /*= false*/) {
+  LOG_DEBUG("{} Server called client method TChatService.UpdateInfo(tpn.protocol.TUpdateInfoRequest{{ {}  }})",
+    GetCallerInfo(), request->ShortDebugString());
+  SendRequest(service_hash_, 1 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
+}
+
+void TChatService::Chat(const ::tpn::protocol::TChatRequest *request, bool client /*= false*/, bool server /*= false*/) {
+  LOG_DEBUG("{} Server called client method TChatService.Chat(tpn.protocol.TChatRequest{{ {}  }})",
+    GetCallerInfo(), request->ShortDebugString());
+  SendRequest(service_hash_, 2 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
+}
+
+void TChatService::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) {
+  switch(method_id & 0x3FFFFFFF) {
+    case 1: {
+      ::tpn::protocol::TUpdateInfoRequest request;
+      if (!request.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize())) {
+        LOG_DEBUG("{} Failed to parse request for TChatService.UpdateInfo server method call.", GetCallerInfo());
+        SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
+        return;
+      }
+      uint32_t status = HandleUpdateInfo(&request);
+      LOG_DEBUG("{} Client called server method TChatService.UpdateInfo(tpn.protocol.TUpdateInfoRequest{{ {} }}) status {}.",
+        GetCallerInfo(), request.ShortDebugString(), status);
+      if (status)
+        SendResponse(service_hash_, method_id, token, status);
+      break;
+    }
+    case 2: {
+      ::tpn::protocol::TChatRequest request;
+      if (!request.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize())) {
+        LOG_DEBUG("{} Failed to parse request for TChatService.Chat server method call.", GetCallerInfo());
+        SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
+        return;
+      }
+      uint32_t status = HandleChat(&request);
+      LOG_DEBUG("{} Client called server method TChatService.Chat(tpn.protocol.TChatRequest{{ {} }}) status {}.",
+        GetCallerInfo(), request.ShortDebugString(), status);
+      if (status)
+        SendResponse(service_hash_, method_id, token, status);
+      break;
+    }
+    default:
+      LOG_ERROR("Bad method id {}.", method_id);
+      SendResponse(service_hash_, method_id, token, kErrorCodeInvalidMethod);
+      break;
+    }
+}
+
+uint32_t TChatService::HandleUpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request) {
+  LOG_ERROR("{} Client tried to call not implemented method TChatService.UpdateInfo({{ {} }})",
+    GetCallerInfo(), request->ShortDebugString());
+  return kErrorCodeNotImplemented;
+}
+
+uint32_t TChatService::HandleChat(const ::tpn::protocol::TChatRequest *request) {
+  LOG_ERROR("{} Client tried to call not implemented method TChatService.Chat({{ {} }})",
+    GetCallerInfo(), request->ShortDebugString());
+  return kErrorCodeNotImplemented;
+}
+
+// ===================================================================
+
+TChatListener::TChatListener() : service_hash_(ServiceHash::value) {
+}
+
+TChatListener::~TChatListener() {
+}
+
+const google::protobuf::ServiceDescriptor *TChatListener::descriptor() {
+  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[4];
+}
+
+void TChatListener::ChatNtf(const ::tpn::protocol::TChatNtf *request, bool client /*= false*/, bool server /*= false*/) {
+  LOG_DEBUG("{} Server called client method TChatListener.ChatNtf(tpn.protocol.TChatNtf{{ {}  }})",
+    GetCallerInfo(), request->ShortDebugString());
+  SendRequest(service_hash_, 1 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
+}
+
+void TChatListener::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer /*buffer*/) {
+  LOG_ERROR("{} Server tried to call server method {}",
+    GetCallerInfo(), method_id);
+}
+
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace protocol
@@ -1093,6 +1857,15 @@ template<> PROTOBUF_NOINLINE ::tpn::protocol::SearchResponse* Arena::CreateMaybe
 }
 template<> PROTOBUF_NOINLINE ::tpn::protocol::Result* Arena::CreateMaybeMessage< ::tpn::protocol::Result >(Arena* arena) {
   return Arena::CreateMessageInternal< ::tpn::protocol::Result >(arena);
+}
+template<> PROTOBUF_NOINLINE ::tpn::protocol::TUpdateInfoRequest* Arena::CreateMaybeMessage< ::tpn::protocol::TUpdateInfoRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::tpn::protocol::TUpdateInfoRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::tpn::protocol::TChatRequest* Arena::CreateMaybeMessage< ::tpn::protocol::TChatRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::tpn::protocol::TChatRequest >(arena);
+}
+template<> PROTOBUF_NOINLINE ::tpn::protocol::TChatNtf* Arena::CreateMaybeMessage< ::tpn::protocol::TChatNtf >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::tpn::protocol::TChatNtf >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 
