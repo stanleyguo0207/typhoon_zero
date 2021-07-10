@@ -59,63 +59,33 @@ class TcpClientTest
                 protocol::Header &&header, MessageBuffer &&packet) {
     LOG_INFO("TcpClientTest recv data");
 
-    if (count_ > 10) {
-      Stop();
+    if (0 == packet.GetActiveSize()) {
       return;
     }
 
-    std::this_thread::sleep_for(1s);
-
-    protocol::SearchRequest request;
-    if (!request.ParseFromArray(packet.GetReadPointer(),
+    protocol::TChatNtf ntf;
+    if (!ntf.ParseFromArray(packet.GetReadPointer(),
                                 packet.GetActiveSize())) {
       LOG_ERROR("TcpClientTest FireRecv error");
       Stop();
       return;
     }
 
-    request.set_query("QUERY_{}"_format(RandU32()));
-    request.set_page_number(RandI32(100, 1000));
-    request.set_result_per_page(RandI32(0, 100));
-
-    header.set_service_id(0);
-    header.set_service_hash(0x512656A2u);
-    header.set_method_id(0x40000001);
-    header.set_size(request.ByteSizeLong());
-    header.set_token(count_++);
-
-    uint16_t header_size = (uint16_t)header.ByteSizeLong();
-    EndianRefMakeLittle(header_size);
-
-    packet.Resize(sizeof(header_size) + header.GetCachedSize() +
-                  request.GetCachedSize());
-    packet.Reset();
-    packet.Write(&header_size, sizeof(header_size));
-    uint8_t *ptr = packet.GetWritePointer();
-    packet.WriteCompleted(header.GetCachedSize());
-    header.SerializePartialToArray(ptr, header.GetCachedSize());
-    ptr = packet.GetWritePointer();
-    packet.WriteCompleted(request.GetCachedSize());
-    request.SerializeToArray(ptr, request.GetCachedSize());
-
-    Send(std::move(packet));
+    fmt::print("recv msg: {}\n", ntf.message_list());
   }
 
   void FireConnect(std::shared_ptr<TcpClientTest> &this_ptr,
                    std::error_code ec) {
     LOG_INFO("TcpClientTest connect server");
 
-    protocol::SearchRequest request;
-    request.set_query("QUERY_{}"_format(RandU32()));
-    request.set_page_number(RandI32(100, 1000));
-    request.set_result_per_page(RandI32(0, 100));
+    protocol::TUpdateInfoRequest request;
+    request.set_name("机器人_{}"_format(RandU32()));
 
     protocol::Header header;
     header.set_service_id(0);
-    header.set_service_hash(0x512656A2u);
+    header.set_service_hash(protocol::TChatService::ServiceHash::value);
     header.set_method_id(0x40000001);
     header.set_size(request.ByteSizeLong());
-    header.set_token(count_++);
 
     uint16_t header_size = (uint16_t)header.ByteSizeLong();
     EndianRefMakeLittle(header_size);
@@ -132,9 +102,6 @@ class TcpClientTest
 
     Send(std::move(packet));
   }
-
- private:
-  int count_{0};
 };
 
 int main(int argc, char *argv[]) {
@@ -165,8 +132,35 @@ int main(int argc, char *argv[]) {
 
   client.Start(host, port);
 
-  while (std::getchar() != '\n')
-    ;
+  char line[512];
+
+  while (std::cin.getline(line, 512)) {
+    protocol::TChatRequest request;
+
+    size_t len = strlen(line);
+    request.set_message(line, len);
+
+    protocol::Header header;
+    header.set_service_id(0);
+    header.set_service_hash(protocol::TChatService::ServiceHash::value);
+    header.set_method_id(0x40000002);
+    header.set_size(request.ByteSizeLong());
+
+    uint16_t header_size = (uint16_t)header.ByteSizeLong();
+    EndianRefMakeLittle(header_size);
+
+    MessageBuffer packet(sizeof(header_size) + header.GetCachedSize() +
+                         request.GetCachedSize());
+    packet.Write(&header_size, sizeof(header_size));
+    uint8_t *ptr = packet.GetWritePointer();
+    packet.WriteCompleted(header.GetCachedSize());
+    header.SerializePartialToArray(ptr, header.GetCachedSize());
+    ptr = packet.GetWritePointer();
+    packet.WriteCompleted(request.GetCachedSize());
+    request.SerializeToArray(ptr, request.GetCachedSize());
+
+    client.Send(std::move(packet));
+  }
 
   client.Stop();
 

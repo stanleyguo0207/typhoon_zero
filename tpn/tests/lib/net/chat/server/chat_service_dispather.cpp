@@ -20,34 +20,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_SERVICE_DISPATHER_H_
-#define TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_SERVICE_DISPATHER_H_
-
-#include "net.h"
-#include "service_mgr.h"
-
-using namespace tpn;
-using namespace tpn::net;
-
-namespace tpn {
-namespace net {
-
-class TcpChatSession;
-
-}  // namespace net
-}  // namespace tpn
+#include "chat_service_dispather.h"
 
 namespace test {
-
-class TcpChatDispather : public ServiceMgr<tpn::net::TcpChatSession> {
- public:
-  TPN_SINGLETON_DECL(TcpChatDispather)
-};
 
 TPN_SINGLETON_IMPL(TcpChatDispather)
 
 }  // namespace test
-
-#define chat_dispather test::TcpChatDispather::Instance()
-
-#endif  // TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_SERVICE_DISPATHER_H_

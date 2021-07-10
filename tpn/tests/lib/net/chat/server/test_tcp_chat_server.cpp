@@ -37,8 +37,6 @@
 #include "test_service.pb.h"
 
 #include "net.h"
-#include "service.h"
-#include "service_mgr.h"
 
 #include "chat_server.hpp"
 
@@ -75,7 +73,7 @@ int main(int argc, char *argv[]) {
   std::string_view host = "0.0.0.0";
   std::string_view port = "9990";
 
-  net::TcpChatServer server;
+  TcpChatServer server;
 
   LOG_INFO("Tcp chat server start init...");
 

@@ -24,44 +24,44 @@
 #define TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_SERVER_H_
 
 #include "net.h"
+
 #include "chat_session.hpp"
-#include "chat_room.hpp"
-#include "chat_service.hpp"
-#include "chat_service_dispather.hpp"
+#include "chat_room.h"
+#include "chat_service.h"
+#include "chat_service_dispather.h"
 
-namespace tpn {
+using namespace tpn;
 
-using namespace test;
+namespace test {
 
-namespace net {
-
-class TcpChatServer : public TcpServerBridge<TcpChatSession> {
+template <typename SessionType>
+class TcpChatServerBridge
+    : public net::TcpServerBase<TcpChatServerBridge<SessionType>, SessionType> {
  public:
-  using Super = TcpServerBridge<TcpChatSession>;
-  using Self  = TcpChatServer;
+  using Super =
+      net::TcpServerBase<TcpChatServerBridge<SessionType>, SessionType>;
+  using Self = TcpChatServerBridge;
 
-  TcpChatServer() : Super(), room_() {
+  using Super::TcpServerBase;
+
+  TcpChatServerBridge() : Super(), room_() {
     chat_dispather->AddService<TcpChatService>();
   }
-  ~TcpChatServer() { Super::Stop(); }
 
- protected:
-  /// 创造一个tcp会话
-  ///  @tapram      Args        会话子类所需额外参数预留类型
-  ///  @param[in]   args...     会话子类所需额外参数预留
+  ~TcpChatServerBridge() { this->Stop(); }
+
   template <typename... Args>
-  std::shared_ptr<TcpChatSession> MakeSession(Args &&...args) {
-    return std::make_shared<TcpChatSession>(
-        std::forward<Args>(args)..., room_, this->GetIoHandleByIndex(),
-        this->session_mgr_, this->buffer_max_, this->buffer_prepare_);
+  TPN_INLINE std::shared_ptr<SessionType> MakeSession(Args &&... args) {
+    NET_DEBUG("TcpServerBase MakeSession state {}",
+              ToNetStateStr(this->state_));
+    return Super::MakeSession(std::forward<Args>(args)..., room_);
   }
 
- protected:
-  test::ChatRoom room_;  ///< 房间
+  ChatRoom room_;  ///< 房间
 };
 
-}  // namespace net
+using TcpChatServer = TcpChatServerBridge<TcpChatSession>;
 
-}  // namespace tpn
+}  // namespace test
 
 #endif  // TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_SERVER_H_

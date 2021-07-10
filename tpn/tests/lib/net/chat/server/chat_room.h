@@ -29,11 +29,12 @@
 
 #include "log.h"
 #include "test_service.pb.h"
-#include "chat_participant.hpp"
 
 using namespace tpn;
 
 namespace test {
+
+class TcpChatSession;
 
 static constexpr uint32_t kMaxRecentMsgs = 100;
 
@@ -41,36 +42,17 @@ class ChatRoom {
   using ChatMessageQueue = std::deque<std::string>;
 
  public:
-  ChatRoom() {}
-  ~ChatRoom() {}
+  ChatRoom();
+  ~ChatRoom();
 
-  void Join(std::shared_ptr<ChatParticipant> participant) {
-    NET_INFO("Join a new participant");
+  void Join(std::shared_ptr<TcpChatSession> user);
 
-    users_.emplace(participant);
-    for (auto &&msg : recent_msg_) {
-      participant->Deliver(msg);
-    }
-  }
+  void Leave(std::shared_ptr<TcpChatSession> user);
 
-  void Leave(std::shared_ptr<ChatParticipant> participant) {
-    NET_INFO("Leave a participant");
-    users_.erase(participant);
-  }
-
-  void Deliver(const std::string &msg) {
-    recent_msg_.emplace_back(msg);
-    while (recent_msg_.size() > kMaxRecentMsgs) {
-      recent_msg_.pop_front();
-    }
-
-    for (auto &&user : users_) {
-      user->Deliver(msg);
-    }
-  }
+  void Deliver(const std::string &msg);
 
  private:
-  std::set<std::shared_ptr<ChatParticipant>> users_;  ///<  聊天室内会话
+  std::set<std::shared_ptr<TcpChatSession>> users_;  ///<  聊天室内会话
   ChatMessageQueue recent_msg_;                       ///< 消息
 };
 

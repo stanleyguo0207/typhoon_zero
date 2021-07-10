@@ -27,46 +27,32 @@
 #include <string>
 
 #include "net.h"
-#include "service.h"
-#include "service_mgr.h"
 
-#include "chat_service.hpp"
-#include "chat_room.hpp"
-#include "chat_service_dispather.hpp"
-#include "chat_participant.hpp"
+#include "chat_room.h"
+#include "chat_service.h"
+#include "chat_service_dispather.h"
 
-namespace tpn {
+using namespace tpn;
 
-using namespace test;
+namespace test {
 
-namespace net {
-
-TPN_NET_FORWARD_DECL_BASE_CLASS
-TPN_NET_FORWARD_DECL_TCP_BASE_CLASS
-TPN_NET_FORWARD_DECL_TCP_SERVER_CLASS
-TPN_NET_FORWARD_DECL_TCP_SESSION_CLASS
-
-template <typename Derived, typename ArgsType>
-class TcpChatSessionBase : public TcpSessionBase<Derived, ArgsType>,
-                           public ChatParticipant {
-  TPN_NET_FRIEND_DECL_BASE_CLASS
-  TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
-  TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS
-  TPN_NET_FRIEND_DECL_TCP_SESSION_CLASS
-
+class TcpChatSession
+    : public net::TcpSessionBase<TcpChatSession, net::TemplateArgsTcpSession> {
  public:
-  using Super = net::TcpSessionBase<Derived, ArgsType>;
-  using Self  = TcpChatSessionBase<Derived, ArgsType>;
+  using Super =
+      net::TcpSessionBase<TcpChatSession, net::TemplateArgsTcpSession>;
+  using Self = TcpChatSession;
 
-  using Super::Send;
+  using Super::TcpSessionBase;
 
-  explicit TcpChatSessionBase(test::ChatRoom &room, IoHandle &io_handle,
-                              SessionMgr<Derived> &session_mgr,
-                              size_t buffer_max, size_t buffer_prepare)
+  explicit TcpChatSession(ChatRoom &room, net::IoHandle &io_handle,
+                          net::SessionMgr<Self> &session_mgr, size_t buffer_max,
+                          size_t buffer_prepare)
       : Super(io_handle, session_mgr, buffer_max, buffer_prepare),
-        room_(room) {}
+        room_(room) {
+  }
 
-  ~TcpChatSessionBase() = default;
+  ~TcpChatSession() = default;
 
   void SendRequest(uint32_t service_hash, uint32_t method_id,
                    const google::protobuf::Message *request,
@@ -138,7 +124,7 @@ class TcpChatSessionBase : public TcpSessionBase<Derived, ArgsType>,
     header.set_service_hash(service_hash);
     header.set_method_id(method_id);
     header.set_token(token);
-    header.set_status(status);
+    header.set_status(kErrorCodeOk);
     header.set_size(response->ByteSizeLong());
 
     uint16_t header_size = (uint16_t)header.ByteSizeLong();
@@ -161,38 +147,37 @@ class TcpChatSessionBase : public TcpSessionBase<Derived, ArgsType>,
 
   void SetName(std::string name) { name_.assign(name); }
 
-  void Deliver(const std::string &msg) override {
+  void Deliver(const std::string &msg) {
     protocol::TChatNtf ntf;
     ntf.add_message_list(msg);
 
-    net::Service<Self, protocol::TChatListener>(CRTP_CAST(this).GetSelfSptr())
+    net::Service<Self, protocol::TChatListener>(this->GetSelfSptr())
         .ChatNtf(&ntf);
   }
 
+  void Chat(const std::string &msg) { room_.Deliver(msg); }
+
   ChatRoom &GetRoom() const { return room_; }
 
- protected:
   /// 处理断开连接
   /// 本函数重写了disconnect模块的HandleDisconnect的方法
   ///  @param[in]   ec          错误码
   ///  @param[in]   this_ptr    延长生命周期的智能指针
   void HandleDisconnect(const std::error_code &ec,
-                        std::shared_ptr<Derived> this_ptr) {
+                        std::shared_ptr<Self> this_ptr) {
     IgnoreUnused(ec, this_ptr);
 
-    room_.Leave(CRTP_CAST(this).GetSelfSptr());
+    room_.Leave(this->GetSelfSptr());
     Super::HandleDisconnect(ec, std::move(this_ptr));
   }
 
-  void FireRecv(std::shared_ptr<Derived> &this_ptr, protocol::Header &&header,
+  void FireRecv(std::shared_ptr<Self> &this_ptr, protocol::Header &&header,
                 MessageBuffer &&packet) {
-    Derived &derive = CRTP_CAST(this);
-
     std::ignore = this_ptr;
 
     LOG_INFO("FireRecv recv data");
 
-    chat_dispather->Dispatch(derive.GetSelfSptr(), header.service_hash(),
+    chat_dispather->Dispatch(this->GetSelfSptr(), header.service_hash(),
                              header.token(), header.method_id(),
                              std::move(packet));
   }
@@ -203,14 +188,6 @@ class TcpChatSessionBase : public TcpSessionBase<Derived, ArgsType>,
   uint32_t request_token_{0};  ///< 令牌
 };
 
-class TcpChatSession
-    : public TcpChatSessionBase<TcpChatSession, TemplateArgsTcpSession> {
- public:
-  using TcpChatSessionBase<TcpChatSession,
-                           TemplateArgsTcpSession>::TcpChatSessionBase;
-};
-
-}  // namespace net
-}  // namespace tpn
+}  // namespace test
 
 #endif  // TYPHOON_ZERO_TPN_TESTS_LIB_NET_CHAT_SERVER_CHAT_SESSION_H_

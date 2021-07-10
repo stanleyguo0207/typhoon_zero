@@ -26,34 +26,24 @@
 #include "net.h"
 #include "service.h"
 #include "test_service.pb.h"
-#include "chat_session.hpp"
-#include "chat_room.hpp"
+
+using namespace tpn;
 
 namespace test {
 
-using namespace tpn;
-using namespace tpn::net;
+class TcpChatSession;
 
 class TcpChatService
     : public net::Service<TcpChatSession, protocol::TChatService> {
  public:
-  using TChatService = Service<TcpChatSession, protocol::TChatService>;
+  using TChatService = net::Service<TcpChatSession, protocol::TChatService>;
 
-  TcpChatService(std::shared_ptr<TcpChatSession> session_sptr)
-      : TChatService(session_sptr) {}
+  TcpChatService(std::shared_ptr<TcpChatSession> session_sptr);
 
-  // server methods --------------------------------------------------
   uint32_t HandleUpdateInfo(
-      const ::tpn::protocol::TUpdateInfoRequest *request) override {
-    LOG_INFO("client set name {}", request->name());
-    session_sptr_->SetName(request->name());
-    return kErrorCodeOk;
-  }
+      const ::tpn::protocol::TUpdateInfoRequest *request) override;
 
-  uint32_t HandleChat(const ::tpn::protocol::TChatRequest *request) override {
-    session_sptr_->GetRoom().Deliver(request->message());
-    return kErrorCodeOk;
-  }
+  uint32_t HandleChat(const ::tpn::protocol::TChatRequest *request) override;
 };
 
 }  // namespace test

@@ -47,11 +47,10 @@
 #endif
 
 using namespace tpn;
-using namespace tpn::net;
 
 class TcpServiceSession;
 
-class TcpServiceDispatcher : public ServiceMgr<TcpServiceSession> {
+class TcpServiceDispatcher : public net::ServiceMgr<TcpServiceSession> {
  public:
   TPN_SINGLETON_DECL(TcpServiceDispatcher)
 };
@@ -60,33 +59,13 @@ TPN_SINGLETON_IMPL(TcpServiceDispatcher)
 
 #define test_dispather TcpServiceDispatcher::Instance()
 
-namespace tpn {
-
-namespace net {
-
-TPN_NET_FORWARD_DECL_BASE_CLASS
-TPN_NET_FORWARD_DECL_TCP_BASE_CLASS
-TPN_NET_FORWARD_DECL_TCP_SERVER_CLASS
-TPN_NET_FORWARD_DECL_TCP_SESSION_CLASS
-
-template <typename Derived, typename ArgsType>
-class TcpServiceSessionBase : public TcpSessionBase<Derived, ArgsType> {
-  TPN_NET_FRIEND_DECL_BASE_CLASS
-  TPN_NET_FRIEND_DECL_TCP_BASE_CLASS
-  TPN_NET_FRIEND_DECL_TCP_SERVER_CLASS
-  TPN_NET_FRIEND_DECL_TCP_SESSION_CLASS
-
+class TcpServiceSession
+    : public net::TcpSessionBase<TcpServiceSession, net::TemplateArgsTcpSession> {
  public:
-  using Super = TcpSessionBase<Derived, ArgsType>;
+  using Super = net::TcpSessionBase<TcpServiceSession, net::TemplateArgsTcpSession>;
+  using Self  = TcpServiceSession;
 
-  using Super::Send;
-
-  explicit TcpServiceSessionBase(IoHandle &io_handle,
-                                 SessionMgr<Derived> &session_mgr,
-                                 size_t buffer_max, size_t buffer_prepare)
-      : Super(io_handle, session_mgr, buffer_max, buffer_prepare) {}
-
-  ~TcpServiceSessionBase() = default;
+  using Super::TcpSessionBase;
 
   void SendRequest(uint32_t service_hash, uint32_t method_id,
                    const google::protobuf::Message *request,
@@ -132,31 +111,19 @@ class TcpServiceSessionBase : public TcpSessionBase<Derived, ArgsType> {
 
   std::string GetCallerInfo() const { return "TcpServiceSessionBase"; }
 
- protected:
-  void FireRecv(std::shared_ptr<Derived> &this_ptr, protocol::Header &&header,
+  void FireRecv(std::shared_ptr<Self> &this_ptr, protocol::Header &&header,
                 MessageBuffer &&packet) {
-    Derived &derive = CRTP_CAST(this);
+
 
     LOG_INFO("FireRecv recv data");
 
-    test_dispather->Dispatch(derive.GetSelfSptr(), header.service_hash(),
+    test_dispather->Dispatch(this->GetSelfSptr(), header.service_hash(),
                              header.token(), header.method_id(),
                              std::move(packet));
   }
 };
 
-}  // namespace net
-
-}  // namespace tpn
-
-class TcpServiceSession
-    : public TcpServiceSessionBase<TcpServiceSession, TemplateArgsTcpSession> {
- public:
-  using TcpServiceSessionBase<TcpServiceSession,
-                              TemplateArgsTcpSession>::TcpServiceSessionBase;
-};
-
-using TcpServiceServer = TcpServerBridge<TcpServiceSession>;
+using TcpServiceServer = net::TcpServerBridge<TcpServiceSession>;
 
 class TcpTestService3
     : public net::Service<TcpServiceSession, protocol::TestService3> {
