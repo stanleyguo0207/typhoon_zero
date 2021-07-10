@@ -49,8 +49,7 @@ class TcpChatSession
                           net::SessionMgr<Self> &session_mgr, size_t buffer_max,
                           size_t buffer_prepare)
       : Super(io_handle, session_mgr, buffer_max, buffer_prepare),
-        room_(room) {
-  }
+        room_(room) {}
 
   ~TcpChatSession() = default;
 

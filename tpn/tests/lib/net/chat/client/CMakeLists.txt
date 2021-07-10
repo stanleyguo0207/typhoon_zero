@@ -33,7 +33,7 @@ set_property(TARGET
   APPEND
   PROPERTY
     COMPILE_DEFINITIONS
-    _TPN_NET_ChAT_CLIENT_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_net_chat_client_test.json"
+    _TPN_NET_CHAT_CLIENT_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_net_chat_client_test.json"
 )
 
 target_link_libraries(test_tcp_chat_client

@@ -51,7 +51,7 @@ class TcpChatServerBridge
   ~TcpChatServerBridge() { this->Stop(); }
 
   template <typename... Args>
-  TPN_INLINE std::shared_ptr<SessionType> MakeSession(Args &&... args) {
+  TPN_INLINE std::shared_ptr<SessionType> MakeSession(Args &&...args) {
     NET_DEBUG("TcpServerBase MakeSession state {}",
               ToNetStateStr(this->state_));
     return Super::MakeSession(std::forward<Args>(args)..., room_);

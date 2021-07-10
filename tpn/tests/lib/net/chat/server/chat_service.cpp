@@ -44,4 +44,4 @@ uint32_t TcpChatService::HandleChat(
   return kErrorCodeOk;
 }
 
-}
+}  // namespace test

@@ -37,9 +37,9 @@
 #include "random_hub.h"
 #include "utils.h"
 
-#ifndef _TPN_NET_SERVICE_CLIENT_CONFIG_TEST_FILE
-#  define _TPN_NET_SERVICE_CLIENT_CONFIG_TEST_FILE \
-    "config_net_service_client_test.json"
+#ifndef _TPN_NET_CHAT_CLIENT_CONFIG_TEST_FILE
+#  define _TPN_NET_CHAT_CLIENT_CONFIG_TEST_FILE \
+    "config_net_chat_client_test.json"
 #endif
 
 using namespace tpn;
@@ -64,8 +64,7 @@ class TcpClientTest
     }
 
     protocol::TChatNtf ntf;
-    if (!ntf.ParseFromArray(packet.GetReadPointer(),
-                                packet.GetActiveSize())) {
+    if (!ntf.ParseFromArray(packet.GetReadPointer(), packet.GetActiveSize())) {
       LOG_ERROR("TcpClientTest FireRecv error");
       Stop();
       return;
@@ -110,7 +109,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   std::string config_error;
-  if (!g_config->Load(_TPN_NET_SERVICE_CLIENT_CONFIG_TEST_FILE,
+  if (!g_config->Load(_TPN_NET_CHAT_CLIENT_CONFIG_TEST_FILE,
                       std::vector<std::string>(argv, argv + argc),
                       config_error)) {
     printf("Error in config file: %s\n", config_error.c_str());

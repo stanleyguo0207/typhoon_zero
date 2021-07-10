@@ -53,7 +53,7 @@ class ChatRoom {
 
  private:
   std::set<std::shared_ptr<TcpChatSession>> users_;  ///<  聊天室内会话
-  ChatMessageQueue recent_msg_;                       ///< 消息
+  ChatMessageQueue recent_msg_;                      ///< 消息
 };
 
 }  // namespace test
