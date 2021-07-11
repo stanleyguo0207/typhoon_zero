@@ -182,6 +182,15 @@ inline constexpr void IgnoreUnused(const Ts &...) {}
 template <typename... Ts>
 inline constexpr void IgnoreUnused() {}
 
+/// 完美转发lambda标识
+template <typename Func, typename... Args>
+decltype(auto) ForwardAsLambda(Func &&func, Args &&...args) {
+  return [func = std::forward<decltype(func)>(func),
+          tup  = std::forward_as_tuple(args...)]() mutable {
+    return std::apply(std::move(func), std::move(tup));
+  };
+}
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_

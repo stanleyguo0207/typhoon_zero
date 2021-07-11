@@ -32,6 +32,16 @@
   // @example	"default-DEBUG;game_server-INFO"
   //   解释为 名为default的记录器志记级别为DEBUG,名为game_server的记录器志记级别为INFO
   "log_logger_levels": "default-DEBUG",
+  /// 日志记录器格式类型
+  /// 使用 & 分隔。
+  /// 支持类型
+  /// 0 默认格式 默认格式 [时间] [级别(简)] [线程id] [源文件定位信息] 日志内容
+  /// 1 时间使用缓冲
+  /// 2 日志级别显示全称
+  /// 4 不打印线程id
+  /// 8 不打印源文件定位信息
+  // @type  string  默认值 "0"
+  //"log_format_types": "1&2&4",
   /// 每日日志基础名称
   /// 每个进程一定要单独配置此选项
   // @type	string	默认值 "log/daily/daily.log"

@@ -28,10 +28,13 @@
 #include "debug_hub.h"
 #include "config.h"
 #include "logger.h"
+#include "async_logger.h"
 #include "exception_hub.h"
 #include "appender_console.h"
 #include "appender_daily_file.h"
 #include "platform.h"
+#include "thread_pool.h"
+#include "periodic_worker.h"
 
 namespace tpn {
 
@@ -61,6 +64,10 @@ void LogHub::Init() {
     }
   }
 
+  uint32_t thread_pool_size =
+      g_config->GetU32Default("log_thread_pool_size", 1);
+  thread_pool_ = std::make_shared<ThreadPool>(thread_pool_size);
+
   auto console_logger = std::make_shared<AppenderConsoleStdout>();
   auto daily_logger   = std::make_shared<AppenderDailyFile>(
       g_config->GetStringDefault("log_daily_file_base_path",
@@ -69,11 +76,24 @@ void LogHub::Init() {
       g_config->GetI32Default("log_daily_file_rotation_minute", 0),
       g_config->GetBoolDefault("log_daily_file_truncate", false),
       static_cast<uint16_t>(g_config->GetI32Default("log_daily_file_max", 7)));
-  auto default_logger = std::make_shared<Logger>(
+  auto default_logger = std::make_shared<AsyncLogger>(
       g_config->GetStringDefault("log_default_logger_name", "default"),
-      AppenderInitList({console_logger, daily_logger}));
+      AppenderInitList({console_logger, daily_logger}), thread_pool_);
   InitializeLogger(default_logger);
   SetDefaultLogger(std::move(default_logger));
+
+  // 解析日志格式类型
+  format_type_    = EnumToUnderlyType(FormatType::kFormatTypeDefault);
+  auto format_str = g_config->GetStringDefault("log_format_types", "");
+  if (!format_str.empty()) {
+    auto tk1 = Tokenizer(format_str, '&');
+    for (auto &&format_type_str : tk1) {
+      format_type_ |= ToInteger<uint32_t>(format_type_str);
+    }
+  }
+
+  uint32_t flush_interval = g_config->GetU32Default("log_flush_interval", 1000);
+  FlushEvery(MilliSeconds(flush_interval));
 }
 
 void LogHub::RegisterLogger(LoggerSptr new_logger) {
@@ -146,6 +166,13 @@ void LogHub::FlushAll() {
   }
 }
 
+// template <typename Rep, typename Period>
+// void LogHub::FlushEvery(std::chrono::duration<Rep, Period> interval) {
+//   std::lock_guard<std::mutex> lock(flush_mutex_);
+//   auto task         = [this] { this->FlushAll(); };
+//   periodic_flusher_ = std::make_unique<PeriodicWorker>(task, interval);
+// }
+
 void LogHub::SetErrHandler(ErrHandler err_handler) {
   std::lock_guard<std::mutex> lock(logger_map_mutex_);
   global_err_handler_ = std::move(err_handler);
@@ -195,6 +222,22 @@ std::tm LogHub::GetTime(LogClock::time_point tp) const {
   } else {
     return GmTime(LogClock::to_time_t(tp));
   }
+}
+
+uint32_t LogHub::GetFormatType() const { return format_type_; }
+
+std::recursive_mutex &LogHub::GetThreadPoolMutex() {
+  return thread_pool_mutex_;
+}
+
+void LogHub::SetThreadPool(ThreadPoolSptr thread_pool) {
+  std::lock_guard<std::recursive_mutex> lock(thread_pool_mutex_);
+  thread_pool_ = std::move(thread_pool);
+}
+
+ThreadPoolSptr LogHub::GetThreadPool() {
+  std::lock_guard<std::recursive_mutex> lock(thread_pool_mutex_);
+  return thread_pool_;
 }
 
 void LogHub::ThrowIfExists(std::string_view logger_name) {

@@ -48,6 +48,23 @@ enum class PatternTimeType : uint8_t {
   kPatternTimeTypeUtc,        ///< 世界协调时间
 };
 
+/// 格式类型
+/// 默认格式 [时间] [级别(简)] [线程id] [源文件定位信息] 日志内容
+///  kFormatTypeDefault & kFormatTypeTimeCache
+///   [时间(缓冲)] [级别(简)] [线程id] [源文件定位信息] 日志内容
+enum class FormatType : uint32_t {
+  /// 默认格式 [时间] [级别(简)] [线程id] [源文件定位信息] 日志内容
+  kFormatTypeDefault = 0x0,
+  /// [时间(缓冲1s内的时间)]
+  kFormatTypeTimeCache = 0x1,
+  /// [级别(全)]
+  kFormatTypeDebugLevel = 0x1 << 1,
+  /// 无线程id
+  kFormatTypeNoThreadId = 0x1 << 2,
+  /// 无源文件定位信息
+  kFormatTypeNoSourceLocation = 0x1 << 3,
+};
+
 /// 记录器颜色支持样式
 enum class AppenderColorMode : uint8_t {
   kAppenderColorModeAlways = 0,  ///< 一直

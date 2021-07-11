@@ -56,19 +56,28 @@ void SetGlobalFlushLevel(LogLevel level) {
 
 void FlushAll() { g_log_hub->FlushAll(); }
 
+template <typename Rep, typename Period>
+void FlushEvery(std::chrono::duration<Rep, Period> interval) {
+  g_log_hub->FlushEvery(interval);
+}
+
 void SetErrHandler(ErrHandler err_handler) {
   g_log_hub->SetErrHandler(std::move(err_handler));
 }
 
-void ApplyAll(const std::function<void(const LoggerSptr)> &func) {}
+void ApplyAll(const std::function<void(const LoggerSptr)> &func) {
+  g_log_hub->ApplyAll(func);
+}
 
-void Drop(std::string_view logger_name) {}
+void Drop(std::string_view logger_name) { g_log_hub->Drop(logger_name); }
 
-void DropAll() {}
+void DropAll() { g_log_hub->DropAll(); }
 
-void Shutdown() {}
+void Shutdown() { g_log_hub->Shutdown(); }
 
-void SetAutomaticRegistration(bool automatic_registration) {}
+void SetAutomaticRegistration(bool automatic_registration) {
+  g_log_hub->SetAutomaticRegistration(automatic_registration);
+}
 
 }  // namespace log
 

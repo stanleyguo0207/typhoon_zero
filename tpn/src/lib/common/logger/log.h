@@ -24,14 +24,14 @@
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_LOG_H_
 
 #include "log_hub.h"
-#include "sync_factory.h"
+#include "async_factory.h"
 
 namespace tpn {
 
 namespace log {
 
 /// 默认记录器工厂
-using DefaultFactory = SynchronousFactory;
+using DefaultFactory = AsynchronousFactory;
 
 /// 使用默认记录器工厂生产记录器
 ///  @tparam      Appender          追加器类型
@@ -87,6 +87,13 @@ void SetGlobalFlushLevel(LogLevel level);
 
 /// 刷新所有记录的记录器
 void FlushAll();
+
+/// 间隔刷新
+///  @tapram      Rep
+///  @tapram      Period
+///  @param[in]   interval    刷新间隔
+template <typename Rep, typename Period>
+void FlushEvery(std::chrono::duration<Rep, Period> interval);
 
 /// 设置日志中枢全局错误处理函数
 ///  @param[in]   err_handler     错误处理函数

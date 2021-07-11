@@ -32,6 +32,9 @@
 
 namespace tpn {
 
+class ThreadPool;
+class PeriodicWorker;
+
 namespace log {
 
 enum class LogLevel : uint8_t;
@@ -49,6 +52,13 @@ using ErrHandler = std::function<void(std::string_view err_msg)>;
 
 class Logger;
 using LoggerSptr = std::shared_ptr<Logger>;
+
+class AsyncLogger;
+using AsyncLoggerSptr = std::shared_ptr<AsyncLogger>;
+
+using ThreadPoolSptr     = std::shared_ptr<ThreadPool>;
+using ThreadPoolWptr     = std::weak_ptr<ThreadPool>;
+using PeriodicWorkerUptr = std::unique_ptr<PeriodicWorker>;
 
 }  // namespace log
 

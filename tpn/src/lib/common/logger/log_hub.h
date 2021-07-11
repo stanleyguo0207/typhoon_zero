@@ -27,6 +27,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "chrono_wrap.h"
 #include "log_common.h"
 
 namespace tpn {
@@ -74,6 +75,17 @@ class TPN_COMMON_API LogHub {
   /// 刷新所有记录的记录器
   void FlushAll();
 
+  /// 间隔刷新
+  ///  @tapram      Rep
+  ///  @tapram      Period
+  ///  @param[in]   interval    刷新间隔
+  template <typename Rep, typename Period>
+  void FlushEvery(std::chrono::duration<Rep, Period> interval) {
+    std::lock_guard<std::mutex> lock(flush_mutex_);
+    auto task         = [this] { this->FlushAll(); };
+    periodic_flusher_ = std::make_unique<PeriodicWorker>(task, interval);
+  }
+
   /// 设置日志中枢全局错误处理函数
   ///  @param[in]   err_handler     错误处理函数
   void SetErrHandler(ErrHandler err_handler);
@@ -101,7 +113,24 @@ class TPN_COMMON_API LogHub {
   PatternTimeType GetPatternTimeType() const;
 
   /// 根据模式时间返回时间结构
+  ///  @return tp对应的时间结构
   std::tm GetTime(LogClock::time_point tp) const;
+
+  /// 获取日志格式类型
+  ///  @return 格式类型
+  uint32_t GetFormatType() const;
+
+  /// 获取线程池锁
+  ///  @return 线程池锁
+  std::recursive_mutex &GetThreadPoolMutex();
+
+  /// 设置线程池
+  ///  @param[in]   thread_pool     线程池
+  void SetThreadPool(ThreadPoolSptr thread_pool);
+
+  /// 获取线程池
+  ///  @return 日志线程池
+  ThreadPoolSptr GetThreadPool();
 
  private:
   /// 如果存在日志名称则抛出异常
@@ -125,6 +154,10 @@ class TPN_COMMON_API LogHub {
   bool automatic_registration_{true};       ///< 是否默认注册
   PatternTimeType pattern_time_type_{
       PatternTimeType::kPatternTimeTypeLocal};  ///< 模式时间
+  uint32_t format_type_{0};                     ///< 日志格式类型
+  std::recursive_mutex thread_pool_mutex_;      ///< 线程池锁
+  ThreadPoolSptr thread_pool_;                  ///< 异步线程池
+  PeriodicWorkerUptr periodic_flusher_;         ///< 周期刷新器
 
   TPN_SINGLETON_DECL(LogHub)
 };
