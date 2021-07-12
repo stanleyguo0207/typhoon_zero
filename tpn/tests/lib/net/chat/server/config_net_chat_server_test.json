@@ -61,6 +61,9 @@
   /// 默认日志记录器名称
   // @type	string	默认值 "default"
   //"log_default_logger_name": "default"
+  /// 日志异步线程池大小
+  // @type  int     默认值 1
+  "log_thread_pool_size": 2,
   ///---------------------------------------------------------------------------
   "config_all_support_end": 1
 }
