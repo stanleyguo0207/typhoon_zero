@@ -45,8 +45,11 @@ AsyncLogger::AsyncLogger(std::string_view name, AppenderSptr single_appender,
 
 void AsyncLogger::AppenderDoLog(const LogMsg &msg) {
   if (auto pool_ptr = thread_pool_.lock()) {
-    pool_ptr->Submit(&tpn::log::AsyncLogger::BlackendDoLog, this->GetSelfSptr(),
-                     AsyncLogMsg{msg});
+    pool_ptr->Submit(
+        [this, this_ptr = this->GetSelfSptr(), async_msg = AsyncLogMsg{msg}]() {
+          std::ignore = this_ptr;
+          this->BlackendDoLog(async_msg);
+        });
   } else {
     TPN_THROW(LogException(
         fmt::format("Async Log: thread pool doesn't exist anymore")));
@@ -55,8 +58,10 @@ void AsyncLogger::AppenderDoLog(const LogMsg &msg) {
 
 void AsyncLogger::AppenderDoFlush() {
   if (auto pool_ptr = thread_pool_.lock()) {
-    pool_ptr->Submit(&tpn::log::AsyncLogger::BlackendDoFlush,
-                     this->GetSelfSptr());
+    pool_ptr->Submit([this, this_ptr = this->GetSelfSptr()]() {
+      std::ignore = this_ptr;
+      this->BlackendDoFlush();
+    });
   } else {
     TPN_THROW(LogException(
         fmt::format("Async Log: thread pool doesn't exist anymore")));

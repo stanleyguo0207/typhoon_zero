@@ -204,7 +204,15 @@ void LogHub::DropAll() {
 
 void LogHub::Shutdown() {
   FlushAll();
+  {
+    std::lock_guard<std::mutex> lock(flush_mutex_);
+    periodic_flusher_.reset();
+  }
   DropAll();
+  {
+    std::lock_guard<std::recursive_mutex> lock(thread_pool_mutex_);
+    thread_pool_.reset();
+  }
 }
 
 void LogHub::SetAutomaticRegistration(bool automatic_registration) {
