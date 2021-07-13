@@ -225,7 +225,7 @@
 #define TPN_RMCV(TypeName) std::remove_cv_t<TypeName>
 
 // std::remove_cv_t<std::remove_reference_t<TypeName>>
-#define TPN_RMRFCV(TypeName) TPN_RMCV(TPN_RMRF(TypeName))
+#define TPN_RMRFCV(TypeName) std::remove_cvref_t<TypeName>;
 
 // crtp to derive static_cast<Derived&>(*this)
 #define CRTP_CAST(This) static_cast<Derived &>(*This)
