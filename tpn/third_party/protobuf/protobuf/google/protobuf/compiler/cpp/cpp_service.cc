@@ -93,7 +93,7 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
   printer->Print(
       vars_,
       "\n"
-      "static const google::protobuf::ServiceDescriptor *descriptor();\n"
+      "static const ::google::protobuf::ServiceDescriptor *descriptor();\n"
       "\n");
 
   // client
@@ -102,7 +102,7 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
           .GetExtension(tpn::protocol::service_options)
           .inbound()) {
     printer->Print(vars_,
-                   "// client methods "
+                   "// inbound methods "
                    "--------------------------------------------------\n");
 
     GenerateClientMethodSignatures(printer);
@@ -128,7 +128,7 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
     printer->Indent();
 
     printer->Print(
-        "// server methods "
+        "// outbound methods "
         "--------------------------------------------------\n");
 
     GenerateServerMethodSignatures(printer);
@@ -148,16 +148,15 @@ void ServiceGenerator::GenerateInterface(io::Printer *printer) {
 void ServiceGenerator::GenerateImplementation(io::Printer *printer) {
   printer->Print(
       vars_,
-      "$classname$::$classname$() : "
-      "service_hash_(ServiceHash::value) {\n"
-      "}\n"
+      "$classname$::$classname$()\n"
+      "  : service_hash_(ServiceHash::value) {}\n"
       "\n"
-      "$classname$::~$classname$() {\n"
-      "}\n"
+      "$classname$::~$classname$() {}\n"
       "\n"
-      "const google::protobuf::ServiceDescriptor *$classname$::descriptor() {\n"
-      "  google::protobuf::internal::AssignDescriptors(&$desc_table$);\n"
-      "  return  $file_level_service_descriptors$[$index_in_metadata$];\n"
+      "const ::google::protobuf::ServiceDescriptor *$classname$::descriptor() "
+      "{\n"
+      "  ::google::protobuf::internal::AssignDescriptors(&$desc_table$);\n"
+      "  return $file_level_service_descriptors$[$index_in_metadata$];\n"
       "}\n"
       "\n");
 
@@ -174,14 +173,13 @@ void ServiceGenerator::GenerateImplementation(io::Printer *printer) {
     GenerateServerCallMethod(printer);
     GenerateServerImplementations(printer);
   } else {
-    printer->Print(
-        vars_,
-        "void $classname$::CallServerMethod(uint32_t token, uint32_t "
-        "method_id, MessageBuffer /*buffer*/) {\n"
-        "  LOG_ERROR(\"{} Server tried to call server method {}\",\n"
-        "    GetCallerInfo(), method_id);\n"
-        "}\n"
-        "\n");
+    printer->Print(vars_,
+                   "void $classname$::CallServerMethod(uint32_t token, "
+                   "uint32_t method_id, MessageBuffer /*buffer*/) {\n"
+                   "  LOG_ERROR(\"{} Server tried to call server method {}\", "
+                   "GetCallerInfo(), method_id);\n"
+                   "}\n"
+                   "\n");
   }
 }
 
@@ -201,7 +199,7 @@ void ServiceGenerator::GenerateClientMethodSignatures(io::Printer *printer) {
     sub_vars["output_type"]     = ClassName(method->output_type(), true);
     sub_vars["input_type_name"] = method->input_type()->full_name();
 
-    if (method->output_type()->name() != "NoResponse") {
+    if ("NoResponse" != method->output_type()->name()) {
       printer->Print(
           sub_vars,
           "void $name$(const $input_type$ *request, "
@@ -227,16 +225,18 @@ void ServiceGenerator::GenerateServerMethodSignatures(io::Printer *printer) {
     sub_vars["input_type"]  = ClassName(method->input_type(), true);
     sub_vars["output_type"] = ClassName(method->output_type(), true);
 
-    if (method->output_type()->name() != "NoResponse") {
+    if ("NoResponse" != method->output_type()->name()) {
       printer->Print(
           sub_vars,
-          "virtual uint32_t Handle$name$(const $input_type$ *request, "
-          "$output_type$ *response, std::function<void(ServiceBase*, uint32_t, "
-          "const google::protobuf::Message *)> &continuation);\n");
+          "virtual ::tpn::protocol::ErrorCode Handle$name$(const $input_type$ "
+          "*request, "
+          "$output_type$ *response, std::function<void(ServiceBase*, "
+          "::tpn::protocol::ErrorCode, "
+          "const ::google::protobuf::Message *)> &continuation);\n");
     } else {
-      printer->Print(
-          sub_vars,
-          "virtual uint32_t Handle$name$(const $input_type$ *request);\n");
+      printer->Print(sub_vars,
+                     "virtual ::tpn::protocol::ErrorCode Handle$name$(const "
+                     "$input_type$ *request);\n");
     }
   }
 }
@@ -259,15 +259,15 @@ void ServiceGenerator::GenerateClientMethodImplementations(
     sub_vars["output_type"]     = ClassName(method->output_type(), true);
     sub_vars["input_type_name"] = method->input_type()->full_name();
 
-    if (method->output_type()->name() != "NoResponse") {
+    if ("NoResponse" != method->output_type()->name()) {
       printer->Print(
           sub_vars,
           "void $classname$::$name$(const $input_type$ *request, "
           "std::function<void(const $output_type$ *)> response_callback, bool "
           "client /*= false*/, bool server /*= false*/) {\n"
           "  LOG_DEBUG(\"{} Server called client method "
-          "$full_name$($input_type_name${{ {} }})\",\n"
-          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "$full_name$($input_type_name${{ {} }})\", GetCallerInfo(), "
+          "request->ShortDebugString());\n"
           "  std::function<void(MessageBuffer)> callback = "
           "[response_callback](MessageBuffer buffer) -> void {\n"
           "    $output_type$ response;\n"
@@ -285,8 +285,8 @@ void ServiceGenerator::GenerateClientMethodImplementations(
           "void $classname$::$name$(const $input_type$ *request, bool client "
           "/*= false*/, bool server /*= false*/) {\n"
           "  LOG_DEBUG(\"{} Server called client "
-          "method $full_name$($input_type_name${{ {}  }})\",\n"
-          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "method $full_name$($input_type_name${{ {}  }})\", GetCallerInfo(), "
+          "request->ShortDebugString());\n"
           "  SendRequest(service_hash_, $method_id$ | (client ? 0x40000000 : "
           "0) | (server ? 0x80000000 : 0), request);\n"
           "}\n"
@@ -329,27 +329,25 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
                    "        return;\n"
                    "      }\n");
 
-    if (method->output_type()->name() != "NoResponse") {
+    if ("NoResponse" != method->output_type()->name()) {
       printer->Print(
           sub_vars,
           "      LOG_DEBUG(\"{} Client called server method "
-          "$full_name$($input_type_name${{ {} }}).\",\n"
-          "GetCallerInfo(), request.ShortDebugString());\n"
-          "      std::function<void(ServiceBase*, uint32_t, "
-          "const google::protobuf::Message *)> continuation = [token, "
-          "method_id](ServiceBase *service, uint32_t status, "
-          "const google::protobuf::Message *response)\n"
-          "      {\n"
+          "$full_name$($input_type_name${{ {} }}).\", GetCallerInfo(), "
+          "request.ShortDebugString());\n"
+          "      std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, "
+          "const ::google::protobuf::Message *)> continuation = [token, "
+          "method_id](ServiceBase *service, ::tpn::protocol::ErrorCode status, "
+          "const ::google::protobuf::Message *response) {\n"
           "        TPN_ASSERT(response->GetDescriptor() == "
           "$output_type$::descriptor(), \"response descriptor error {} != "
           "{}\", response->GetDescriptor()->DebugString(), "
           "$output_type$::descriptor()->DebugString());\n"
           "        $classname$* self = static_cast<$classname$*>(service);\n"
           "        LOG_DEBUG(\"{} Client called server method $full_name$() "
-          "returned $output_type_name${{ {} }} status {}.\",\n"
-          "          self->GetCallerInfo(), response->ShortDebugString(), "
-          "status);\n"
-          "        if (!status)\n"
+          "returned $output_type_name${{ {} }} status {}.\", "
+          "self->GetCallerInfo(), response->ShortDebugString(), status);\n"
+          "        if (kErrorCodeOk == status)\n"
           "          self->SendResponse(self->service_hash_, method_id, token, "
           "response);\n"
           "        else\n"
@@ -357,18 +355,18 @@ void ServiceGenerator::GenerateServerCallMethod(io::Printer *printer) {
           "status);\n"
           "      };\n"
           "      $output_type$ response;\n"
-          "      uint32_t status = Handle$name$(&request, &response, "
-          "continuation);\n"
+          "      ::tpn::protocol::ErrorCode status = Handle$name$(&request, "
+          "&response, continuation);\n"
           "      if (continuation)\n"
           "        continuation(this, status, &response);\n");
     } else {
       printer->Print(
           sub_vars,
-          "      uint32_t status = Handle$name$(&request);\n"
+          "      ::tpn::protocol::ErrorCode status = Handle$name$(&request);\n"
           "      LOG_DEBUG(\"{} Client called server "
-          "method $full_name$($input_type_name${{ {} }}) status {}.\",\n"
-          "        GetCallerInfo(), request.ShortDebugString(), status);\n"
-          "      if (status)\n"
+          "method $full_name$($input_type_name${{ {} }}) status {}.\", "
+          "GetCallerInfo(), request.ShortDebugString(), status);\n"
+          "      if (kErrorCodeOk != status)\n"
           "        SendResponse(service_hash_, method_id, token, status);\n");
     }
 
@@ -402,25 +400,28 @@ void ServiceGenerator::GenerateServerImplementations(io::Printer *printer) {
     sub_vars["input_type"]  = ClassName(method->input_type(), true);
     sub_vars["output_type"] = ClassName(method->output_type(), true);
 
-    if (method->output_type()->name() != "NoResponse") {
+    if ("NoResponse" != method->output_type()->name()) {
       printer->Print(
           sub_vars,
-          "uint32_t $classname$::Handle$name$(const $input_type$ *request, "
-          "$output_type$ *response, std::function<void(ServiceBase*, uint32_t, "
-          "const google::protobuf::Message *)>& continuation) {\n"
+          "::tpn::protocol::ErrorCode $classname$::Handle$name$(const "
+          "$input_type$ *request, "
+          "$output_type$ *response, std::function<void(ServiceBase*, "
+          "::tpn::protocol::ErrorCode, "
+          "const ::google::protobuf::Message *)>& continuation) {\n"
           "  LOG_ERROR(\"{} Client tried to call not implemented method "
-          "$full_name$({{ {} }})\",\n"
-          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "$full_name$({{ {} }})\", GetCallerInfo(), "
+          "request->ShortDebugString());\n"
           "  return kErrorCodeNotImplemented;\n"
           "}\n"
           "\n");
     } else {
       printer->Print(
           sub_vars,
-          "uint32_t $classname$::Handle$name$(const $input_type$ *request) {\n"
+          "::tpn::protocol::ErrorCode $classname$::Handle$name$(const "
+          "$input_type$ *request) {\n"
           "  LOG_ERROR(\"{} Client tried to call not implemented method "
-          "$full_name$({{ {} }})\",\n"
-          "    GetCallerInfo(), request->ShortDebugString());\n"
+          "$full_name$({{ {} }})\", GetCallerInfo(), "
+          "request->ShortDebugString());\n"
           "  return kErrorCodeNotImplemented;\n"
           "}\n"
           "\n");

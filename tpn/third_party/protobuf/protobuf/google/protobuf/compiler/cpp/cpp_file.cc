@@ -1407,8 +1407,9 @@ void FileGenerator::GenerateProto2NamespaceEnumSpecializations(
 
 void FileGenerator::GeneratePGTHeaderInclude(io::Printer *printer) {
   if (file_->service_count() > 0) {
-    printer->Print("#include \"service_base.h\"\n");
     printer->Print("#include \"message_buffer.h\"\n");
+    printer->Print("#include \"error_code.pb.h\"\n");
+    printer->Print("#include \"service_base.h\"\n");
     printer->Print("#include <functional>\n");
     printer->Print("#include <type_traits>\n");
   } else {
@@ -1420,7 +1421,6 @@ void FileGenerator::GeneratePGTSourceInclude(io::Printer *printer) {
   if (file_->service_count() > 0) {
     printer->Print("#include \"log.h\"\n");
     printer->Print("#include \"debug_hub.h\"\n");
-    printer->Print("#include \"error_code.pb.h\"\n");
   }
 }
 

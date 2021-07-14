@@ -27,6 +27,7 @@
 #include <functional>
 
 #include "net_common.h"
+#include "error_code.pb.h"
 
 namespace tpn {
 
@@ -90,7 +91,7 @@ class Service : public ServiceType {
   ///  @param[in]   token           令牌
   ///  @param[in]   status          状态
   void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
-                    uint32_t status) override {
+                    protocol::ErrorCode status) override {
     session_sptr_->SendResponse(service_hash, method_id, token, status);
   }
 

@@ -114,7 +114,8 @@ class TcpChatSession
     Send(std::move(packet));
   }
 
-  void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
+  void SendResponse(uint32_t service_hash, uint32_t method_id,
+                    protocol::ErrorCode token,
                     const google::protobuf::Message *response) {
     NET_DEBUG("TcpServiceSessionBase SendResponse response");
 

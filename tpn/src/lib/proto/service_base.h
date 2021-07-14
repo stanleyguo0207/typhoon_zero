@@ -28,6 +28,7 @@
 
 #include "define.h"
 #include "message_buffer.h"
+#include "error_code.pb.h"
 
 namespace google {
 
@@ -77,7 +78,7 @@ class TPN_PROTO_API ServiceBase {
   ///  @param[in]   token           令牌
   ///  @param[in]   status          状态
   virtual void SendResponse(uint32_t service_hash, uint32_t method_id,
-                            uint32_t token, uint32_t status) = 0;
+                            uint32_t token, protocol::ErrorCode status) = 0;
 
   /// 回应
   ///  @param[in]   service_hash    服务key
