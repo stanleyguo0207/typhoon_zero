@@ -40,10 +40,11 @@ class TcpChatService
 
   TcpChatService(std::shared_ptr<TcpChatSession> session_sptr);
 
-  uint32_t HandleUpdateInfo(
+  protocol::ErrorCode HandleUpdateInfo(
       const ::tpn::protocol::TUpdateInfoRequest *request) override;
 
-  uint32_t HandleChat(const ::tpn::protocol::TChatRequest *request) override;
+  protocol::ErrorCode HandleChat(
+      const ::tpn::protocol::TChatRequest *request) override;
 };
 
 }  // namespace test

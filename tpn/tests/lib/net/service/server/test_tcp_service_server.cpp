@@ -60,10 +60,12 @@ TPN_SINGLETON_IMPL(TcpServiceDispatcher)
 #define test_dispather TcpServiceDispatcher::Instance()
 
 class TcpServiceSession
-    : public net::TcpSessionBase<TcpServiceSession, net::TemplateArgsTcpSession> {
+    : public net::TcpSessionBase<TcpServiceSession,
+                                 net::TemplateArgsTcpSession> {
  public:
-  using Super = net::TcpSessionBase<TcpServiceSession, net::TemplateArgsTcpSession>;
-  using Self  = TcpServiceSession;
+  using Super =
+      net::TcpSessionBase<TcpServiceSession, net::TemplateArgsTcpSession>;
+  using Self = TcpServiceSession;
 
   using Super::TcpSessionBase;
 
@@ -113,8 +115,6 @@ class TcpServiceSession
 
   void FireRecv(std::shared_ptr<Self> &this_ptr, protocol::Header &&header,
                 MessageBuffer &&packet) {
-
-
     LOG_INFO("FireRecv recv data");
 
     test_dispather->Dispatch(this->GetSelfSptr(), header.service_hash(),
@@ -133,7 +133,7 @@ class TcpTestService3
   TcpTestService3(std::shared_ptr<TcpServiceSession> session_sptr)
       : TestService3(session_sptr) {}
 
-  uint32_t HandleProcessClientRequest31(
+  protocol::ErrorCode HandleProcessClientRequest31(
       const ::tpn::protocol::SearchRequest *request) override {
     LOG_INFO("query: {} page_number: {} per_page: {}", request->query(),
              request->page_number(), request->result_per_page());

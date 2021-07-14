@@ -527,13 +527,13 @@ class Header final :
   void _internal_set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 status = 6;
+  // .tpn.protocol.ErrorCode status = 6;
   void clear_status();
-  ::PROTOBUF_NAMESPACE_ID::uint32 status() const;
-  void set_status(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  ::tpn::protocol::ErrorCode status() const;
+  void set_status(::tpn::protocol::ErrorCode value);
   private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_status() const;
-  void _internal_set_status(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  ::tpn::protocol::ErrorCode _internal_status() const;
+  void _internal_set_status(::tpn::protocol::ErrorCode value);
   public:
 
   // @@protoc_insertion_point(class_scope:tpn.protocol.Header)
@@ -548,7 +548,7 @@ class Header final :
   ::PROTOBUF_NAMESPACE_ID::uint32 size_;
   ::PROTOBUF_NAMESPACE_ID::uint32 service_hash_;
   ::PROTOBUF_NAMESPACE_ID::uint32 method_id_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 status_;
+  int status_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_type_2frpc_5ftype_2eproto;
 };
@@ -737,22 +737,22 @@ inline void Header::set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:tpn.protocol.Header.method_id)
 }
 
-// uint32 status = 6;
+// .tpn.protocol.ErrorCode status = 6;
 inline void Header::clear_status() {
-  status_ = 0u;
+  status_ = 0;
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_status() const {
-  return status_;
+inline ::tpn::protocol::ErrorCode Header::_internal_status() const {
+  return static_cast< ::tpn::protocol::ErrorCode >(status_);
 }
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::status() const {
+inline ::tpn::protocol::ErrorCode Header::status() const {
   // @@protoc_insertion_point(field_get:tpn.protocol.Header.status)
   return _internal_status();
 }
-inline void Header::_internal_set_status(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void Header::_internal_set_status(::tpn::protocol::ErrorCode value) {
   
   status_ = value;
 }
-inline void Header::set_status(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+inline void Header::set_status(::tpn::protocol::ErrorCode value) {
   _internal_set_status(value);
   // @@protoc_insertion_point(field_set:tpn.protocol.Header.status)
 }

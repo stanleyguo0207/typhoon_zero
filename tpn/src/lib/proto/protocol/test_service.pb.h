@@ -33,8 +33,9 @@
 #include <google/protobuf/service.h>
 #include <google/protobuf/unknown_field_set.h>
 #include "type/rpc_type.pb.h"
-#include "service_base.h"
 #include "message_buffer.h"
+#include "error_code.pb.h"
+#include "service_base.h"
 #include <functional>
 #include <type_traits>
 // @@protoc_insertion_point(includes)
@@ -1044,9 +1045,9 @@ class TestService1 : public ServiceBase {
 
   using ServiceHash = std::integral_constant<uint32_t, 0x63F1143Fu>;
 
-  static const google::protobuf::ServiceDescriptor *descriptor();
+  static const ::google::protobuf::ServiceDescriptor *descriptor();
 
-  // client methods --------------------------------------------------
+  // inbound methods --------------------------------------------------
   void ProcessClientRequest11(const ::tpn::protocol::SearchRequest *request, bool client = false, bool server = false);
   void ProcessClientRequest12(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client = false, bool server = false);
 
@@ -1067,13 +1068,13 @@ class TestService2 : public ServiceBase {
 
   using ServiceHash = std::integral_constant<uint32_t, 0x52265835u>;
 
-  static const google::protobuf::ServiceDescriptor *descriptor();
+  static const ::google::protobuf::ServiceDescriptor *descriptor();
 
   void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
  protected:
-  // server methods --------------------------------------------------
-  virtual uint32_t HandleProcessClientRequest21(const ::tpn::protocol::SearchRequest *request);
-  virtual uint32_t HandleProcessClientRequest22(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, uint32_t, const google::protobuf::Message *)> &continuation);
+  // outbound methods --------------------------------------------------
+  virtual ::tpn::protocol::ErrorCode HandleProcessClientRequest21(const ::tpn::protocol::SearchRequest *request);
+  virtual ::tpn::protocol::ErrorCode HandleProcessClientRequest22(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, const ::google::protobuf::Message *)> &continuation);
 
  private:
   uint32_t service_hash_{0};
@@ -1091,17 +1092,17 @@ class TestService3 : public ServiceBase {
 
   using ServiceHash = std::integral_constant<uint32_t, 0x512656A2u>;
 
-  static const google::protobuf::ServiceDescriptor *descriptor();
+  static const ::google::protobuf::ServiceDescriptor *descriptor();
 
-  // client methods --------------------------------------------------
+  // inbound methods --------------------------------------------------
   void ProcessClientRequest31(const ::tpn::protocol::SearchRequest *request, bool client = false, bool server = false);
   void ProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client = false, bool server = false);
 
   void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
  protected:
-  // server methods --------------------------------------------------
-  virtual uint32_t HandleProcessClientRequest31(const ::tpn::protocol::SearchRequest *request);
-  virtual uint32_t HandleProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, uint32_t, const google::protobuf::Message *)> &continuation);
+  // outbound methods --------------------------------------------------
+  virtual ::tpn::protocol::ErrorCode HandleProcessClientRequest31(const ::tpn::protocol::SearchRequest *request);
+  virtual ::tpn::protocol::ErrorCode HandleProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, const ::google::protobuf::Message *)> &continuation);
 
  private:
   uint32_t service_hash_{0};
@@ -1119,17 +1120,17 @@ class TChatService : public ServiceBase {
 
   using ServiceHash = std::integral_constant<uint32_t, 0xEF00192Cu>;
 
-  static const google::protobuf::ServiceDescriptor *descriptor();
+  static const ::google::protobuf::ServiceDescriptor *descriptor();
 
-  // client methods --------------------------------------------------
+  // inbound methods --------------------------------------------------
   void UpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request, bool client = false, bool server = false);
   void Chat(const ::tpn::protocol::TChatRequest *request, bool client = false, bool server = false);
 
   void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;
  protected:
-  // server methods --------------------------------------------------
-  virtual uint32_t HandleUpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request);
-  virtual uint32_t HandleChat(const ::tpn::protocol::TChatRequest *request);
+  // outbound methods --------------------------------------------------
+  virtual ::tpn::protocol::ErrorCode HandleUpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request);
+  virtual ::tpn::protocol::ErrorCode HandleChat(const ::tpn::protocol::TChatRequest *request);
 
  private:
   uint32_t service_hash_{0};
@@ -1147,9 +1148,9 @@ class TChatListener : public ServiceBase {
 
   using ServiceHash = std::integral_constant<uint32_t, 0x7608B2A9u>;
 
-  static const google::protobuf::ServiceDescriptor *descriptor();
+  static const ::google::protobuf::ServiceDescriptor *descriptor();
 
-  // client methods --------------------------------------------------
+  // inbound methods --------------------------------------------------
   void ChatNtf(const ::tpn::protocol::TChatNtf *request, bool client = false, bool server = false);
 
   void CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) final;

@@ -46,5 +46,5 @@ message Header {
   uint32 size = 3;           // 数据包体大小
   fixed32 service_hash = 4;  // 服务哈希值
   uint32 method_id = 5;      // 方法id
-  uint32 status = 6;         // 状态码
+  ErrorCode status = 6;      // 状态码
 }

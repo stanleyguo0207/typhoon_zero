@@ -49,7 +49,8 @@ constexpr Header::Header(
   , size_(0u)
   , service_hash_(0u)
   , method_id_(0u)
-  , status_(0u){}
+  , status_(0)
+{}
 struct HeaderDefaultTypeInternal {
   constexpr HeaderDefaultTypeInternal()
     : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
@@ -106,11 +107,11 @@ const char descriptor_table_protodef_type_2frpc_5ftype_2eproto[] PROTOBUF_SECTIO
   "\n\023type/rpc_type.proto\022\014tpn.protocol\032#pgt"
   "_custom/pgt_custom_options.proto\032\020error_"
   "code.proto\"\014\n\nNoResponse\")\n\007Address\022\020\n\010a"
-  "dd_ress\030\001 \001(\t\022\014\n\004port\030\002 \001(\r\"r\n\006Header\022\022\n"
-  "\nservice_id\030\001 \001(\r\022\r\n\005token\030\002 \001(\r\022\014\n\004size"
-  "\030\003 \001(\r\022\024\n\014service_hash\030\004 \001(\007\022\021\n\tmethod_i"
-  "d\030\005 \001(\r\022\016\n\006status\030\006 \001(\rB\005H\001\200\001\000P\000P\001b\006prot"
-  "o3"
+  "dd_ress\030\001 \001(\t\022\014\n\004port\030\002 \001(\r\"\213\001\n\006Header\022\022"
+  "\n\nservice_id\030\001 \001(\r\022\r\n\005token\030\002 \001(\r\022\014\n\004siz"
+  "e\030\003 \001(\r\022\024\n\014service_hash\030\004 \001(\007\022\021\n\tmethod_"
+  "id\030\005 \001(\r\022\'\n\006status\030\006 \001(\0162\027.tpn.protocol."
+  "ErrorCodeB\005H\001\200\001\000P\000P\001b\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_type_2frpc_5ftype_2eproto_deps[2] = {
   &::descriptor_table_error_5fcode_2eproto,
@@ -118,7 +119,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_type_2frpc_5ftype_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_type_2frpc_5ftype_2eproto = {
-  false, false, 282, descriptor_table_protodef_type_2frpc_5ftype_2eproto, "type/rpc_type.proto", 
+  false, false, 308, descriptor_table_protodef_type_2frpc_5ftype_2eproto, "type/rpc_type.proto", 
   &descriptor_table_type_2frpc_5ftype_2eproto_once, descriptor_table_type_2frpc_5ftype_2eproto_deps, 2, 3,
   schemas, file_default_instances, TableStruct_type_2frpc_5ftype_2eproto::offsets,
   file_level_metadata_type_2frpc_5ftype_2eproto, file_level_enum_descriptors_type_2frpc_5ftype_2eproto, file_level_service_descriptors_type_2frpc_5ftype_2eproto,
@@ -617,11 +618,12 @@ const char* Header::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // uint32 status = 6;
+      // .tpn.protocol.ErrorCode status = 6;
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
-          status_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+          _internal_set_status(static_cast<::tpn::protocol::ErrorCode>(val));
         } else goto handle_unusual;
         continue;
       default: {
@@ -683,10 +685,11 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(5, this->_internal_method_id(), target);
   }
 
-  // uint32 status = 6;
+  // .tpn.protocol.ErrorCode status = 6;
   if (this->_internal_status() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(6, this->_internal_status(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      6, this->_internal_status(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -738,11 +741,10 @@ size_t Header::ByteSizeLong() const {
         this->_internal_method_id());
   }
 
-  // uint32 status = 6;
+  // .tpn.protocol.ErrorCode status = 6;
   if (this->_internal_status() != 0) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_status());
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_status());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {

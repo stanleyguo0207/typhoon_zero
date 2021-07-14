@@ -92,7 +92,7 @@ class TcpChatSession
   }
 
   void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
-                    uint32_t status) {
+                    protocol::ErrorCode status) {
     NET_DEBUG("TcpServiceSessionBase SendResponse status");
 
     protocol::Header header;
@@ -114,8 +114,7 @@ class TcpChatSession
     Send(std::move(packet));
   }
 
-  void SendResponse(uint32_t service_hash, uint32_t method_id,
-                    protocol::ErrorCode token,
+  void SendResponse(uint32_t service_hash, uint32_t method_id, uint32_t token,
                     const google::protobuf::Message *response) {
     NET_DEBUG("TcpServiceSessionBase SendResponse response");
 

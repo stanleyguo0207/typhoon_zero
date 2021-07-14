@@ -29,7 +29,7 @@ namespace test {
 TcpChatService::TcpChatService(std::shared_ptr<TcpChatSession> session_sptr)
     : TChatService(session_sptr) {}
 
-uint32_t TcpChatService::HandleUpdateInfo(
+protocol::ErrorCode TcpChatService::HandleUpdateInfo(
     const ::tpn::protocol::TUpdateInfoRequest *request) {
   LOG_INFO("client set name {}", request->name());
   this->session_sptr_->SetName(request->name());
@@ -37,7 +37,7 @@ uint32_t TcpChatService::HandleUpdateInfo(
   return kErrorCodeOk;
 }
 
-uint32_t TcpChatService::HandleChat(
+protocol::ErrorCode TcpChatService::HandleChat(
     const ::tpn::protocol::TChatRequest *request) {
   //this->session_sptr_->Chat(request->message());
   this->session_sptr_->GetRoom().Deliver(request->message());

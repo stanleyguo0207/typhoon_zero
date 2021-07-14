@@ -14,7 +14,6 @@
 #include <google/protobuf/wire_format.h>
 #include "log.h"
 #include "debug_hub.h"
-#include "error_code.pb.h"
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
 
@@ -1548,26 +1547,23 @@ void TChatNtf::InternalSwap(TChatNtf* other) {
 
 // ===================================================================
 
-TestService1::TestService1() : service_hash_(ServiceHash::value) {
-}
+TestService1::TestService1()
+  : service_hash_(ServiceHash::value) {}
 
-TestService1::~TestService1() {
-}
+TestService1::~TestService1() {}
 
-const google::protobuf::ServiceDescriptor *TestService1::descriptor() {
-  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
-  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[0];
+const ::google::protobuf::ServiceDescriptor *TestService1::descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[0];
 }
 
 void TestService1::ProcessClientRequest11(const ::tpn::protocol::SearchRequest *request, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TestService1.ProcessClientRequest11(tpn.protocol.SearchRequest{{ {}  }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TestService1.ProcessClientRequest11(tpn.protocol.SearchRequest{{ {}  }})", GetCallerInfo(), request->ShortDebugString());
   SendRequest(service_hash_, 1 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
 }
 
 void TestService1::ProcessClientRequest12(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TestService1.ProcessClientRequest12(tpn.protocol.SearchRequest{{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TestService1.ProcessClientRequest12(tpn.protocol.SearchRequest{{ {} }})", GetCallerInfo(), request->ShortDebugString());
   std::function<void(MessageBuffer)> callback = [response_callback](MessageBuffer buffer) -> void {
     ::tpn::protocol::SearchResponse response;
     if (response.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize()))
@@ -1577,21 +1573,19 @@ void TestService1::ProcessClientRequest12(const ::tpn::protocol::SearchRequest *
 }
 
 void TestService1::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer /*buffer*/) {
-  LOG_ERROR("{} Server tried to call server method {}",
-    GetCallerInfo(), method_id);
+  LOG_ERROR("{} Server tried to call server method {}", GetCallerInfo(), method_id);
 }
 
 // ===================================================================
 
-TestService2::TestService2() : service_hash_(ServiceHash::value) {
-}
+TestService2::TestService2()
+  : service_hash_(ServiceHash::value) {}
 
-TestService2::~TestService2() {
-}
+TestService2::~TestService2() {}
 
-const google::protobuf::ServiceDescriptor *TestService2::descriptor() {
-  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
-  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[1];
+const ::google::protobuf::ServiceDescriptor *TestService2::descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[1];
 }
 
 void TestService2::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer buffer) {
@@ -1603,10 +1597,9 @@ void TestService2::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
       }
-      uint32_t status = HandleProcessClientRequest21(&request);
-      LOG_DEBUG("{} Client called server method TestService2.ProcessClientRequest21(tpn.protocol.SearchRequest{{ {} }}) status {}.",
-        GetCallerInfo(), request.ShortDebugString(), status);
-      if (status)
+      ::tpn::protocol::ErrorCode status = HandleProcessClientRequest21(&request);
+      LOG_DEBUG("{} Client called server method TestService2.ProcessClientRequest21(tpn.protocol.SearchRequest{{ {} }}) status {}.", GetCallerInfo(), request.ShortDebugString(), status);
+      if (kErrorCodeOk != status)
         SendResponse(service_hash_, method_id, token, status);
       break;
     }
@@ -1617,21 +1610,18 @@ void TestService2::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
       }
-      LOG_DEBUG("{} Client called server method TestService2.ProcessClientRequest22(tpn.protocol.SearchRequest{{ {} }}).",
-GetCallerInfo(), request.ShortDebugString());
-      std::function<void(ServiceBase*, uint32_t, const google::protobuf::Message *)> continuation = [token, method_id](ServiceBase *service, uint32_t status, const google::protobuf::Message *response)
-      {
+      LOG_DEBUG("{} Client called server method TestService2.ProcessClientRequest22(tpn.protocol.SearchRequest{{ {} }}).", GetCallerInfo(), request.ShortDebugString());
+      std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, const ::google::protobuf::Message *)> continuation = [token, method_id](ServiceBase *service, ::tpn::protocol::ErrorCode status, const ::google::protobuf::Message *response) {
         TPN_ASSERT(response->GetDescriptor() == ::tpn::protocol::SearchResponse::descriptor(), "response descriptor error {} != {}", response->GetDescriptor()->DebugString(), ::tpn::protocol::SearchResponse::descriptor()->DebugString());
         TestService2* self = static_cast<TestService2*>(service);
-        LOG_DEBUG("{} Client called server method TestService2.ProcessClientRequest22() returned tpn.protocol.SearchResponse{{ {} }} status {}.",
-          self->GetCallerInfo(), response->ShortDebugString(), status);
-        if (!status)
+        LOG_DEBUG("{} Client called server method TestService2.ProcessClientRequest22() returned tpn.protocol.SearchResponse{{ {} }} status {}.", self->GetCallerInfo(), response->ShortDebugString(), status);
+        if (kErrorCodeOk == status)
           self->SendResponse(self->service_hash_, method_id, token, response);
         else
           self->SendResponse(self->service_hash_, method_id, token, status);
       };
       ::tpn::protocol::SearchResponse response;
-      uint32_t status = HandleProcessClientRequest22(&request, &response, continuation);
+      ::tpn::protocol::ErrorCode status = HandleProcessClientRequest22(&request, &response, continuation);
       if (continuation)
         continuation(this, status, &response);
       break;
@@ -1643,40 +1633,35 @@ GetCallerInfo(), request.ShortDebugString());
     }
 }
 
-uint32_t TestService2::HandleProcessClientRequest21(const ::tpn::protocol::SearchRequest *request) {
-  LOG_ERROR("{} Client tried to call not implemented method TestService2.ProcessClientRequest21({{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+::tpn::protocol::ErrorCode TestService2::HandleProcessClientRequest21(const ::tpn::protocol::SearchRequest *request) {
+  LOG_ERROR("{} Client tried to call not implemented method TestService2.ProcessClientRequest21({{ {} }})", GetCallerInfo(), request->ShortDebugString());
   return kErrorCodeNotImplemented;
 }
 
-uint32_t TestService2::HandleProcessClientRequest22(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, uint32_t, const google::protobuf::Message *)>& continuation) {
-  LOG_ERROR("{} Client tried to call not implemented method TestService2.ProcessClientRequest22({{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+::tpn::protocol::ErrorCode TestService2::HandleProcessClientRequest22(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, const ::google::protobuf::Message *)>& continuation) {
+  LOG_ERROR("{} Client tried to call not implemented method TestService2.ProcessClientRequest22({{ {} }})", GetCallerInfo(), request->ShortDebugString());
   return kErrorCodeNotImplemented;
 }
 
 // ===================================================================
 
-TestService3::TestService3() : service_hash_(ServiceHash::value) {
-}
+TestService3::TestService3()
+  : service_hash_(ServiceHash::value) {}
 
-TestService3::~TestService3() {
-}
+TestService3::~TestService3() {}
 
-const google::protobuf::ServiceDescriptor *TestService3::descriptor() {
-  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
-  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[2];
+const ::google::protobuf::ServiceDescriptor *TestService3::descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[2];
 }
 
 void TestService3::ProcessClientRequest31(const ::tpn::protocol::SearchRequest *request, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TestService3.ProcessClientRequest31(tpn.protocol.SearchRequest{{ {}  }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TestService3.ProcessClientRequest31(tpn.protocol.SearchRequest{{ {}  }})", GetCallerInfo(), request->ShortDebugString());
   SendRequest(service_hash_, 1 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
 }
 
 void TestService3::ProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, std::function<void(const ::tpn::protocol::SearchResponse *)> response_callback, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TestService3.ProcessClientRequest32(tpn.protocol.SearchRequest{{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TestService3.ProcessClientRequest32(tpn.protocol.SearchRequest{{ {} }})", GetCallerInfo(), request->ShortDebugString());
   std::function<void(MessageBuffer)> callback = [response_callback](MessageBuffer buffer) -> void {
     ::tpn::protocol::SearchResponse response;
     if (response.ParseFromArray(buffer.GetReadPointer(), buffer.GetActiveSize()))
@@ -1694,10 +1679,9 @@ void TestService3::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
       }
-      uint32_t status = HandleProcessClientRequest31(&request);
-      LOG_DEBUG("{} Client called server method TestService3.ProcessClientRequest31(tpn.protocol.SearchRequest{{ {} }}) status {}.",
-        GetCallerInfo(), request.ShortDebugString(), status);
-      if (status)
+      ::tpn::protocol::ErrorCode status = HandleProcessClientRequest31(&request);
+      LOG_DEBUG("{} Client called server method TestService3.ProcessClientRequest31(tpn.protocol.SearchRequest{{ {} }}) status {}.", GetCallerInfo(), request.ShortDebugString(), status);
+      if (kErrorCodeOk != status)
         SendResponse(service_hash_, method_id, token, status);
       break;
     }
@@ -1708,21 +1692,18 @@ void TestService3::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
       }
-      LOG_DEBUG("{} Client called server method TestService3.ProcessClientRequest32(tpn.protocol.SearchRequest{{ {} }}).",
-GetCallerInfo(), request.ShortDebugString());
-      std::function<void(ServiceBase*, uint32_t, const google::protobuf::Message *)> continuation = [token, method_id](ServiceBase *service, uint32_t status, const google::protobuf::Message *response)
-      {
+      LOG_DEBUG("{} Client called server method TestService3.ProcessClientRequest32(tpn.protocol.SearchRequest{{ {} }}).", GetCallerInfo(), request.ShortDebugString());
+      std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, const ::google::protobuf::Message *)> continuation = [token, method_id](ServiceBase *service, ::tpn::protocol::ErrorCode status, const ::google::protobuf::Message *response) {
         TPN_ASSERT(response->GetDescriptor() == ::tpn::protocol::SearchResponse::descriptor(), "response descriptor error {} != {}", response->GetDescriptor()->DebugString(), ::tpn::protocol::SearchResponse::descriptor()->DebugString());
         TestService3* self = static_cast<TestService3*>(service);
-        LOG_DEBUG("{} Client called server method TestService3.ProcessClientRequest32() returned tpn.protocol.SearchResponse{{ {} }} status {}.",
-          self->GetCallerInfo(), response->ShortDebugString(), status);
-        if (!status)
+        LOG_DEBUG("{} Client called server method TestService3.ProcessClientRequest32() returned tpn.protocol.SearchResponse{{ {} }} status {}.", self->GetCallerInfo(), response->ShortDebugString(), status);
+        if (kErrorCodeOk == status)
           self->SendResponse(self->service_hash_, method_id, token, response);
         else
           self->SendResponse(self->service_hash_, method_id, token, status);
       };
       ::tpn::protocol::SearchResponse response;
-      uint32_t status = HandleProcessClientRequest32(&request, &response, continuation);
+      ::tpn::protocol::ErrorCode status = HandleProcessClientRequest32(&request, &response, continuation);
       if (continuation)
         continuation(this, status, &response);
       break;
@@ -1734,40 +1715,35 @@ GetCallerInfo(), request.ShortDebugString());
     }
 }
 
-uint32_t TestService3::HandleProcessClientRequest31(const ::tpn::protocol::SearchRequest *request) {
-  LOG_ERROR("{} Client tried to call not implemented method TestService3.ProcessClientRequest31({{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+::tpn::protocol::ErrorCode TestService3::HandleProcessClientRequest31(const ::tpn::protocol::SearchRequest *request) {
+  LOG_ERROR("{} Client tried to call not implemented method TestService3.ProcessClientRequest31({{ {} }})", GetCallerInfo(), request->ShortDebugString());
   return kErrorCodeNotImplemented;
 }
 
-uint32_t TestService3::HandleProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, uint32_t, const google::protobuf::Message *)>& continuation) {
-  LOG_ERROR("{} Client tried to call not implemented method TestService3.ProcessClientRequest32({{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+::tpn::protocol::ErrorCode TestService3::HandleProcessClientRequest32(const ::tpn::protocol::SearchRequest *request, ::tpn::protocol::SearchResponse *response, std::function<void(ServiceBase*, ::tpn::protocol::ErrorCode, const ::google::protobuf::Message *)>& continuation) {
+  LOG_ERROR("{} Client tried to call not implemented method TestService3.ProcessClientRequest32({{ {} }})", GetCallerInfo(), request->ShortDebugString());
   return kErrorCodeNotImplemented;
 }
 
 // ===================================================================
 
-TChatService::TChatService() : service_hash_(ServiceHash::value) {
-}
+TChatService::TChatService()
+  : service_hash_(ServiceHash::value) {}
 
-TChatService::~TChatService() {
-}
+TChatService::~TChatService() {}
 
-const google::protobuf::ServiceDescriptor *TChatService::descriptor() {
-  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
-  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[3];
+const ::google::protobuf::ServiceDescriptor *TChatService::descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[3];
 }
 
 void TChatService::UpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TChatService.UpdateInfo(tpn.protocol.TUpdateInfoRequest{{ {}  }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TChatService.UpdateInfo(tpn.protocol.TUpdateInfoRequest{{ {}  }})", GetCallerInfo(), request->ShortDebugString());
   SendRequest(service_hash_, 1 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
 }
 
 void TChatService::Chat(const ::tpn::protocol::TChatRequest *request, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TChatService.Chat(tpn.protocol.TChatRequest{{ {}  }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TChatService.Chat(tpn.protocol.TChatRequest{{ {}  }})", GetCallerInfo(), request->ShortDebugString());
   SendRequest(service_hash_, 2 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
 }
 
@@ -1780,10 +1756,9 @@ void TChatService::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
       }
-      uint32_t status = HandleUpdateInfo(&request);
-      LOG_DEBUG("{} Client called server method TChatService.UpdateInfo(tpn.protocol.TUpdateInfoRequest{{ {} }}) status {}.",
-        GetCallerInfo(), request.ShortDebugString(), status);
-      if (status)
+      ::tpn::protocol::ErrorCode status = HandleUpdateInfo(&request);
+      LOG_DEBUG("{} Client called server method TChatService.UpdateInfo(tpn.protocol.TUpdateInfoRequest{{ {} }}) status {}.", GetCallerInfo(), request.ShortDebugString(), status);
+      if (kErrorCodeOk != status)
         SendResponse(service_hash_, method_id, token, status);
       break;
     }
@@ -1794,10 +1769,9 @@ void TChatService::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
         SendResponse(service_hash_, method_id, token, kErrorCodeMalformedRequest);
         return;
       }
-      uint32_t status = HandleChat(&request);
-      LOG_DEBUG("{} Client called server method TChatService.Chat(tpn.protocol.TChatRequest{{ {} }}) status {}.",
-        GetCallerInfo(), request.ShortDebugString(), status);
-      if (status)
+      ::tpn::protocol::ErrorCode status = HandleChat(&request);
+      LOG_DEBUG("{} Client called server method TChatService.Chat(tpn.protocol.TChatRequest{{ {} }}) status {}.", GetCallerInfo(), request.ShortDebugString(), status);
+      if (kErrorCodeOk != status)
         SendResponse(service_hash_, method_id, token, status);
       break;
     }
@@ -1808,40 +1782,35 @@ void TChatService::CallServerMethod(uint32_t token, uint32_t method_id, MessageB
     }
 }
 
-uint32_t TChatService::HandleUpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request) {
-  LOG_ERROR("{} Client tried to call not implemented method TChatService.UpdateInfo({{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+::tpn::protocol::ErrorCode TChatService::HandleUpdateInfo(const ::tpn::protocol::TUpdateInfoRequest *request) {
+  LOG_ERROR("{} Client tried to call not implemented method TChatService.UpdateInfo({{ {} }})", GetCallerInfo(), request->ShortDebugString());
   return kErrorCodeNotImplemented;
 }
 
-uint32_t TChatService::HandleChat(const ::tpn::protocol::TChatRequest *request) {
-  LOG_ERROR("{} Client tried to call not implemented method TChatService.Chat({{ {} }})",
-    GetCallerInfo(), request->ShortDebugString());
+::tpn::protocol::ErrorCode TChatService::HandleChat(const ::tpn::protocol::TChatRequest *request) {
+  LOG_ERROR("{} Client tried to call not implemented method TChatService.Chat({{ {} }})", GetCallerInfo(), request->ShortDebugString());
   return kErrorCodeNotImplemented;
 }
 
 // ===================================================================
 
-TChatListener::TChatListener() : service_hash_(ServiceHash::value) {
-}
+TChatListener::TChatListener()
+  : service_hash_(ServiceHash::value) {}
 
-TChatListener::~TChatListener() {
-}
+TChatListener::~TChatListener() {}
 
-const google::protobuf::ServiceDescriptor *TChatListener::descriptor() {
-  google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
-  return  file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[4];
+const ::google::protobuf::ServiceDescriptor *TChatListener::descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_protocol_2ftest_5fservice_2eproto);
+  return file_level_service_descriptors_protocol_2ftest_5fservice_2eproto[4];
 }
 
 void TChatListener::ChatNtf(const ::tpn::protocol::TChatNtf *request, bool client /*= false*/, bool server /*= false*/) {
-  LOG_DEBUG("{} Server called client method TChatListener.ChatNtf(tpn.protocol.TChatNtf{{ {}  }})",
-    GetCallerInfo(), request->ShortDebugString());
+  LOG_DEBUG("{} Server called client method TChatListener.ChatNtf(tpn.protocol.TChatNtf{{ {}  }})", GetCallerInfo(), request->ShortDebugString());
   SendRequest(service_hash_, 1 | (client ? 0x40000000 : 0) | (server ? 0x80000000 : 0), request);
 }
 
 void TChatListener::CallServerMethod(uint32_t token, uint32_t method_id, MessageBuffer /*buffer*/) {
-  LOG_ERROR("{} Server tried to call server method {}",
-    GetCallerInfo(), method_id);
+  LOG_ERROR("{} Server tried to call server method {}", GetCallerInfo(), method_id);
 }
 
 
