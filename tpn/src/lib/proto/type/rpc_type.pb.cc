@@ -44,11 +44,10 @@ struct AddressDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT AddressDefaultTypeInternal _Address_default_instance_;
 constexpr Header::Header(
   ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : service_id_(0u)
+  : service_hash_(0u)
+  , method_id_(0u)
   , token_(0u)
   , size_(0u)
-  , service_hash_(0u)
-  , method_id_(0u)
   , status_(0)
 {}
 struct HeaderDefaultTypeInternal {
@@ -84,11 +83,10 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_type_2frpc_5ftype_2eproto::off
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, service_id_),
-  PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, token_),
-  PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, size_),
   PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, service_hash_),
   PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, method_id_),
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, token_),
+  PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, size_),
   PROTOBUF_FIELD_OFFSET(::tpn::protocol::Header, status_),
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -107,11 +105,11 @@ const char descriptor_table_protodef_type_2frpc_5ftype_2eproto[] PROTOBUF_SECTIO
   "\n\023type/rpc_type.proto\022\014tpn.protocol\032#pgt"
   "_custom/pgt_custom_options.proto\032\020error_"
   "code.proto\"\014\n\nNoResponse\")\n\007Address\022\020\n\010a"
-  "dd_ress\030\001 \001(\t\022\014\n\004port\030\002 \001(\r\"\213\001\n\006Header\022\022"
-  "\n\nservice_id\030\001 \001(\r\022\r\n\005token\030\002 \001(\r\022\014\n\004siz"
-  "e\030\003 \001(\r\022\024\n\014service_hash\030\004 \001(\007\022\021\n\tmethod_"
-  "id\030\005 \001(\r\022\'\n\006status\030\006 \001(\0162\027.tpn.protocol."
-  "ErrorCodeB\005H\001\200\001\000P\000P\001b\006proto3"
+  "dd_ress\030\001 \001(\t\022\014\n\004port\030\002 \001(\r\"w\n\006Header\022\024\n"
+  "\014service_hash\030\001 \001(\007\022\021\n\tmethod_id\030\002 \001(\r\022\r"
+  "\n\005token\030\003 \001(\r\022\014\n\004size\030\004 \001(\r\022\'\n\006status\030\005 "
+  "\001(\0162\027.tpn.protocol.ErrorCodeB\005H\001\200\001\000P\000P\001b"
+  "\006proto3"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_type_2frpc_5ftype_2eproto_deps[2] = {
   &::descriptor_table_error_5fcode_2eproto,
@@ -119,7 +117,7 @@ static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_type_2frpc_5ftype_2eproto_once;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_type_2frpc_5ftype_2eproto = {
-  false, false, 308, descriptor_table_protodef_type_2frpc_5ftype_2eproto, "type/rpc_type.proto", 
+  false, false, 287, descriptor_table_protodef_type_2frpc_5ftype_2eproto, "type/rpc_type.proto", 
   &descriptor_table_type_2frpc_5ftype_2eproto_once, descriptor_table_type_2frpc_5ftype_2eproto_deps, 2, 3,
   schemas, file_default_instances, TableStruct_type_2frpc_5ftype_2eproto::offsets,
   file_level_metadata_type_2frpc_5ftype_2eproto, file_level_enum_descriptors_type_2frpc_5ftype_2eproto, file_level_service_descriptors_type_2frpc_5ftype_2eproto,
@@ -531,17 +529,17 @@ Header::Header(::PROTOBUF_NAMESPACE_ID::Arena* arena,
 Header::Header(const Header& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&service_id_, &from.service_id_,
+  ::memcpy(&service_hash_, &from.service_hash_,
     static_cast<size_t>(reinterpret_cast<char*>(&status_) -
-    reinterpret_cast<char*>(&service_id_)) + sizeof(status_));
+    reinterpret_cast<char*>(&service_hash_)) + sizeof(status_));
   // @@protoc_insertion_point(copy_constructor:tpn.protocol.Header)
 }
 
 inline void Header::SharedCtor() {
 ::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&service_id_) - reinterpret_cast<char*>(this)),
+    reinterpret_cast<char*>(&service_hash_) - reinterpret_cast<char*>(this)),
     0, static_cast<size_t>(reinterpret_cast<char*>(&status_) -
-    reinterpret_cast<char*>(&service_id_)) + sizeof(status_));
+    reinterpret_cast<char*>(&service_hash_)) + sizeof(status_));
 }
 
 Header::~Header() {
@@ -571,9 +569,9 @@ void Header::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&service_id_, 0, static_cast<size_t>(
+  ::memset(&service_hash_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&status_) -
-      reinterpret_cast<char*>(&service_id_)) + sizeof(status_));
+      reinterpret_cast<char*>(&service_hash_)) + sizeof(status_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -583,44 +581,37 @@ const char* Header::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::int
     ::PROTOBUF_NAMESPACE_ID::uint32 tag;
     ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // uint32 service_id = 1;
+      // fixed32 service_hash = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          service_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // uint32 token = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
-          token_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // uint32 size = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
-          size_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else goto handle_unusual;
-        continue;
-      // fixed32 service_hash = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 13)) {
           service_hash_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<::PROTOBUF_NAMESPACE_ID::uint32>(ptr);
           ptr += sizeof(::PROTOBUF_NAMESPACE_ID::uint32);
         } else goto handle_unusual;
         continue;
-      // uint32 method_id = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+      // uint32 method_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
           method_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else goto handle_unusual;
         continue;
-      // .tpn.protocol.ErrorCode status = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
+      // uint32 token = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          token_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // uint32 size = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          size_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // .tpn.protocol.ErrorCode status = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
           ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           _internal_set_status(static_cast<::tpn::protocol::ErrorCode>(val));
@@ -655,41 +646,35 @@ failure:
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint32 service_id = 1;
-  if (this->_internal_service_id() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_service_id(), target);
-  }
-
-  // uint32 token = 2;
-  if (this->_internal_token() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_token(), target);
-  }
-
-  // uint32 size = 3;
-  if (this->_internal_size() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_size(), target);
-  }
-
-  // fixed32 service_hash = 4;
+  // fixed32 service_hash = 1;
   if (this->_internal_service_hash() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed32ToArray(4, this->_internal_service_hash(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFixed32ToArray(1, this->_internal_service_hash(), target);
   }
 
-  // uint32 method_id = 5;
+  // uint32 method_id = 2;
   if (this->_internal_method_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(5, this->_internal_method_id(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_method_id(), target);
   }
 
-  // .tpn.protocol.ErrorCode status = 6;
+  // uint32 token = 3;
+  if (this->_internal_token() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_token(), target);
+  }
+
+  // uint32 size = 4;
+  if (this->_internal_size() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(4, this->_internal_size(), target);
+  }
+
+  // .tpn.protocol.ErrorCode status = 5;
   if (this->_internal_status() != 0) {
     target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
-      6, this->_internal_status(), target);
+      5, this->_internal_status(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -708,40 +693,33 @@ size_t Header::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // uint32 service_id = 1;
-  if (this->_internal_service_id() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_service_id());
-  }
-
-  // uint32 token = 2;
-  if (this->_internal_token() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_token());
-  }
-
-  // uint32 size = 3;
-  if (this->_internal_size() != 0) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
-        this->_internal_size());
-  }
-
-  // fixed32 service_hash = 4;
+  // fixed32 service_hash = 1;
   if (this->_internal_service_hash() != 0) {
     total_size += 1 + 4;
   }
 
-  // uint32 method_id = 5;
+  // uint32 method_id = 2;
   if (this->_internal_method_id() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
         this->_internal_method_id());
   }
 
-  // .tpn.protocol.ErrorCode status = 6;
+  // uint32 token = 3;
+  if (this->_internal_token() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_token());
+  }
+
+  // uint32 size = 4;
+  if (this->_internal_size() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_size());
+  }
+
+  // .tpn.protocol.ErrorCode status = 5;
   if (this->_internal_status() != 0) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_status());
@@ -775,20 +753,17 @@ void Header::MergeFrom(const Header& from) {
   ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_service_id() != 0) {
-    _internal_set_service_id(from._internal_service_id());
+  if (from._internal_service_hash() != 0) {
+    _internal_set_service_hash(from._internal_service_hash());
+  }
+  if (from._internal_method_id() != 0) {
+    _internal_set_method_id(from._internal_method_id());
   }
   if (from._internal_token() != 0) {
     _internal_set_token(from._internal_token());
   }
   if (from._internal_size() != 0) {
     _internal_set_size(from._internal_size());
-  }
-  if (from._internal_service_hash() != 0) {
-    _internal_set_service_hash(from._internal_service_hash());
-  }
-  if (from._internal_method_id() != 0) {
-    _internal_set_method_id(from._internal_method_id());
   }
   if (from._internal_status() != 0) {
     _internal_set_status(from._internal_status());
@@ -813,9 +788,9 @@ void Header::InternalSwap(Header* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(Header, status_)
       + sizeof(Header::status_)
-      - PROTOBUF_FIELD_OFFSET(Header, service_id_)>(
-          reinterpret_cast<char*>(&service_id_),
-          reinterpret_cast<char*>(&other->service_id_));
+      - PROTOBUF_FIELD_OFFSET(Header, service_hash_)>(
+          reinterpret_cast<char*>(&service_hash_),
+          reinterpret_cast<char*>(&other->service_hash_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Header::GetMetadata() const {

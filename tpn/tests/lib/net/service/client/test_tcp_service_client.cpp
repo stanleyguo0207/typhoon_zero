@@ -78,7 +78,6 @@ class TcpClientTest
     request.set_page_number(RandI32(100, 1000));
     request.set_result_per_page(RandI32(0, 100));
 
-    header.set_service_id(0);
     header.set_service_hash(0x512656A2u);
     header.set_method_id(0x40000001);
     header.set_size(request.ByteSizeLong());
@@ -111,7 +110,6 @@ class TcpClientTest
     request.set_result_per_page(RandI32(0, 100));
 
     protocol::Header header;
-    header.set_service_id(0);
     header.set_service_hash(0x512656A2u);
     header.set_method_id(0x40000001);
     header.set_size(request.ByteSizeLong());

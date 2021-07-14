@@ -81,7 +81,6 @@ class TcpClientTest
     request.set_name("机器人_{}"_format(RandU32()));
 
     protocol::Header header;
-    header.set_service_id(0);
     header.set_service_hash(protocol::TChatService::ServiceHash::value);
     header.set_method_id(0x40000001);
     header.set_size(request.ByteSizeLong());
@@ -140,7 +139,6 @@ int main(int argc, char *argv[]) {
     request.set_message(line, len);
 
     protocol::Header header;
-    header.set_service_id(0);
     header.set_service_hash(protocol::TChatService::ServiceHash::value);
     header.set_method_id(0x40000002);
     header.set_size(request.ByteSizeLong());

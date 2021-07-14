@@ -80,7 +80,6 @@ class TcpServiceSession
     NET_DEBUG("TcpServiceSessionBase SendRequest");
 
     protocol::Header header;
-    header.set_service_id(0);
     header.set_service_hash(0x512656A2u);
     header.set_method_id(0x80000001);
     header.set_size(request->ByteSizeLong());

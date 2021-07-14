@@ -41,10 +41,9 @@ message Address {
 
 // 数据包头
 message Header {
-  uint32 service_id = 1;     // 服务器id
-  uint32 token = 2;          // 令牌
-  uint32 size = 3;           // 数据包体大小
-  fixed32 service_hash = 4;  // 服务哈希值
-  uint32 method_id = 5;      // 方法id
-  ErrorCode status = 6;      // 状态码
+  fixed32 service_hash = 1;  // 服务哈希值
+  uint32 method_id = 2;      // 方法id
+  uint32 token = 3;          // 令牌
+  uint32 size = 4;           // 数据包体大小
+  ErrorCode status = 5;      // 状态码
 }

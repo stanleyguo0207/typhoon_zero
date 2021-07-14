@@ -475,41 +475,13 @@ class Header final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kServiceIdFieldNumber = 1,
-    kTokenFieldNumber = 2,
-    kSizeFieldNumber = 3,
-    kServiceHashFieldNumber = 4,
-    kMethodIdFieldNumber = 5,
-    kStatusFieldNumber = 6,
+    kServiceHashFieldNumber = 1,
+    kMethodIdFieldNumber = 2,
+    kTokenFieldNumber = 3,
+    kSizeFieldNumber = 4,
+    kStatusFieldNumber = 5,
   };
-  // uint32 service_id = 1;
-  void clear_service_id();
-  ::PROTOBUF_NAMESPACE_ID::uint32 service_id() const;
-  void set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_service_id() const;
-  void _internal_set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 token = 2;
-  void clear_token();
-  ::PROTOBUF_NAMESPACE_ID::uint32 token() const;
-  void set_token(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_token() const;
-  void _internal_set_token(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // uint32 size = 3;
-  void clear_size();
-  ::PROTOBUF_NAMESPACE_ID::uint32 size() const;
-  void set_size(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  private:
-  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_size() const;
-  void _internal_set_size(::PROTOBUF_NAMESPACE_ID::uint32 value);
-  public:
-
-  // fixed32 service_hash = 4;
+  // fixed32 service_hash = 1;
   void clear_service_hash();
   ::PROTOBUF_NAMESPACE_ID::uint32 service_hash() const;
   void set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -518,7 +490,7 @@ class Header final :
   void _internal_set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // uint32 method_id = 5;
+  // uint32 method_id = 2;
   void clear_method_id();
   ::PROTOBUF_NAMESPACE_ID::uint32 method_id() const;
   void set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
@@ -527,7 +499,25 @@ class Header final :
   void _internal_set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value);
   public:
 
-  // .tpn.protocol.ErrorCode status = 6;
+  // uint32 token = 3;
+  void clear_token();
+  ::PROTOBUF_NAMESPACE_ID::uint32 token() const;
+  void set_token(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_token() const;
+  void _internal_set_token(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // uint32 size = 4;
+  void clear_size();
+  ::PROTOBUF_NAMESPACE_ID::uint32 size() const;
+  void set_size(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  private:
+  ::PROTOBUF_NAMESPACE_ID::uint32 _internal_size() const;
+  void _internal_set_size(::PROTOBUF_NAMESPACE_ID::uint32 value);
+  public:
+
+  // .tpn.protocol.ErrorCode status = 5;
   void clear_status();
   ::tpn::protocol::ErrorCode status() const;
   void set_status(::tpn::protocol::ErrorCode value);
@@ -543,11 +533,10 @@ class Header final :
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 service_id_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 token_;
-  ::PROTOBUF_NAMESPACE_ID::uint32 size_;
   ::PROTOBUF_NAMESPACE_ID::uint32 service_hash_;
   ::PROTOBUF_NAMESPACE_ID::uint32 method_id_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 token_;
+  ::PROTOBUF_NAMESPACE_ID::uint32 size_;
   int status_;
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   friend struct ::TableStruct_type_2frpc_5ftype_2eproto;
@@ -637,67 +626,7 @@ inline void Address::set_port(::PROTOBUF_NAMESPACE_ID::uint32 value) {
 
 // Header
 
-// uint32 service_id = 1;
-inline void Header::clear_service_id() {
-  service_id_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_service_id() const {
-  return service_id_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::service_id() const {
-  // @@protoc_insertion_point(field_get:tpn.protocol.Header.service_id)
-  return _internal_service_id();
-}
-inline void Header::_internal_set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  service_id_ = value;
-}
-inline void Header::set_service_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_service_id(value);
-  // @@protoc_insertion_point(field_set:tpn.protocol.Header.service_id)
-}
-
-// uint32 token = 2;
-inline void Header::clear_token() {
-  token_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_token() const {
-  return token_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::token() const {
-  // @@protoc_insertion_point(field_get:tpn.protocol.Header.token)
-  return _internal_token();
-}
-inline void Header::_internal_set_token(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  token_ = value;
-}
-inline void Header::set_token(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_token(value);
-  // @@protoc_insertion_point(field_set:tpn.protocol.Header.token)
-}
-
-// uint32 size = 3;
-inline void Header::clear_size() {
-  size_ = 0u;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_size() const {
-  return size_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::size() const {
-  // @@protoc_insertion_point(field_get:tpn.protocol.Header.size)
-  return _internal_size();
-}
-inline void Header::_internal_set_size(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  
-  size_ = value;
-}
-inline void Header::set_size(::PROTOBUF_NAMESPACE_ID::uint32 value) {
-  _internal_set_size(value);
-  // @@protoc_insertion_point(field_set:tpn.protocol.Header.size)
-}
-
-// fixed32 service_hash = 4;
+// fixed32 service_hash = 1;
 inline void Header::clear_service_hash() {
   service_hash_ = 0u;
 }
@@ -717,7 +646,7 @@ inline void Header::set_service_hash(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:tpn.protocol.Header.service_hash)
 }
 
-// uint32 method_id = 5;
+// uint32 method_id = 2;
 inline void Header::clear_method_id() {
   method_id_ = 0u;
 }
@@ -737,7 +666,47 @@ inline void Header::set_method_id(::PROTOBUF_NAMESPACE_ID::uint32 value) {
   // @@protoc_insertion_point(field_set:tpn.protocol.Header.method_id)
 }
 
-// .tpn.protocol.ErrorCode status = 6;
+// uint32 token = 3;
+inline void Header::clear_token() {
+  token_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_token() const {
+  return token_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::token() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.token)
+  return _internal_token();
+}
+inline void Header::_internal_set_token(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  token_ = value;
+}
+inline void Header::set_token(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_token(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.token)
+}
+
+// uint32 size = 4;
+inline void Header::clear_size() {
+  size_ = 0u;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::_internal_size() const {
+  return size_;
+}
+inline ::PROTOBUF_NAMESPACE_ID::uint32 Header::size() const {
+  // @@protoc_insertion_point(field_get:tpn.protocol.Header.size)
+  return _internal_size();
+}
+inline void Header::_internal_set_size(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  
+  size_ = value;
+}
+inline void Header::set_size(::PROTOBUF_NAMESPACE_ID::uint32 value) {
+  _internal_set_size(value);
+  // @@protoc_insertion_point(field_set:tpn.protocol.Header.size)
+}
+
+// .tpn.protocol.ErrorCode status = 5;
 inline void Header::clear_status() {
   status_ = 0;
 }

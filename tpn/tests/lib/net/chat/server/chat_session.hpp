@@ -69,7 +69,6 @@ class TcpChatSession
     NET_DEBUG("TcpServiceSessionBase SendRequest");
 
     protocol::Header header;
-    header.set_service_id(0);
     header.set_service_hash(service_hash);
     header.set_method_id(method_id);
     header.set_token(request_token_++);
@@ -96,7 +95,6 @@ class TcpChatSession
     NET_DEBUG("TcpServiceSessionBase SendResponse status");
 
     protocol::Header header;
-    header.set_service_id(0xFE);
     header.set_service_hash(service_hash);
     header.set_method_id(method_id);
     header.set_token(token);
@@ -119,7 +117,6 @@ class TcpChatSession
     NET_DEBUG("TcpServiceSessionBase SendResponse response");
 
     protocol::Header header;
-    header.set_service_id(0);
     header.set_service_hash(service_hash);
     header.set_method_id(method_id);
     header.set_token(token);
