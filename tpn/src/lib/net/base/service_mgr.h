@@ -64,8 +64,7 @@ class ServiceMgr {
                            uint32_t method_id, MessageBuffer buffer) {
     auto iter = dispatchers_.find(service_hash);
     if (dispatchers_.end() != iter) {
-      iter->second(session_sptr, service_hash, token, method_id,
-                   std::move(buffer));
+      iter->second(session_sptr, token, method_id, std::move(buffer));
     } else {
       NET_DEBUG("{} tried to call invalid service {:#x}",
                 session_sptr->GetCallerInfo(), service_hash);
@@ -82,8 +81,8 @@ class ServiceMgr {
   ///  @param[in]   buffer          协议数据
   template <typename ServiceType>
   static void Dispatch(std::shared_ptr<SessionType> session_sptr,
-                       uint32_t service_hash, uint32_t token,
-                       uint32_t method_id, MessageBuffer buffer) {
+                       uint32_t token, uint32_t method_id,
+                       MessageBuffer buffer) {
     ServiceType(session_sptr)
         .CallServerMethod(token, method_id, std::move(buffer));
   }
@@ -91,7 +90,7 @@ class ServiceMgr {
  protected:
   /// 服务方法签名
   using ServiceMethod = void (*)(std::shared_ptr<SessionType>, uint32_t,
-                                 uint32_t, uint32_t, MessageBuffer);
+                                 uint32_t, MessageBuffer);
 
   std::unordered_map<uint32_t, ServiceMethod> dispatchers_;  ///< 服务分发器
 };
