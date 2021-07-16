@@ -75,6 +75,9 @@ int main(int argc, char *argv[]) {
 
   TcpChatServer server;
 
+  server.StartTimer(kTimerIdTest, Seconds(1),
+                    [&]() { LOG_DEBUG("Timer call"); });
+
   LOG_INFO("Tcp chat server start init...");
 
   server.Start(host, port);

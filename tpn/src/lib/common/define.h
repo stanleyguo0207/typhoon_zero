@@ -242,4 +242,14 @@
 // template <typename, bool>
 #define TEMPLATE_DECL_2_BOOL template <typename, bool>
 
+// uint8_t -> uint16_t
+#define MAKE_UINT16_T(h, l) ((((uint16_t)h) << 8) | (((uint16_t)l) & 0xFF))
+
+// uint16_t -> uint32_t
+#define MAKE_UINT32_T(h, l) ((((uint32_t)h) << 16) | (((uint32_t)l) & 0xFFFF))
+
+// uint32_t -> uint64_t
+#define MAKE_UINT64_T(h, l) \
+  ((((uint64_t)h) << 32) | (((uint64_t)l) & 0xFFFFFFFF))
+
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_

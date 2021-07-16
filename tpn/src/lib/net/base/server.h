@@ -35,6 +35,7 @@
 #include "session_mgr.h"
 #include "custom_allocator.h"
 #include "post_wrap.h"
+#include "user_timer.h"
 
 namespace tpn {
 
@@ -48,7 +49,8 @@ TPN_NET_FORWARD_DECL_BASE_CLASS
 template <typename Derived, typename SessionType>
 class ServerBase : public CRTPObject<Derived, false>,
                    public IoPool,
-                   public PostWrap<Derived> {
+                   public PostWrap<Derived>,
+                   public UserTimer<Derived> {
   TPN_NET_FRIEND_DECL_BASE_CLASS
 
  public:
@@ -62,6 +64,7 @@ class ServerBase : public CRTPObject<Derived, false>,
       : Super(),
         IoPool(concurrency_hint),
         PostWrap<Derived>(),
+        UserTimer<Derived>(),
         io_handle_(GetIoHandleByIndex(0)),
         session_mgr_(io_handle_),
         rallocator_(),
@@ -86,6 +89,9 @@ class ServerBase : public CRTPObject<Derived, false>,
     }
 
     NET_DEBUG("ServerBase Stop state {}", ToNetStateStr(this->state_));
+
+    // 停止所有用户自定义定时器
+    this->StopAllTimers();
 
     // 停止所有post中的任务
     this->StopAllPostedTasks();
