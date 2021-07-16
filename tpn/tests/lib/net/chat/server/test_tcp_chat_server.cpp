@@ -75,10 +75,13 @@ int main(int argc, char *argv[]) {
 
   TcpChatServer server;
 
-  server.StartTimer(kTimerIdTest, Seconds(1),
-                    [&]() { LOG_DEBUG("Timer call"); });
-
   LOG_INFO("Tcp chat server start init...");
+
+  // server.StartTimer(kTimerIdTest, 300ms, [&]() { LOG_DEBUG("Timer call"); });
+  // server.StartDelayTimer(kTimerIdTest, 2s, 1s,
+  //                        [&]() { LOG_DEBUG("Timer call"); });
+  server.StartCycleTimer(kTimerIdTest, 1s, 3,
+                         [&]() { LOG_DEBUG("Timer call"); });
 
   server.Start(host, port);
 

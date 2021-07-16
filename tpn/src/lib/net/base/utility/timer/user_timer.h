@@ -50,9 +50,6 @@ struct UserTimerKey {
     return (other.group == this->group && other.id == this->id);
   }
 
-  /// 获取64位的索引
-  TPN_INLINE uint64_t GetKey() const { return MAKE_UINT64_T(group, id); }
-
   TimerGroup group;  ///< 组别
   TimerId id;        ///< id
 
@@ -62,8 +59,8 @@ struct UserTimerKey {
 
 /// 用户自定义定时器索引哈希值
 struct UserTimerKeyHash {
-  TPN_INLINE uint64_t operator()(const UserTimerKey &key) const {
-    return key.GetKey();
+  TPN_INLINE uint32_t operator()(const UserTimerKey &key) const {
+    return MAKE_UINT32_T(key.group, key.id);
   }
 };
 
@@ -75,6 +72,7 @@ struct UserTimerKeyEqual {
   }
 };
 
+/// 定时器永久循环
 static constexpr int kUserTimerCycleForever = -1;
 
 /// 用户自定义定时器对象
@@ -94,7 +92,7 @@ struct UserTimerObj {
   UserTimerKey key;                                ///< 定时器索引
   asio::steady_timer timer;                        ///< 定时器
   std::function<void()> task;                      ///< 定时任务
-  std::atomic<int> cycle{kUserTimerCycleForever};  ///< 重复次数 -1 为永久
+  std::atomic<int> cycle{kUserTimerCycleForever};  ///< 重复次数
   bool exited{false};                              ///< 退出标志
 };
 
@@ -113,48 +111,46 @@ class UserTimer {
 
   /// 开启定时器
   /// 从当前时间开始，间隔interval触发定时器，不会停止
+  /// 默认在kTimerGroupCommon组中
   ///  @tapram      Rep
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   id
-  ///  @param[in]   interval
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
-  TPN_INLINE void StartTimer(TimerId &&id,
+  TPN_INLINE void StartTimer(TimerId id,
                              std::chrono::duration<Rep, Period> interval,
                              Func &&func, Args &&...args) {
-    using return_type = std::invoke_result_t<Func, Args...>;
-
     Derived &derive = CRTP_CAST(this);
 
-    auto t = std::make_shared<std::packaged_task<return_type()>>(
-        ForwardAsLambda(std::forward<decltype(func)>(func),
-                        std::forward<decltype(args)>(args)...));
-    std::function<void()> task = [t]() { (*t)(); };
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
 
     asio::post(
         derive.GetIoHandle().GetStrand(),
-        MakeAllocator(
-            derive.GetWriteAllocator(),
-            [this, &derive, this_ptr = derive.GetSelfSptr(),
-             UserTimerKey = UserTimerKey(TimerGroup::kTimerGroupCommon, id),
-             interval, task = std::move(task)]() mutable {
-              std::shared_ptr<UserTimerObj> timer_obj_sptr;
-              auto iter = this->user_timers_.find(UserTimerKey);
-              if (this->user_timers_.end() != iter) {
-                timer_obj_sptr       = iter->second;
-                timer_obj_sptr->task = std::move(task);
-              } else {
-                timer_obj_sptr = std::make_shared<UserTimerObj>(
-                    UserTimerKey, derive.GetIoHandle().GetIoContext(),
-                    std::move(task));
-              }
+        MakeAllocator(derive.GetWriteAllocator(),
+                      [this, &derive, this_ptr = derive.GetSelfSptr(),
+                       key = UserTimerKey(TimerGroup::kTimerGroupCommon, id),
+                       interval, task = std::move(task)]() mutable {
+                        std::shared_ptr<UserTimerObj> timer_obj_sptr;
+                        auto iter = this->user_timers_.find(key);
+                        if (this->user_timers_.end() != iter) {
+                          timer_obj_sptr       = iter->second;
+                          timer_obj_sptr->task = std::move(task);
+                        } else {
+                          timer_obj_sptr = std::make_shared<UserTimerObj>(
+                              key, derive.GetIoHandle().GetIoContext(),
+                              std::move(task));
 
-              derive.PostUserTimers(std::move(timer_obj_sptr), interval,
-                                    std::move(this_ptr));
-            }));
+                          this->user_timers_[std::move(key)] = timer_obj_sptr;
+                        }
+
+                        derive.PostUserTimers(std::move(timer_obj_sptr),
+                                              interval, std::move(this_ptr));
+                      }));
   }
 
   /// 开启定时器
@@ -163,15 +159,89 @@ class UserTimer {
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   group
-  ///  @param[in]   id
-  ///  @param[in]   interval
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   group     定时器组
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
-  TPN_INLINE void StartTimer(TimerGroup &&group, TimerId &&id,
+  TPN_INLINE void StartTimer(TimerGroup group, TimerId id,
                              std::chrono::duration<Rep, Period> interval,
-                             Func &&func, Args &&...args) {}
+                             Func &&func, Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
+
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(derive.GetWriteAllocator(),
+                      [this, &derive, this_ptr = derive.GetSelfSptr(),
+                       key  = UserTimerKey(group, id), interval,
+                       task = std::move(task)]() mutable {
+                        std::shared_ptr<UserTimerObj> timer_obj_sptr;
+                        auto iter = this->user_timers_.find(key);
+                        if (this->user_timers_.end() != iter) {
+                          timer_obj_sptr       = iter->second;
+                          timer_obj_sptr->task = std::move(task);
+                        } else {
+                          timer_obj_sptr = std::make_shared<UserTimerObj>(
+                              key, derive.GetIoHandle().GetIoContext(),
+                              std::move(task));
+
+                          this->user_timers_[std::move(key)] = timer_obj_sptr;
+                        }
+
+                        derive.PostUserTimers(std::move(timer_obj_sptr),
+                                              interval, std::move(this_ptr));
+                      }));
+  }
+
+  /// 延迟开启定时器
+  /// 从当前时间延迟delay时间开始，间隔interval触发定时器，不会停止
+  /// 默认在kTimerGroupCommon组中
+  ///  @tapram      Rep
+  ///  @tapram      Period
+  ///  @tapram      Func
+  ///  @tapram      Args...
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   delay     延迟启动时间
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
+  template <typename Rep, typename Period, typename Func, typename... Args>
+  TPN_INLINE void StartDelayTimer(TimerId id,
+                                  std::chrono::duration<Rep, Period> delay,
+                                  std::chrono::duration<Rep, Period> interval,
+                                  Func &&func, Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
+
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(
+            derive.GetWriteAllocator(),
+            [this, &derive, this_ptr = derive.GetSelfSptr(),
+             key = UserTimerKey(TimerGroup::kTimerGroupCommon, id), delay,
+             interval, task = std::move(task)]() mutable {
+              std::shared_ptr<UserTimerObj> timer_obj_sptr;
+              auto iter = this->user_timers_.find(key);
+              if (this->user_timers_.end() != iter) {
+                timer_obj_sptr       = iter->second;
+                timer_obj_sptr->task = std::move(task);
+              } else {
+                timer_obj_sptr = std::make_shared<UserTimerObj>(
+                    key, derive.GetIoHandle().GetIoContext(), std::move(task));
+
+                this->user_timers_[std::move(key)] = timer_obj_sptr;
+              }
+
+              derive.PostDelayUserTimers(std::move(timer_obj_sptr), delay,
+                                         interval, std::move(this_ptr));
+            }));
+  }
 
   /// 延迟开启定时器
   /// 从当前时间延迟delay时间开始，间隔interval触发定时器，不会停止
@@ -179,34 +249,90 @@ class UserTimer {
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   id
-  ///  @param[in]   delay
-  ///  @param[in]   interval
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   group     定时器组
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   delay     延迟启动时间
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
-  TPN_INLINE void StartDelayTimer(TimerId &&id,
+  TPN_INLINE void StartDelayTimer(TimerGroup group, TimerId id,
                                   std::chrono::duration<Rep, Period> delay,
                                   std::chrono::duration<Rep, Period> interval,
-                                  Func &&func, Args &&...args) {}
+                                  Func &&func, Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
 
-  /// 延迟开启定时器
-  /// 从当前时间延迟delay时间开始，间隔interval触发定时器，不会停止
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(
+            derive.GetWriteAllocator(),
+            [this, &derive, this_ptr = derive.GetSelfSptr(),
+             key  = UserTimerKey(group, id), delay, interval,
+             task = std::move(task)]() mutable {
+              std::shared_ptr<UserTimerObj> timer_obj_sptr;
+              auto iter = this->user_timers_.find(key);
+              if (this->user_timers_.end() != iter) {
+                timer_obj_sptr       = iter->second;
+                timer_obj_sptr->task = std::move(task);
+              } else {
+                timer_obj_sptr = std::make_shared<UserTimerObj>(
+                    key, derive.GetIoHandle().GetIoContext(), std::move(task));
+
+                this->user_timers_[std::move(key)] = timer_obj_sptr;
+              }
+
+              derive.PostDelayUserTimers(std::move(timer_obj_sptr), delay,
+                                         interval, std::move(this_ptr));
+            }));
+  }
+
+  /// 开启固定循环次数定时器
+  /// 从当前时间开始，间隔interval触发定时器，执行cycle次
+  /// 默认在kTimerGroupCommon组中
   ///  @tapram      Rep
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   group
-  ///  @param[in]   id
-  ///  @param[in]   delay
-  ///  @param[in]   interval
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   cycle     循环次数 -1 为永久
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
-  TPN_INLINE void StartDelayTimer(TimerGroup &&group, TimerId &&id,
-                                  std::chrono::duration<Rep, Period> delay,
+  TPN_INLINE void StartCycleTimer(TimerId id,
                                   std::chrono::duration<Rep, Period> interval,
-                                  Func &&func, Args &&...args) {}
+                                  int cycle, Func &&func, Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
+
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(derive.GetWriteAllocator(),
+                      [this, &derive, this_ptr = derive.GetSelfSptr(),
+                       key = UserTimerKey(TimerGroup::kTimerGroupCommon, id),
+                       interval, cycle, task = std::move(task)]() mutable {
+                        std::shared_ptr<UserTimerObj> timer_obj_sptr;
+                        auto iter = this->user_timers_.find(key);
+                        if (this->user_timers_.end() != iter) {
+                          timer_obj_sptr       = iter->second;
+                          timer_obj_sptr->task = std::move(task);
+                        } else {
+                          timer_obj_sptr = std::make_shared<UserTimerObj>(
+                              key, derive.GetIoHandle().GetIoContext(),
+                              std::move(task), cycle);
+
+                          this->user_timers_[std::move(key)] = timer_obj_sptr;
+                        }
+
+                        derive.PostUserTimers(std::move(timer_obj_sptr),
+                                              interval, std::move(this_ptr));
+                      }));
+  }
 
   /// 开启固定循环次数定时器
   /// 从当前时间开始，间隔interval触发定时器，执行cycle次
@@ -214,32 +340,44 @@ class UserTimer {
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   id
-  ///  @param[in]   interval
-  ///  @param[in]   cycle
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   group     定时器组
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   cycle     循环次数 -1 为永久
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
-  TPN_INLINE void StartCycleTimer(TimerId &&id,
+  TPN_INLINE void StartCycleTimer(TimerGroup group, TimerId id,
                                   std::chrono::duration<Rep, Period> interval,
-                                  int cycle, Func &&func, Args &&...args) {}
+                                  int cycle, Func &&func, Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
 
-  /// 开启固定循环次数定时器
-  /// 从当前时间开始，间隔interval触发定时器，执行cycle次
-  ///  @tapram      Rep
-  ///  @tapram      Period
-  ///  @tapram      Func
-  ///  @tapram      Args...
-  ///  @param[in]   group
-  ///  @param[in]   id
-  ///  @param[in]   interval
-  ///  @param[in]   cycle
-  ///  @param[in]   func
-  ///  @param[in]   args...
-  template <typename Rep, typename Period, typename Func, typename... Args>
-  TPN_INLINE void StartCycleTimer(TimerGroup &&group, TimerId &&id,
-                                  std::chrono::duration<Rep, Period> interval,
-                                  int cycle, Func &&func, Args &&...args) {}
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(derive.GetWriteAllocator(),
+                      [this, &derive, this_ptr = derive.GetSelfSptr(),
+                       key  = UserTimerKey(group, id), interval, cycle,
+                       task = std::move(task)]() mutable {
+                        std::shared_ptr<UserTimerObj> timer_obj_sptr;
+                        auto iter = this->user_timers_.find(key);
+                        if (this->user_timers_.end() != iter) {
+                          timer_obj_sptr       = iter->second;
+                          timer_obj_sptr->task = std::move(task);
+                        } else {
+                          timer_obj_sptr = std::make_shared<UserTimerObj>(
+                              key, derive.GetIoHandle().GetIoContext(),
+                              std::move(task), cycle);
+
+                          this->user_timers_[std::move(key)] = timer_obj_sptr;
+                        }
+
+                        derive.PostUserTimers(std::move(timer_obj_sptr),
+                                              interval, std::move(this_ptr));
+                      }));
+  }
 
   /// 延迟开启固定循环次数定时器
   /// 从当前时间延迟delay时间开始，间隔interval触发定时器，执行cycle次
@@ -247,17 +385,46 @@ class UserTimer {
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   id
-  ///  @param[in]   delay
-  ///  @param[in]   interval
-  ///  @param[in]   cycle
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   delay     延迟启动时间
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   cycle     循环次数 -1 为永久
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
   TPN_INLINE void StartDelayCycleTimer(
-      TimerId &&id, std::chrono::duration<Rep, Period> delay,
+      TimerId id, std::chrono::duration<Rep, Period> delay,
       std::chrono::duration<Rep, Period> interval, int cycle, Func &&func,
-      Args &&...args) {}
+      Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
+
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(derive.GetIoHandle().GetStrand(),
+               MakeAllocator(
+                   derive.GetWriteAllocator(),
+                   [this, &derive, this_ptr = derive.GetSelfSptr(),
+                    key = UserTimerKey(TimerGroup::kTimerGroupCommon, id),
+                    delay, interval, cycle, task = std::move(task)]() mutable {
+                     std::shared_ptr<UserTimerObj> timer_obj_sptr;
+                     auto iter = this->user_timers_.find(key);
+                     if (this->user_timers_.end() != iter) {
+                       timer_obj_sptr       = iter->second;
+                       timer_obj_sptr->task = std::move(task);
+                     } else {
+                       timer_obj_sptr = std::make_shared<UserTimerObj>(
+                           key, derive.GetIoHandle().GetIoContext(),
+                           std::move(task), cycle);
+
+                       this->user_timers_[std::move(key)] = timer_obj_sptr;
+                     }
+
+                     derive.PostDelayUserTimers(std::move(timer_obj_sptr),
+                                                delay, interval,
+                                                std::move(this_ptr));
+                   }));
+  }
 
   /// 延迟开启固定循环次数定时器
   /// 从当前时间延迟delay时间开始，间隔interval触发定时器，执行cycle次
@@ -265,23 +432,51 @@ class UserTimer {
   ///  @tapram      Period
   ///  @tapram      Func
   ///  @tapram      Args...
-  ///  @param[in]   group
-  ///  @param[in]   id
-  ///  @param[in]   delay
-  ///  @param[in]   interval
-  ///  @param[in]   cycle
-  ///  @param[in]   func
-  ///  @param[in]   args...
+  ///  @param[in]   group     定时器组
+  ///  @param[in]   id        定时器id
+  ///  @param[in]   delay     延迟启动时间
+  ///  @param[in]   interval  触发间隔
+  ///  @param[in]   cycle     循环次数 -1 为永久
+  ///  @param[in]   func      定时任务
+  ///  @param[in]   args...   定时任务参数
   template <typename Rep, typename Period, typename Func, typename... Args>
   TPN_INLINE void StartDelayCycleTimer(
-      TimerGroup &&group, TimerId &&id,
-      std::chrono::duration<Rep, Period> delay,
+      TimerGroup group, TimerId id, std::chrono::duration<Rep, Period> delay,
       std::chrono::duration<Rep, Period> interval, int cycle, Func &&func,
-      Args &&...args) {}
+      Args &&...args) {
+    Derived &derive = CRTP_CAST(this);
+
+    std::function<void()> task =
+        ForwardAsLambda(std::forward<Func>(func), std::forward<Args>(args)...);
+
+    asio::post(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(derive.GetWriteAllocator(),
+                      [this, &derive, this_ptr = derive.GetSelfSptr(),
+                       key  = UserTimerKey(group, id), delay, interval, cycle,
+                       task = std::move(task)]() mutable {
+                        std::shared_ptr<UserTimerObj> timer_obj_sptr;
+                        auto iter = this->user_timers_.find(key);
+                        if (this->user_timers_.end() != iter) {
+                          timer_obj_sptr       = iter->second;
+                          timer_obj_sptr->task = std::move(task);
+                        } else {
+                          timer_obj_sptr = std::make_shared<UserTimerObj>(
+                              key, derive.GetIoHandle().GetIoContext(),
+                              std::move(task), cycle);
+
+                          this->user_timers_[std::move(key)] = timer_obj_sptr;
+                        }
+
+                        derive.PostDelayUserTimers(std::move(timer_obj_sptr),
+                                                   delay, interval,
+                                                   std::move(this_ptr));
+                      }));
+  }
 
   /// 关闭定时器
   ///  @param[in]   id
-  TPN_INLINE void StopTimer(TimerId &&id) {
+  TPN_INLINE void StopTimer(TimerId id) {
     Derived &derive = CRTP_CAST(this);
     derive.StopTimer(TimerGroup::kTimerGroupCommon, std::move(id));
   }
@@ -289,7 +484,7 @@ class UserTimer {
   /// 关闭定时器
   ///  @param[in]   group
   ///  @param[in]   id
-  TPN_INLINE void StopTimer(TimerGroup &&group, TimerId &&id) {
+  TPN_INLINE void StopTimer(TimerGroup group, TimerId id) {
     Derived &derive = CRTP_CAST(this);
 
     if (!derive.GetIoHandle().GetStrand().running_in_this_thread()) {
@@ -299,7 +494,7 @@ class UserTimer {
               derive.GetWriteAllocator(),
               [this, this_ptr = derive.GetSelfSptr(), group = std::move(group),
                id = std::move(id)]() mutable {
-                this->Stop(std::move(group), std::move(id));
+                this->StopTimer(std::move(group), std::move(id));
               }));
     }
 
@@ -314,7 +509,35 @@ class UserTimer {
 
   /// 关闭定时器
   ///  @param[in]   group
-  TPN_INLINE void StopGroupTimers(TimerGroup &&group) {}
+  TPN_INLINE void StopGroupTimers(TimerGroup group) {
+    Derived &derive = CRTP_CAST(this);
+
+    if (!derive.GetIoHandle().GetStrand().running_in_this_thread()) {
+      return asio::post(
+          derive.GetIoHandle().GetStrand(),
+          MakeAllocator(derive.GetWriteAllocator(),
+                        [this, this_ptr = derive.GetSelfSptr(),
+                         group]() mutable { this->StopGroupTimers(group); }));
+    }
+
+    for (auto &[key, timer_obj_sptr] : this->user_timers_) {
+      if (group == static_cast<uint16_t>(key >> 16)) {
+        timer_obj_sptr->exited = true;
+        timer_obj_sptr->timer.cancel(s_ec_ignore);
+      }
+    }
+
+    for (auto iter = this->user_timers_.begin();
+         iter != this->user_timers_.end();) {
+      if (group == iter->first.group) {
+        iter->second->exited = true;
+        iter->second->timer.cancel(s_ec_ignore);
+        iter = this->user_timers_.erase(iter);
+      } else {
+        ++iter;
+      }
+    }
+  }
 
   /// 关闭定时器
   TPN_INLINE void StopAllTimers() {
@@ -380,7 +603,26 @@ class UserTimer {
       std::shared_ptr<UserTimerObj> timer_obj_sptr,
       std::chrono::duration<Rep, Period> delay,
       std::chrono::duration<Rep, Period> interval,
-      std::shared_ptr<Derived> this_ptr) {}
+      std::shared_ptr<Derived> this_ptr) {
+    Derived &derive = CRTP_CAST(this);
+
+    if (timer_obj_sptr->exited) {
+      return;
+    }
+
+    auto &timer = timer_obj_sptr->timer;
+
+    timer.expires_after(delay);
+    timer.async_wait(asio::bind_executor(
+        derive.GetIoHandle().GetStrand(),
+        MakeAllocator(derive.GetWriteAllocator(),
+                      [&derive, timer_obj_sptr = std::move(timer_obj_sptr),
+                       interval, self_ptr      = std::move(this_ptr)](
+                          const std::error_code &ec) mutable {
+                        derive.HandleUserTimers(ec, std::move(timer_obj_sptr),
+                                                interval, std::move(self_ptr));
+                      })));
+  }
 
   /// 处理一个用户自定义定时器
   ///  @tapram      Rep
@@ -405,7 +647,8 @@ class UserTimer {
     }
 
     if (kUserTimerCycleForever != timer_obj_sptr->cycle.load()) {
-      if (0 == timer_obj_sptr->cycle.load()) {
+      if (0 == timer_obj_sptr->cycle.load() ||
+          1 == timer_obj_sptr->cycle.load()) {
         derive.StopTimer(timer_obj_sptr->key.group, timer_obj_sptr->key.id);
         return;
       }
