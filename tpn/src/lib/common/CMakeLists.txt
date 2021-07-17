@@ -50,6 +50,7 @@ target_include_directories(common
 		${CMAKE_CURRENT_BINARY_DIR}
 	PUBLIC
 		${PUBLIC_INCLUDES}
+    ${CMAKE_BINARY_DIR}
 	)
 
 # link
@@ -68,6 +69,9 @@ target_link_libraries(common
 
 # export
 add_definitions(-DTPN_API_EXPORT_COMMON)
+
+# dependencies
+add_dependencies(common revision_data.h)
 
 # ide folder
 set_target_properties(common

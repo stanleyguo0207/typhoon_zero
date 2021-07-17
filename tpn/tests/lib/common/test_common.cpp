@@ -333,3 +333,19 @@ TEST_CASE("byte_buffer", "[common]") {
 //   // uint32_t now_time = bbuffer.ReadPackedTime();
 //   // fmt::print("now time: {}\n", now_time);
 // }
+
+#include "banner.h"
+TEST_CASE("banner", "[common]") {
+#ifndef _TPN_COMMON_CONFIG_TEST_FILE
+#  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
+#endif
+
+  std::string error;
+  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
+  if (!error.empty()) {
+    cout << error.c_str() << endl;
+    return;
+  }
+
+  BannerShow("test common banner", [&]() {});
+}

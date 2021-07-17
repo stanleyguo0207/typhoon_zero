@@ -20,7 +20,20 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(genrev)
-add_subdirectory(common)
-add_subdirectory(proto)
-add_subdirectory(net)
+# custom
+add_custom_target(revision_data.h
+  ALL
+    COMMAND
+    "${CMAKE_COMMAND}"
+      -DBUILDIR="${CMAKE_BINARY_DIR}"
+      -P "${CMAKE_SOURCE_DIR}/tpn/cmake/genrev.cmake" "${CMAKE_BINARY_DIR}"
+    WORKING_DIRECTORY
+    "${CMAKE_SOURCE_DIR}"
+  )
+
+# properties
+set_target_properties(revision_data.h
+  PROPERTIES
+    FOLDER
+      "libs"
+  )

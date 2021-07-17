@@ -647,8 +647,7 @@ class UserTimer {
     }
 
     if (kUserTimerCycleForever != timer_obj_sptr->cycle.load()) {
-      if (0 == timer_obj_sptr->cycle.load() ||
-          1 == timer_obj_sptr->cycle.load()) {
+      if (timer_obj_sptr->cycle.load() <= 1) {
         derive.StopTimer(timer_obj_sptr->key.group, timer_obj_sptr->key.id);
         return;
       }
