@@ -29,6 +29,7 @@ add_executable(test_protobuf
 	"../../test_main.cpp"
 	"test_protobuf.cpp"
 	"addressbook.pb.cc"
+  "complex_type.pb.cc"
 	)
 
 target_link_libraries(test_protobuf
