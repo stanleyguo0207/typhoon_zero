@@ -27,6 +27,7 @@
 #include <string>
 
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/util/json_util.h>
 
 #include "fmt_wrap.h"
 #include "addressbook.pb.h"
@@ -134,6 +135,21 @@ void ListPeople(const tutorial::AddressBook &address_book) {
   }
 }
 
+void ListPeopleJson(const tutorial::AddressBook &address_book) {
+  using namespace google::protobuf::util;
+
+  std::string json_string;
+
+  JsonPrintOptions options;
+  options.add_whitespace = true;
+  options.always_print_primitive_fields = true;
+  options.preserve_proto_field_names    = true;
+
+  MessageToJsonString(address_book, &json_string, options);
+
+  fmt::print("JSON: {}", json_string);
+}
+
 TEST_CASE("addressbook read", "[protobuf]") {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -151,4 +167,6 @@ TEST_CASE("addressbook read", "[protobuf]") {
   }
 
   ListPeople(address_book);
+
+  ListPeopleJson(address_book);
 }
