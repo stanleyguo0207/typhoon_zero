@@ -39,3 +39,7 @@ Valgrind (Valgrind is an instrumentation framework for building dynamic analysis
 libreadline (The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in. )
   http://tiswww.case.edu/php/chet/readline/rltop.html
   Version: external
+
+xlnt (Cross-platform user-friendly xlsx library for C++11+)
+  https://github.com/tfussell/xlnt
+  Version: v1.5.0 568ac85346bc37757b0cd16464e7e1ea7656df91
