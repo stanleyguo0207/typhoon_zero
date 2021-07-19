@@ -20,7 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(miniz)
-add_subdirectory(utfcpp)
+# add_subdirectory(miniz)
+# add_subdirectory(utfcpp)
 add_subdirectory(libstudxml)
 add_subdirectory(xlnt)

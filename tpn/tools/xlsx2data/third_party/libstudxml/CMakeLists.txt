@@ -65,7 +65,7 @@ set(EXPAT
 
 # library
 add_library(libstudxml
-  STATIC
+  OBJECT
     ${LIBSTUDXML}
     ${GENX}
     ${EXPAT}
@@ -77,10 +77,10 @@ target_compile_definitions(libstudxml
     LIBSTUDXML_STATIC_LIB=1
   )
 
-target_compile_definitions(libstudxml
-  PUBLIC 
-    XML_STATIC=1
-  )
+# target_compile_definitions(libstudxml
+#   PUBLIC 
+#     XML_STATIC=1
+#   )
 
 # include
 target_include_directories(libstudxml
@@ -97,11 +97,12 @@ if(MSVC)
     )
 endif()
 
-# link library
-target_link_libraries(libstudxml
-	PRIVATE
-		typhoon-dependency-interface
-)
+set_property(TARGET
+	libstudxml
+	APPEND
+	PROPERTY
+		POSITION_INDEPENDENT_CODE 1
+	)
 
 # ide folder
 set_target_properties(libstudxml

@@ -20,26 +20,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# library
-add_library(utfcpp_xlnt
-	INTERFACE
-	)
-
-# include
-target_include_directories(utfcpp_xlnt
-	INTERFACE
-		${CMAKE_CURRENT_SOURCE_DIR}
-	)
-
-# link library
-target_link_libraries(utfcpp_xlnt
-	INTERFACE	
-		typhoon-dependency-interface
-	)
-
-# ide folder
-set_target_properties(utfcpp_xlnt
-	PROPERTIES
-		FOLDER
-			"tools"
-	)
+# # library
+# add_library(utfcpp_xlnt
+# 	INTERFACE
+# 	)
+# 
+# # include
+# target_include_directories(utfcpp_xlnt
+# 	INTERFACE
+# 		${CMAKE_CURRENT_SOURCE_DIR}
+# 	)
+# 
+# # link library
+# target_link_libraries(utfcpp_xlnt
+# 	INTERFACE	
+# 		typhoon-dependency-interface
+# 	)
+# 
+# # ide folder
+# set_target_properties(utfcpp_xlnt
+# 	PROPERTIES
+# 		FOLDER
+# 			"tools"
+# 	)

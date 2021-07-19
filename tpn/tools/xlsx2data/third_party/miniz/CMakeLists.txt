@@ -20,26 +20,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# library
-add_library(miniz
-	INTERFACE
-	)
-
-# include
-target_include_directories(miniz
-	INTERFACE
-		${CMAKE_CURRENT_SOURCE_DIR}
-	)
-
-# link library
-target_link_libraries(miniz
-	INTERFACE	
-		typhoon-dependency-interface
-	)
-
-# ide folder
-set_target_properties(miniz
-	PROPERTIES
-		FOLDER
-			"tools"
-	)
+# # library
+# add_library(miniz
+# 	INTERFACE
+# 	)
+# 
+# # include
+# target_include_directories(miniz
+# 	INTERFACE
+# 		${CMAKE_CURRENT_SOURCE_DIR}
+# 	)
+# 
+# # link library
+# target_link_libraries(miniz
+# 	INTERFACE	
+# 		typhoon-dependency-interface
+# 	)
+# 
+# # ide folder
+# set_target_properties(miniz
+# 	PROPERTIES
+# 		FOLDER
+# 			"tools"
+# 	)

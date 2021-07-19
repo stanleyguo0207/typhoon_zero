@@ -41,30 +41,42 @@ GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
 # library xlnt
 add_library(xlnt
-  ${PRIVATE_SOURCES}
+  SHARED
+    ${PRIVATE_SOURCES}
+    $<TARGET_OBJECTS:libstudxml>
 	)
 
 # include
 target_include_directories(xlnt
 	PRIVATE
 		${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/../libstudxml
+    ${CMAKE_CURRENT_SOURCE_DIR}/../miniz
+    ${CMAKE_CURRENT_SOURCE_DIR}/../utfcpp
 	PUBLIC
 		${PUBLIC_INCLUDES}
 	)
-
-# link
-target_link_libraries(xlnt
+ 
+target_compile_definitions(xlnt
   PRIVATE
-    typhoon-core-interface
-	PUBLIC
-    libstudxml
-    miniz
-    utfcpp_xlnt
-	)
-  
+    XLNT_SHARED=1
+  )
+
 # export
-add_definitions(-DXLNT_STATIC)
+# add_definitions(-DXLNT_STATIC)
 # add_definitions(-DXLNT_EXPORT)
+
+if(WIN32)
+  target_compile_definitions(xlnt
+    PRIVATE
+      _CRT_SECURE_NO_WARNINGS=1
+    )
+
+  target_compile_definitions(xlnt
+    PRIVATE
+      XLNT_EXPORT=1
+    )
+endif()
 
 # ide folder
 set_target_properties(xlnt
