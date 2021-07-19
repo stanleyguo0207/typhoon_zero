@@ -28,7 +28,7 @@ add_custom_target(revision_data.h
       -DBUILDIR="${CMAKE_BINARY_DIR}"
       -P "${CMAKE_SOURCE_DIR}/tpn/cmake/genrev.cmake" "${CMAKE_BINARY_DIR}"
     WORKING_DIRECTORY
-    "${CMAKE_SOURCE_DIR}"
+    "${CMAKE_BINARY_DIR}"
   )
 
 # properties
