@@ -197,8 +197,15 @@ source_group(workbook FILES ${WORKBOOK_HEADERS} ${WORKBOOK_SOURCES})
 source_group(worksheet FILES ${WORKSHEET_HEADERS} ${WORKSHEET_SOURCES})
 source_group(third-party\\miniz FILES ${MINIZ_HEADERS} ${MINIZ_SOURCES})
 
-set_target_properties(common
+set_target_properties(xlnt
 	PROPERTIES
 		FOLDER
 			"libs"
 	)
+
+install(TARGETS
+  xlnt
+  LIBRARY
+    DESTINATION
+      ${LIBS_DIR}
+  )
