@@ -23,7 +23,6 @@
 set(LIBSTUDXML_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIBSTUDXML_INCLUDE_DIR ${LIBSTUDXML_ROOT_DIR})
 
-# source collect
 set(LIBSTUDXML
   ${LIBSTUDXML_ROOT_DIR}/libstudxml/parser.cxx
   ${LIBSTUDXML_ROOT_DIR}/libstudxml/qname.cxx
@@ -63,7 +62,6 @@ set(EXPAT
   ${LIBSTUDXML_ROOT_DIR}/libstudxml/details/expat/xmltok.h
   )
 
-# library
 add_library(libstudxml
   OBJECT
     ${LIBSTUDXML}
@@ -71,25 +69,18 @@ add_library(libstudxml
     ${EXPAT}
   )
 
-# compile
 target_compile_definitions(libstudxml
   PUBLIC
     LIBSTUDXML_STATIC_LIB=1
   )
 
-# target_compile_definitions(libstudxml
-#   PUBLIC 
-#     XML_STATIC=1
-#   )
-
-# include
 target_include_directories(libstudxml
   PUBLIC
     ${LIBSTUDXML_ROOT_DIR}
   PUBLIC
     ${EXPAT_INCLUDE_DIRS}
   )
-  
+
 if(MSVC)
   target_compile_definitions(libstudxml
     PRIVATE
@@ -97,16 +88,7 @@ if(MSVC)
     )
 endif()
 
-set_property(TARGET
-	libstudxml
-	APPEND
-	PROPERTY
-		POSITION_INDEPENDENT_CODE 1
-	)
-
-# ide folder
 set_target_properties(libstudxml
-	PROPERTIES
-		FOLDER
-			"tools"
-)
+  PROPERTIES
+    POSITION_INDEPENDENT_CODE 1
+  )

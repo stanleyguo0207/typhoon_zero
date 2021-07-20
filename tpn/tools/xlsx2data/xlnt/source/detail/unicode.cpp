@@ -25,7 +25,7 @@
 #pragma clang diagnostic ignored "-Wdeprecated"
 #pragma clang diagnostic ignored "-Wweak-vtables"
 #pragma clang diagnostic ignored "-Wsign-conversion"
-#include <utf8.h>
+#include <utfcpp/utf8.h>
 #pragma clang diagnostic pop
 
 #include <xlnt/utils/exceptions.hpp>
