@@ -22,11 +22,15 @@
 
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include <xlnt/xlnt.hpp>
 
 #include "config.h"
 #include "banner.h"
+#include "log.h"
+
+namespace fs = std::filesystem;
 
 #ifndef _TPN_XLSX2DATA_CONFIG
 #  define _TPN_XLSX2DATA_CONFIG "xlsx2data_config.json"
@@ -34,17 +38,35 @@
 
 int main(int argc, char *argv[]) {
   std::string config_error;
-  if (!g_config->Load(_TPN_XLSX2DATA_CONFIG, 
-    std::vector<std::string>(argv, argv + argc), config_error)) {
-    printf(
-        "Error in config file:%s, error:%s\n ",
-               _TPN_XLSX2DATA_CONFIG, config_error.c_str());
+  if (!g_config->Load(_TPN_XLSX2DATA_CONFIG,
+                      std::vector<std::string>(argv, argv + argc),
+                      config_error)) {
+    printf("Error in config file:%s, error:%s\n ", _TPN_XLSX2DATA_CONFIG,
+           config_error.c_str());
     return 1;
   }
 
   tpn::BannerShow("typhoon xlsx to data tools", [&]() {});
 
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
 
+  std::string data_dir = g_config->GetStringDefault("xlsx_data_dir", "./data");
+  xlnt::workbook wb;
+  for (auto &iter : fs::directory_iterator(data_dir)) {
+    LOG_DEBUG("path: {}", iter.path());
+    wb.clear();
+    wb.load(iter.path());
+    auto ws = wb.active_sheet();
+    for (auto &&row : ws.rows(false)) {
+      for (auto &&cell : row) {
+        printf("%s\n", cell.to_string().c_str());
+      }
+    }
+  }
+
+  std::this_thread::sleep_for(1s);
 
   return 0;
 }
