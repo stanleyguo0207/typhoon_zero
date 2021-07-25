@@ -72,8 +72,40 @@ set_target_properties(tpn_xlsx
 install(TARGETS
   tpn_xlsx
     DESTINATION
-      ${BIN_DIR}
+      ${BIN_DIR}/tools
   )
+
+# config
+if(NOT WIN32)
+  set_property(TARGET
+	  tpn_xlsx
+	  APPEND
+	  PROPERTY
+		  COMPILE_DEFINITIONS
+		  _TPN_XLSX2DATA_CONFIG="${CONF_DIR}/xlsx2data_config.json"
+	  )
+
+  install(FILES
+    xlsx2data_config.json 
+      DESTINATION
+      ${CONF_DIR}
+    )
+elseif(WIN32)
+  add_custom_command(TARGET
+    tpn_xlsx
+    POST_BUILD
+      COMMAND
+      ${CMAKE_COMMAND} -E copy
+		  ${CMAKE_CURRENT_SOURCE_DIR}/xlsx2data_config.json
+		  ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+    )
+
+  install(FILES
+    xlsx2data_config.json 
+      DESTINATION
+      ${BIN_DIR}/tools
+    )
+endif()
 
 # pch
 if(USE_COREPCH)

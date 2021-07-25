@@ -20,16 +20,31 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+#include <vector>
+#include <string>
+
 #include <xlnt/xlnt.hpp>
 
+#include "config.h"
+#include "banner.h"
+
+#ifndef _TPN_XLSX2DATA_CONFIG
+#  define _TPN_XLSX2DATA_CONFIG "xlsx2data_config.json"
+#endif
+
 int main(int argc, char *argv[]) {
-  xlnt::workbook wb;
-  xlnt::worksheet ws = wb.active_sheet();
-  ws.cell("A1").value(5);
-  ws.cell("B2").value("string data");
-  ws.cell("C3").formula("=RAND()");
-  ws.merge_cells("C3:C4");
-  ws.freeze_panes("B2");
-  wb.save("example.xlsx");
+  std::string config_error;
+  if (!g_config->Load(_TPN_XLSX2DATA_CONFIG, 
+    std::vector<std::string>(argv, argv + argc), config_error)) {
+    printf(
+        "Error in config file:%s, error:%s\n ",
+               _TPN_XLSX2DATA_CONFIG, config_error.c_str());
+    return 1;
+  }
+
+  tpn::BannerShow("typhoon xlsx to data tools", [&]() {});
+
+
+
   return 0;
 }
