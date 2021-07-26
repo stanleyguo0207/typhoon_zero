@@ -52,16 +52,17 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
 
-  std::string data_dir = g_config->GetStringDefault("xlsx_data_dir", "./data");
-  xlnt::workbook wb;
+  std::string data_dir = g_config->GetStringDefault("xlsx_data_dir", "data");
   for (auto &iter : fs::directory_iterator(data_dir)) {
     LOG_DEBUG("path: {}", iter.path());
-    wb.clear();
+    xlnt::workbook wb;  
     wb.load(iter.path());
-    auto ws = wb.active_sheet();
-    for (auto &&row : ws.rows(false)) {
-      for (auto &&cell : row) {
-        printf("%s\n", cell.to_string().c_str());
+    for (auto &&sheet : wb) {
+      LOG_INFO("sheet: {}", sheet.title());
+      for (auto &&row : sheet.rows()) {
+        for (auto &&cell : row) {
+          printf("%s\n", cell.to_string().c_str());
+        }
       }
     }
   }

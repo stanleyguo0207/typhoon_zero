@@ -70,17 +70,17 @@
   ///---------------------------------------------------------------------------
   ///xlsx2data------------------------------------------------------------------
   /// xlsx文件目录路径
-  // @type  string  默认值 "./data"
-  "xlsx_data_dir": "./data",
+  // @type  string  默认值 "data"
+  "xlsx_data_dir": "data",
   /// proto文件输出目录路径
-  // @type  string  默认值 "./proto"
-  "xlsx_proto_dir": "./proto",
+  // @type  string  默认值 "proto"
+  "xlsx_proto_dir": "proto",
   /// client文件目录路径
-  // @type  string  默认值 "./client"
-  "xlsx_client_dir": "./client",
+  // @type  string  默认值 "client"
+  "xlsx_client_dir": "client",
   /// server文件目录路径
-  // @type  string  默认值 "./server"
-  "xlsx_server_dir": "./server",
+  // @type  string  默认值 "server"
+  "xlsx_server_dir": "server",
   ///---------------------------------------------------------------------------
   "config_all_support_end": 1
 }
