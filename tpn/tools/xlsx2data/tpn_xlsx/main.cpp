@@ -30,6 +30,8 @@
 #include "banner.h"
 #include "log.h"
 
+#include "helper.h"
+
 namespace fs = std::filesystem;
 
 #ifndef _TPN_XLSX2DATA_CONFIG
@@ -55,10 +57,13 @@ int main(int argc, char *argv[]) {
   std::string data_dir = g_config->GetStringDefault("xlsx_data_dir", "data");
   for (auto &iter : fs::directory_iterator(data_dir)) {
     LOG_DEBUG("path: {}", iter.path());
-    xlnt::workbook wb;  
+    xlnt::workbook wb;
     wb.load(iter.path());
     for (auto &&sheet : wb) {
       LOG_INFO("sheet: {}", sheet.title());
+      if (!tpn::xlsx::SheetTitleIsOutput(sheet.title())) {
+        continue;
+      }
       for (auto &&row : sheet.rows()) {
         for (auto &&cell : row) {
           printf("%s\n", cell.to_string().c_str());
