@@ -30,7 +30,10 @@ namespace tpn {
 namespace xlsx {
 
 /// proto文件生成器
-class TPN_XLSX2DATA_API ProtoGenerator {};
+class TPN_XLSX2DATA_API ProtoGenerator {
+ public:
+ private:
+};
 
 }  // namespace xlsx
 

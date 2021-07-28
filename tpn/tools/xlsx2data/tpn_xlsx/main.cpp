@@ -22,17 +22,12 @@
 
 #include <vector>
 #include <string>
-#include <filesystem>
-
-#include <xlnt/xlnt.hpp>
 
 #include "config.h"
 #include "banner.h"
 #include "log.h"
 
-#include "helper.h"
-
-namespace fs = std::filesystem;
+#include "generator_hub.h"
 
 #ifndef _TPN_XLSX2DATA_CONFIG
 #  define _TPN_XLSX2DATA_CONFIG "xlsx2data_config.json"
@@ -55,24 +50,14 @@ int main(int argc, char *argv[]) {
                                    [](void *) { tpn::log::Shutdown(); });
 
   std::string data_dir = g_config->GetStringDefault("xlsx_data_dir", "data");
-  for (auto &iter : fs::directory_iterator(data_dir)) {
-    LOG_DEBUG("path: {}", iter.path());
-    xlnt::workbook wb;
-    wb.load(iter.path());
-    for (auto &&sheet : wb) {
-      LOG_INFO("sheet: {}", sheet.title());
-      if (!tpn::xlsx::SheetTitleIsOutput(sheet.title())) {
-        continue;
-      }
-      for (auto &&row : sheet.rows()) {
-        for (auto &&cell : row) {
-          printf("%s\n", cell.to_string().c_str());
-        }
-      }
-    }
+
+  std::string load_error;
+  if (!g_xlsx2data_generator->Load(data_dir, load_error)) {
+    printf("Error in data dir:%s, error:%s\n ", data_dir, load_error.c_str());
+    return 2;
   }
 
-  std::this_thread::sleep_for(1s);
+  g_xlsx2data_generator->Generate();
 
   return 0;
 }

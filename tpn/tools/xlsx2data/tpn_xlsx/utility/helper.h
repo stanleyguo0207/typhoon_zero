@@ -32,7 +32,7 @@ namespace tpn {
 namespace xlsx {
 
 /// sheet表名是否需要输出
-/// @return 需要输出返回true
+///  @return 需要输出返回true
 TPN_XLSX2DATA_API bool SheetTitleIsOutput(std::string_view title);
 
 }  // namespace xlsx

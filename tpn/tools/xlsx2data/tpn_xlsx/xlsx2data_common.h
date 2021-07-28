@@ -23,6 +23,8 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_XLSX2DATA_COMMON_H_
 #define TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_XLSX2DATA_COMMON_H_
 
+#include <xlnt/xlnt.hpp>
+
 #include "define.h"
 
 namespace tpn {
