@@ -20,21 +20,4 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_HELPER_H_
-#define TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_HELPER_H_
-
-#include <string_view>
-
-namespace tpn {
-
-namespace xlsx {
-
-/// sheet表名是否需要输出
-/// @return 需要输出返回true
-bool SheetTitleIsOutput(std::string_view title);
-
-}  // namespace xlsx
-
-}  // namespace tpn
-
-#endif  // TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_HELPER_H_
+#include "xlsx2data_common.h"

@@ -68,6 +68,9 @@ set_target_properties(tpn_xlsx
 			"tools"
 	)
 
+# export
+add_definitions(-DTPN_API_EXPORT_XLSX2DATA)
+
 # install
 install(TARGETS
   tpn_xlsx

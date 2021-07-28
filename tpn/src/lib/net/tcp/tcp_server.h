@@ -455,7 +455,7 @@ class TcpServerBase : public ServerBase<Derived, SessionType> {
 
  protected:
   asio::ip::tcp::acceptor acceptor_;   ///< 接受者
-  asio::steady_timer acceptor_timer_;  //< 用来处理接受者异常定时器
+  asio::steady_timer acceptor_timer_;  ///< 用来处理接受者异常定时器
   asio::steady_timer counter_timer_;  ///< 确保持有的io_handle直到所有的会话关闭
   size_t buffer_max_{(std::numeric_limits<size_t>::max)()};  ///< 缓冲区最大值
   size_t buffer_prepare_{kTcpFrameSize};  ///< 缓冲区初始大小

@@ -144,6 +144,13 @@
 #  define TPN_NET_API TPN_API_IMPORT
 #endif
 
+// xlsx2data api
+#if defined(TPN_API_EXPORT_XLSX2DATA)
+#  define TPN_XLSX2DATA_API TPN_API_EXPORT
+#else
+#  define TPN_XLSX2DATA_API TPN_API_IMPORT
+#endif
+
 // 行结尾符
 #if !defined(TPN_EOL)
 #  if (TPN_PLATFORM == TPN_PLATFORM_WIN)
