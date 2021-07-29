@@ -93,6 +93,8 @@ bool GeneratorHub::Generate() {
     ++index_;
   }
 
+  index_ = 0;
+
   LOG_INFO("xlsx generator finish generate");
 
   return true;
