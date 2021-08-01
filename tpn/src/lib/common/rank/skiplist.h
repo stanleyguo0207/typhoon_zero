@@ -116,7 +116,7 @@ class SkipList {
  public:
   /// 构造函数
   ///  @param[in]   type    调表节点类型
-  explicit SkipList(SkipListType type);
+  explicit SkipList(uint16_t type);
 
   ~SkipList();
 
@@ -142,7 +142,7 @@ class SkipList {
 
   /// 获取跳表类型
   ///  @return 跳表类型
-  SkipListType GetType();
+  uint16_t GetType();
 
   /// 比较uaks的大小
   ///  @param[in]   left    对象1
@@ -150,17 +150,20 @@ class SkipList {
   ///  @return 返回uaks的大小 用于rank中的排序规则 left < right 返回true
   bool CompUaks(uint64_t left[], uint64_t right[]);
 
+  /// 打印数据
+  void PrintStorage() const;
+
   /// 根据类型获取对应的key的大小
   ///  @param[in]   type    调表节点类型
   ///  @return 类型对应的key大小
-  static constexpr size_t GetKeySizeByType(SkipListType type);
+  static constexpr size_t GetKeySizeByType(uint16_t type);
 
   /// 随机层数
   ///  @return 节点层数
   static int GetRandomLevel();
 
  private:
-  SkipListType type_{SkipListType::kSkipListTypeNone};  ///< 跳表节点类型
+  uint16_t type_{SkipListType::kSkipListTypeNone};      ///< 跳表节点类型
   SkipListNodeSptr header_{nullptr};                    ///< 头结点
   SkipListNodeSptr tail_{nullptr};                      ///< 尾结点
   size_t length_{0};  ///< 跳表中节点总个数

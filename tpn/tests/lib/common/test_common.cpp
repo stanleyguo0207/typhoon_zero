@@ -369,14 +369,19 @@ TEST_CASE("rank", "[common]") {
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
 
-  SkipList sp_list(SkipListType::kSkipListTypeS0);
-  auto data1 = std::make_unique<uint64_t[]>(2);
-  data1[0]   = 1001;
-  data1[1]   = 10000;
-  sp_list.Insert(std::move(data1));
+  SkipList sp_list(SkipListType::kSkipListTypeS0 |
+                   SkipListType::kSkipListTypeOrderS0Asc);
 
-  auto data2 = std::make_unique<uint64_t[]>(2);
-  data2[0]   = 1002;
-  data2[1]   = 10005;
-  sp_list.Insert(std::move(data2));
+  for (int i = 0; i < 200; ++i) {
+    auto data = std::make_unique<uint64_t[]>(2);
+    data[0]   = 1001 + i;
+    data[1]   = RandU32();
+    sp_list.Insert(std::move(data));  
+  }
+
+  sp_list.PrintStorage();
+
+  LOG_INFO("rank test end");
+
+  std::this_thread::sleep_for(2s);
 }

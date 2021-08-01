@@ -23,9 +23,12 @@
 #include "skiplist.h"
 
 #include <vector>
+#include <sstream>
 
 #include "random_hub.h"
 #include "utils.h"
+#include "fmt_wrap.h"
+#include "log.h"
 
 namespace tpn {
 
@@ -82,7 +85,7 @@ void SkipListNode::SetLevels(SkipListLevelArrUptr levels) {
   levels_ = std::move(levels);
 }
 
-SkipList::SkipList(SkipListType type) : type_(type) {
+SkipList::SkipList(uint16_t type) : type_(type) {
   header_ = std::make_shared<SkipListNode>(kSkipListMaxLevel);
 }
 
@@ -90,11 +93,11 @@ SkipList::~SkipList() {}
 
 bool SkipList::Insert(SkipListNodeUakArrUptr uaks) {
   std::vector<SkipListNodeSptr> update(kSkipListMaxLevel);
-  size_t rank[kSkipListMaxLevel];
+  size_t rank[kSkipListMaxLevel] = {0};
 
   SkipListNodeSptr x = header_;
   for (int i = level_ - 1; i >= 0; --i) {
-    rank[i] = (i == level_ - 1) ? 0 : rank[i - 1];
+    rank[i] = (i == level_ - 1) ? 0 : rank[i + 1];
     while (x->GetLevels()[i].GetForward() &&
            (CompUaks(x->GetLevels()[i].GetForward()->GetUaks(), uaks.get()))) {
       rank[i] += x->GetLevels()[i].GetSpan();
@@ -118,7 +121,7 @@ bool SkipList::Insert(SkipListNodeUakArrUptr uaks) {
 
   for (int i = 0; i < level; ++i) {
     x->GetLevels()[i].SetForward(update[i]->GetLevels()[i].GetForward());
-    update[i]->GetLevels()->SetForward(x);
+    update[i]->GetLevels()[i].SetForward(x);
 
     x->GetLevels()[i].SetSpan(update[i]->GetLevels()[i].GetSpan() -
                               (rank[0] - rank[i]));
@@ -147,7 +150,7 @@ bool SkipList::Update(SkipListNodeUakArrUptr uaks) { return true; }
 
 uint64_t SkipList::GetScore(uint64_t uid) { return 0; }
 
-SkipListType SkipList::GetType() { return type_; }
+uint16_t SkipList::GetType() { return type_; }
 
 bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
   size_t key_size = GetKeySizeByType(type_);
@@ -171,7 +174,28 @@ bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
   return false;
 }
 
-constexpr size_t SkipList::GetKeySizeByType(SkipListType type) {
+void SkipList::PrintStorage() const {
+  std::ostringstream os;
+  fmt::print(os, "SkipList Info : \n");
+  fmt::print(os, "SIZE: {} LEVEL: {}\n", length_, level_);
+  
+  SkipListNodeSptr x;
+  for (int i = level_ - 1; i >= 0; --i) {
+    fmt::print(os, "CUR LEVEL: {}\n", i);
+    x = header_;
+    while (x->GetLevels()[i].GetForward()) {
+      fmt::print(os, "SPAN: {} UAKS {}-{} => ", x->GetLevels()[i].GetSpan(),
+                 x->GetLevels()[i].GetForward()->GetUaks()[0],
+                 x->GetLevels()[i].GetForward()->GetUaks()[1]);
+      x = x->GetLevels()[i].GetForward();
+    }
+    fmt::print(os, "\n");
+  }
+
+  LOG_INFO("Rank Show : {}\n", os.str());
+}
+
+constexpr size_t SkipList::GetKeySizeByType(uint16_t type) {
   // 只验证低8位
   switch (type & 0x00FF) {
     case SkipListType::kSkipListTypeS0: {  // uid + score
