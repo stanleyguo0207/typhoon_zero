@@ -349,3 +349,34 @@ TEST_CASE("banner", "[common]") {
 
   BannerShow("test common banner", [&]() {});
 }
+
+#include "log.h"
+
+#include "skiplist.h"
+TEST_CASE("rank", "[common]") {
+#ifndef _TPN_COMMON_CONFIG_TEST_FILE
+#  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
+#endif
+
+  std::string error;
+  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
+  if (!error.empty()) {
+    cout << error.c_str() << endl;
+    return;
+  }
+
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
+
+  SkipList sp_list(SkipListType::kSkipListTypeS0);
+  auto data1 = std::make_unique<uint64_t[]>(2);
+  data1[0]   = 1001;
+  data1[1]   = 10000;
+  sp_list.Insert(std::move(data1));
+
+  auto data2 = std::make_unique<uint64_t[]>(2);
+  data2[0]   = 1002;
+  data2[1]   = 10005;
+  sp_list.Insert(std::move(data2));
+}

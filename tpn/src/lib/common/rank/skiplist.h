@@ -33,11 +33,23 @@ constexpr size_t kSkipListMaxLevel    = 32;    ///< 2 ^ 64 元素
 constexpr double kSkipListProbability = 0.25;  ///< 随机层数概率
 
 /// 跳表节点类型
-enum class SkipListType : uint8_t {
-  kSkipListTypeNone      = 0,  ///< 默认
-  kSkipListTypeScore     = 1,  ///< 1|score
-  kSkipListTypeScoreP1   = 2,  ///< 1|score 2|p1
-  kSkipListTypeScoreP1P2 = 3,  ///< 1|score 2|p1 3|p2
+/// 0xFF | 0xFF
+/// 高8位为类型的排序顺序 默认0 Descending， 1 Ascending
+/// 低8位为类型的个数
+/// 高8位的标志是根据低8位的个数相关的，大于低8位的个数，无效
+/// @note   0000 0101 0000 0100
+///         kSkipListTypeOrderP2Asc | kSkipListTypeOrderS0Asc | kSkipListTypeS0P1P2
+///         将被解析为 key为3个参数 长度为4 uid,socre,p1,p2
+///         其中score为升序，p1为降序，p2为升序
+/// @sa GetKeySizeByType 低8位的长度
+enum SkipListType : uint16_t {
+  kSkipListTypeNone       = 0x0,          ///< 默认
+  kSkipListTypeS0         = 0x1,          ///< 1|score
+  kSkipListTypeS0P1       = (0x1 << 1),   ///< 1|score 2|p1
+  kSkipListTypeS0P1P2     = (0x1 << 2),   ///< 1|score 2|p1 3|p2
+  kSkipListTypeOrderS0Asc = (0x1 << 8),   ///< 默认desc 1|score|asc
+  kSkipListTypeOrderP1Asc = (0x1 << 9),   ///< 默认desc 2|p1|asc
+  kSkipListTypeOrderP2Asc = (0x1 << 10),  ///< 默认desc 3|p2|asc
 };
 
 class SkipListNode;
@@ -49,6 +61,14 @@ class SkipListLevel {
  public:
   SkipListLevel();
   ~SkipListLevel();
+
+  SkipListNodeSptr GetForward();
+  SkipListNodeSptr GetForward() const;
+  void SetForward(SkipListNodeSptr node_sptr);
+
+  size_t &GetSpan();
+  const size_t &GetSpan() const;
+  void SetSpan(size_t span);
 
  private:
   SkipListNodeSptr forward_{nullptr};  ///< 前置跳表节点
@@ -73,6 +93,18 @@ class SkipListNode {
 
   ~SkipListNode();
 
+  uint64_t *GetUaks();
+  uint64_t *GetUaks() const;
+  void SetUaks(SkipListNodeUakArrUptr uaks);
+
+  SkipListNodeSptr GetBackward();
+  SkipListNodeSptr GetBackward() const;
+  void SetBackward(SkipListNodeSptr node_sptr);
+
+  SkipListLevel *GetLevels();
+  SkipListLevel *GetLevels() const;
+  void SetLevels(SkipListLevelArrUptr levels);
+
  private:
   SkipListNodeUakArrUptr uaks_{nullptr};  ///< uid and keys
   SkipListNodeSptr backward_{nullptr};    ///< 后置跳表节点
@@ -82,8 +114,6 @@ class SkipListNode {
 /// 跳表
 class SkipList {
  public:
-  SkipList();
-
   /// 构造函数
   ///  @param[in]   type    调表节点类型
   explicit SkipList(SkipListType type);
@@ -113,6 +143,12 @@ class SkipList {
   /// 获取跳表类型
   ///  @return 跳表类型
   SkipListType GetType();
+
+  /// 比较uaks的大小
+  ///  @param[in]   left    对象1
+  ///  @param[in]   right   对象2
+  ///  @return 返回uaks的大小 用于rank中的排序规则 left < right 返回true
+  bool CompUaks(uint64_t left[], uint64_t right[]);
 
   /// 根据类型获取对应的key的大小
   ///  @param[in]   type    调表节点类型
