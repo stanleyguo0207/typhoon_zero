@@ -94,18 +94,46 @@ class SkipListNode {
 
   ~SkipListNode();
 
+  /// 获取玩家id
+  /// @note uaks的第一个数据为uid
+  /// @attention 使用时需要先判断需要通过list判断类型否则越界
+  ///  @return 玩家id
   const uint64_t GetUid() const;
 
+  /// 获取uak数据
+  ///  @return 返回uak数据
   uint64_t *GetUaks();
+
+  /// 获取uak数据
+  ///  @return 返回uak数据
   const uint64_t *GetUaks() const;
+
+  /// 设置uak数据
+  ///  @param[in]   uaks      玩家id与跳表key集合，根据节点类型不同，所需要的参数个数不同
   void SetUaks(SkipListNodeUakArrUptr uaks);
 
+  /// 获取本节点的后置节点
+  ///  @return 后置节点
   SkipListNodeSptr GetBackward();
-  SkipListNodeSptr GetBackward() const;
+
+  /// 获取本节点的后置节点
+  ///  @return 后置节点
+  const SkipListNodeSptr GetBackward() const;
+
+  /// 设置本节点的后置节点
+  ///  @param[in]   node_sptr   后置节点
   void SetBackward(SkipListNodeSptr node_sptr);
 
+  /// 获取本节点的层数据
+  ///  @return 层数据
   SkipListLevel *GetLevels();
+
+  /// 获取本节点的层数据
+  ///  @return 层数据
   const SkipListLevel *GetLevels() const;
+
+  /// 设置本节点的层数据
+  ///  @param[in]   levels      层数据
   void SetLevels(SkipListLevelArrUptr levels);
 
  private:
@@ -120,7 +148,7 @@ using SkipListUidNodeUMap = std::unordered_map<uint64_t, SkipListNodeSptr>;
 class SkipList {
  public:
   /// 构造函数
-  ///  @param[in]   type    调表节点类型
+  ///  @param[in]   type      跳表节点类型 @sa SkipListType
   explicit SkipList(uint16_t type);
 
   ~SkipList();
@@ -147,12 +175,12 @@ class SkipList {
 
   /// 根据玩家id获取排名
   ///  @param[in]   uid       玩家id
-  ///  @return 返回排名
+  ///  @return 返回排名 0 代表未找到 排名从1开始
   size_t GetRank(uint64_t uid);
 
   /// 根据玩家id获取反向排名
   ///  @param[in]   uid       玩家id
-  ///  @return 返回排名
+  ///  @return 返回排名 0 代表未找到 排名从1开始
   size_t GetRevRank(uint64_t uid);
 
   /// 获取跳表类型
@@ -160,6 +188,7 @@ class SkipList {
   uint16_t GetType();
 
   /// 打印数据
+  /// @note 测试用
   void PrintStorage() const;
 
   /// 根据类型获取对应的key的大小

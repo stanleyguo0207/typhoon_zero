@@ -73,7 +73,7 @@ void SkipListNode::SetUaks(SkipListNodeUakArrUptr uaks) {
 
 SkipListNodeSptr SkipListNode::GetBackward() { return backward_; }
 
-SkipListNodeSptr SkipListNode::GetBackward() const { return backward_; }
+const SkipListNodeSptr SkipListNode::GetBackward() const { return backward_; }
 
 void SkipListNode::SetBackward(SkipListNodeSptr node_sptr) {
   backward_ = std::move(node_sptr);
@@ -199,7 +199,7 @@ size_t SkipList::GetRevRank(uint64_t uid) {
     return 0;
   }
 
-  return length_ - rank;
+  return length_ - rank + 1;
 }
 
 uint16_t SkipList::GetType() { return type_; }

@@ -403,6 +403,19 @@ TEST_CASE("rank", "[common]") {
     fmt::print("\n");
   }
 
+  {
+    auto data = std::make_unique<uint64_t[]>(2);
+    data[0]   = 1010;
+    data[1]   = RandU32();
+    sp_list.Update(std::move(data));
+
+    sp_list.PrintStorage();
+
+    LOG_DEBUG("found 1010 score: {} rank: {} revrank: {}",
+              sp_list.GetScore(1010), sp_list.GetRank(1010),
+              sp_list.GetRevRank(1010));
+  }
+
   LOG_INFO("rank test end");
 
   std::this_thread::sleep_for(2s);
