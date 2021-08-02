@@ -24,6 +24,7 @@
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_SKIPLIST_H_
 
 #include <memory>
+#include <unordered_map>
 
 #include "define.h"
 
@@ -93,8 +94,10 @@ class SkipListNode {
 
   ~SkipListNode();
 
+  const uint64_t GetUid() const;
+
   uint64_t *GetUaks();
-  uint64_t *GetUaks() const;
+  const uint64_t *GetUaks() const;
   void SetUaks(SkipListNodeUakArrUptr uaks);
 
   SkipListNodeSptr GetBackward();
@@ -102,7 +105,7 @@ class SkipListNode {
   void SetBackward(SkipListNodeSptr node_sptr);
 
   SkipListLevel *GetLevels();
-  SkipListLevel *GetLevels() const;
+  const SkipListLevel *GetLevels() const;
   void SetLevels(SkipListLevelArrUptr levels);
 
  private:
@@ -110,6 +113,8 @@ class SkipListNode {
   SkipListNodeSptr backward_{nullptr};    ///< 后置跳表节点
   SkipListLevelArrUptr levels_{nullptr};  ///< 该节点的层数据
 };
+
+using SkipListUidNodeUMap = std::unordered_map<uint64_t, SkipListNodeSptr>;
 
 /// 跳表
 class SkipList {
@@ -125,30 +130,29 @@ class SkipList {
   ///  @return 成功返回true
   bool Insert(SkipListNodeUakArrUptr uaks);
 
-  /// 删除数据
-  ///  @param[in]   uid       玩家id
-  ///  @return 成功返回true
-  bool Delete(uint64_t uid);
-
   /// 更新数据
   ///  @param[in]   uaks      玩家id与跳表key集合，根据节点类型不同，所需要的参数个数不同
   ///  @return 成功返回true
   bool Update(SkipListNodeUakArrUptr uaks);
+
+  /// 删除数据
+  ///  @param[in]   uid       玩家id
+  ///  @return 成功返回true
+  bool Delete(uint64_t uid);
 
   /// 根据玩家id获取分数
   ///  @param[in]   uid       玩家id
   ///  @return 返回分数
   uint64_t GetScore(uint64_t uid);
 
+  /// 根据玩家id获取排名
+  ///  @param[in]   uid       玩家id
+  ///  @return 返回排名
+  size_t GetRank(uint64_t uid);
+
   /// 获取跳表类型
   ///  @return 跳表类型
   uint16_t GetType();
-
-  /// 比较uaks的大小
-  ///  @param[in]   left    对象1
-  ///  @param[in]   right   对象2
-  ///  @return 返回uaks的大小 用于rank中的排序规则 left < right 返回true
-  bool CompUaks(uint64_t left[], uint64_t right[]);
 
   /// 打印数据
   void PrintStorage() const;
@@ -163,11 +167,34 @@ class SkipList {
   static int GetRandomLevel();
 
  private:
-  uint16_t type_{SkipListType::kSkipListTypeNone};      ///< 跳表节点类型
-  SkipListNodeSptr header_{nullptr};                    ///< 头结点
-  SkipListNodeSptr tail_{nullptr};                      ///< 尾结点
-  size_t length_{0};  ///< 跳表中节点总个数
-  int level_{1};      ///< 跳表中最高层数
+  /// 获取跳表节点
+  ///  @param[in]   uid       玩家id
+  ///  @return 存在返回节点，不存在返回nullptr
+  SkipListNodeSptr GetNodeByUid(uint64_t uid);
+
+  /// 删除数据
+  ///  @param[in]   node_sptr 节点数据
+  ///  @return 成功返回true
+  bool Delete(SkipListNodeSptr node_sptr);
+
+  /// 删除数据
+  ///  @param[in]   node_sptr 节点数据
+  ///  @param[in]   update    需要更新的查找路径节点
+  ///  @return 成功返回true
+  bool Delete(SkipListNodeSptr node_sptr, std::vector<SkipListNodeSptr> update);
+  /// 比较uaks的大小
+  ///  @param[in]   left    对象1
+  ///  @param[in]   right   对象2
+  ///  @return 返回uaks的大小 用于rank中的排序规则 left < right 返回true
+  bool CompUaks(uint64_t left[], uint64_t right[]);
+
+ private:
+  uint16_t type_{SkipListType::kSkipListTypeNone};  ///< 跳表节点类型
+  SkipListNodeSptr header_{nullptr};                ///< 头结点
+  SkipListNodeSptr tail_{nullptr};                  ///< 尾结点
+  size_t length_{0};              ///< 跳表中节点总个数
+  int level_{1};                  ///< 跳表中最高层数
+  SkipListUidNodeUMap uid_umap_;  ///< uid关联node
 };
 
 }  // namespace tpn

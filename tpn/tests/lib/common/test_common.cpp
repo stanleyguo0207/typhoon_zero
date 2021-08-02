@@ -372,14 +372,35 @@ TEST_CASE("rank", "[common]") {
   SkipList sp_list(SkipListType::kSkipListTypeS0 |
                    SkipListType::kSkipListTypeOrderS0Asc);
 
-  for (int i = 0; i < 200; ++i) {
+  for (int i = 0; i < 20; ++i) {
     auto data = std::make_unique<uint64_t[]>(2);
     data[0]   = 1001 + i;
     data[1]   = RandU32();
-    sp_list.Insert(std::move(data));  
+    sp_list.Insert(std::move(data));
   }
 
   sp_list.PrintStorage();
+
+  LOG_DEBUG("found 1005 score: {} rank: {}", sp_list.GetScore(1005),
+            sp_list.GetRank(1005));
+
+  {
+    auto data = std::make_unique<uint64_t[]>(2);
+    data[0]   = 1005;
+    data[1]   = RandU32();
+    sp_list.Update(std::move(data));
+
+    sp_list.PrintStorage();
+
+    LOG_DEBUG("found 1005 score: {} rank: {}", sp_list.GetScore(1005),
+              sp_list.GetRank(1005));
+  }
+
+  for (int i = 0; i < 20; ++i) {
+    sp_list.Delete(1001 + i);
+    sp_list.PrintStorage();
+    fmt::print("\n");
+  }
 
   LOG_INFO("rank test end");
 

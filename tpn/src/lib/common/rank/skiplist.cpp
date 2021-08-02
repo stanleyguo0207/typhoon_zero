@@ -61,9 +61,11 @@ SkipListNode::SkipListNode(int level, SkipListNodeUakArrUptr uaks)
 
 SkipListNode::~SkipListNode() {}
 
+const uint64_t SkipListNode::GetUid() const { return uaks_[0]; }
+
 uint64_t *SkipListNode::GetUaks() { return uaks_.get(); }
 
-uint64_t *SkipListNode::GetUaks() const { return uaks_.get(); }
+const uint64_t *SkipListNode::GetUaks() const { return uaks_.get(); }
 
 void SkipListNode::SetUaks(SkipListNodeUakArrUptr uaks) {
   uaks_ = std::move(uaks);
@@ -79,7 +81,7 @@ void SkipListNode::SetBackward(SkipListNodeSptr node_sptr) {
 
 SkipListLevel *SkipListNode::GetLevels() { return levels_.get(); }
 
-SkipListLevel *SkipListNode::GetLevels() const { return levels_.get(); }
+const SkipListLevel *SkipListNode::GetLevels() const { return levels_.get(); }
 
 void SkipListNode::SetLevels(SkipListLevelArrUptr levels) {
   levels_ = std::move(levels);
@@ -141,44 +143,63 @@ bool SkipList::Insert(SkipListNodeUakArrUptr uaks) {
 
   ++length_;
 
+  // 添加到hash表里面
+  uid_umap_[x->GetUid()] = x;
+
   return true;
 }
 
-bool SkipList::Delete(uint64_t uid) { return true; }
-
-bool SkipList::Update(SkipListNodeUakArrUptr uaks) { return true; }
-
-uint64_t SkipList::GetScore(uint64_t uid) { return 0; }
-
-uint16_t SkipList::GetType() { return type_; }
-
-bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
+bool SkipList::Update(SkipListNodeUakArrUptr uaks) {
   size_t key_size = GetKeySizeByType(type_);
-  if (key_size > 0) {
-    uint16_t order = type_ & 0xFF00;
-    uint16_t mask  = (0x1 << 8);
-    for (size_t i = 1; i < key_size; ++i) {
-      if (mask & order) {  // asc
-        if (*(left + i) > *(right + i)) {
-          return true;
-        }
-      } else {  // desc
-        if (*(left + i) < *(right + i)) {
-          return true;
-        }
+  if (0 == key_size) {
+    return false;
+  }
+
+  Delete(uaks[0]);
+  Insert(std::move(uaks));
+
+  return true;
+}
+
+bool SkipList::Delete(uint64_t uid) { return Delete(GetNodeByUid(uid)); }
+
+uint64_t SkipList::GetScore(uint64_t uid) {
+  auto node_sptr = GetNodeByUid(uid);
+  if (nullptr != node_sptr) {
+    return node_sptr->GetUaks()[1];
+  }
+  return 0;
+}
+
+size_t SkipList::GetRank(uint64_t uid) {
+  auto node_sptr = GetNodeByUid(uid);
+  if (nullptr != node_sptr) {
+    size_t rank        = 0;
+    SkipListNodeSptr x = header_;
+    for (int i = level_ - 1; i >= 0; --i) {
+      while (x->GetLevels()[i].GetForward() &&
+             (CompUaks(x->GetLevels()[i].GetForward()->GetUaks(),
+                       node_sptr->GetUaks()))) {
+        rank += x->GetLevels()[i].GetSpan();
+        x = x->GetLevels()[i].GetForward();
       }
 
-      mask <<= 1;
+      fmt::print("{}\n", rank);
+      if (x != header_ && x->GetUid() == uid) {
+        return rank;
+      }
     }
   }
-  return false;
+  return 0;
 }
+
+uint16_t SkipList::GetType() { return type_; }
 
 void SkipList::PrintStorage() const {
   std::ostringstream os;
   fmt::print(os, "SkipList Info : \n");
   fmt::print(os, "SIZE: {} LEVEL: {}\n", length_, level_);
-  
+
   SkipListNodeSptr x;
   for (int i = level_ - 1; i >= 0; --i) {
     fmt::print(os, "CUR LEVEL: {}\n", i);
@@ -221,6 +242,93 @@ int SkipList::GetRandomLevel() {
   }
 
   return (level < kSkipListMaxLevel) ? level : kSkipListMaxLevel;
+}
+
+SkipListNodeSptr SkipList::GetNodeByUid(uint64_t uid) {
+  auto iter = uid_umap_.find(uid);
+  if (uid_umap_.end() == iter) {
+    return nullptr;
+  }
+
+  return iter->second;
+}
+
+bool SkipList::Delete(SkipListNodeSptr node_sptr) {
+  if (nullptr == node_sptr) {
+    return false;
+  }
+
+  std::vector<SkipListNodeSptr> update(kSkipListMaxLevel);
+  SkipListNodeSptr x = header_;
+
+  for (int i = level_ - 1; i >= 0; --i) {
+    while (x->GetLevels()[i].GetForward() &&
+           (CompUaks(x->GetLevels()[i].GetForward()->GetUaks(),
+                     node_sptr->GetUaks()))) {
+      x = x->GetLevels()[i].GetForward();
+    }
+    update[i] = x;
+  }
+
+  return Delete(std::move(node_sptr), std::move(update));
+}
+
+bool SkipList::Delete(SkipListNodeSptr node_sptr,
+                      std::vector<SkipListNodeSptr> update) {
+  if (nullptr == node_sptr || update.empty()) {
+    return false;
+  }
+
+  for (int i = 0; i < level_; ++i) {
+    if (update[i]->GetLevels()[i].GetForward() == node_sptr) {
+      update[i]->GetLevels()[i].GetSpan() +=
+          node_sptr->GetLevels()[i].GetSpan() - 1;
+      update[i]->GetLevels()[i].SetForward(
+          node_sptr->GetLevels()[i].GetForward());
+    } else {
+      update[i]->GetLevels()[i].GetSpan() -= 1;
+    }
+  }
+
+  if (node_sptr->GetLevels()[0].GetForward()) {
+    node_sptr->GetLevels()[0].GetForward()->SetBackward(
+        node_sptr->GetBackward());
+  } else {
+    tail_ = node_sptr->GetBackward();
+  }
+
+  while (level_ > 1 &&
+         nullptr == header_->GetLevels()[level_ - 1].GetForward()) {
+    --level_;
+  }
+
+  --length_;
+
+  uid_umap_.erase(node_sptr->GetUid());
+
+  return true;
+}
+
+bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
+  size_t key_size = GetKeySizeByType(type_);
+  if (key_size > 0) {
+    uint16_t order = type_ & 0xFF00;
+    uint16_t mask  = (0x1 << 8);
+    for (size_t i = 1; i < key_size; ++i) {
+      if (mask & order) {  // asc
+        if (*(left + i) > *(right + i)) {
+          return true;
+        }
+      } else {  // desc
+        if (*(left + i) < *(right + i)) {
+          return true;
+        }
+      }
+
+      mask <<= 1;
+    }
+  }
+  return false;
 }
 
 }  // namespace tpn
