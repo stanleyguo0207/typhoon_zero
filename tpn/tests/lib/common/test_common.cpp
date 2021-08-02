@@ -381,8 +381,8 @@ TEST_CASE("rank", "[common]") {
 
   sp_list.PrintStorage();
 
-  LOG_DEBUG("found 1005 score: {} rank: {}", sp_list.GetScore(1005),
-            sp_list.GetRank(1005));
+  LOG_DEBUG("found 1005 score: {} rank: {} revrank: {}", sp_list.GetScore(1005),
+            sp_list.GetRank(1005), sp_list.GetRevRank(1005));
 
   {
     auto data = std::make_unique<uint64_t[]>(2);
@@ -392,8 +392,9 @@ TEST_CASE("rank", "[common]") {
 
     sp_list.PrintStorage();
 
-    LOG_DEBUG("found 1005 score: {} rank: {}", sp_list.GetScore(1005),
-              sp_list.GetRank(1005));
+    LOG_DEBUG("found 1005 score: {} rank: {} revrank: {}",
+              sp_list.GetScore(1005), sp_list.GetRank(1005),
+              sp_list.GetRevRank(1005));
   }
 
   for (int i = 0; i < 20; ++i) {

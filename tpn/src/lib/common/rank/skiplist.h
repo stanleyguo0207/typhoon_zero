@@ -150,6 +150,11 @@ class SkipList {
   ///  @return 返回排名
   size_t GetRank(uint64_t uid);
 
+  /// 根据玩家id获取反向排名
+  ///  @param[in]   uid       玩家id
+  ///  @return 返回排名
+  size_t GetRevRank(uint64_t uid);
+
   /// 获取跳表类型
   ///  @return 跳表类型
   uint16_t GetType();

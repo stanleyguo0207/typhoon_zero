@@ -178,19 +178,28 @@ size_t SkipList::GetRank(uint64_t uid) {
     SkipListNodeSptr x = header_;
     for (int i = level_ - 1; i >= 0; --i) {
       while (x->GetLevels()[i].GetForward() &&
-             (CompUaks(x->GetLevels()[i].GetForward()->GetUaks(),
+             (x->GetLevels()[i].GetForward()->GetUid() == uid ||
+              CompUaks(x->GetLevels()[i].GetForward()->GetUaks(),
                        node_sptr->GetUaks()))) {
         rank += x->GetLevels()[i].GetSpan();
         x = x->GetLevels()[i].GetForward();
       }
 
-      fmt::print("{}\n", rank);
-      if (x != header_ && x->GetUid() == uid) {
+      if (x == node_sptr) {
         return rank;
       }
     }
   }
   return 0;
+}
+
+size_t SkipList::GetRevRank(uint64_t uid) {
+  auto rank = GetRank(uid);
+  if (0 == rank) {
+    return 0;
+  }
+
+  return length_ - rank;
 }
 
 uint16_t SkipList::GetType() { return type_; }
