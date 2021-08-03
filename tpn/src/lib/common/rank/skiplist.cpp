@@ -29,6 +29,7 @@
 #include "utils.h"
 #include "fmt_wrap.h"
 #include "log.h"
+#include "debug_hub.h"
 
 namespace tpn {
 
@@ -202,6 +203,34 @@ size_t SkipList::GetRevRank(uint64_t uid) {
   return length_ - rank + 1;
 }
 
+uint64_t SkipList::GetUidByRank(size_t rank) {
+  auto node_sptr = GetNodeByRank(rank);
+  if (nullptr == node_sptr) {
+    return 0;
+  }
+
+  return node_sptr->GetUid();
+}
+
+uint64_t SkipList::GetUidByRevRank(size_t rank) {
+  auto node_sptr = GetNodeByRank(length_ + 1 - rank);
+  if (nullptr == node_sptr) {
+    return 0;
+  }
+
+  return node_sptr->GetUid();
+}
+
+std::vector<uint64_t> SkipList::GetRange(size_t rank_start /* = 0 */,
+                                         size_t rank_end /* = 0 */) {
+  return std::move(GetRangeWithFlag(rank_start, rank_end));
+}
+
+std::vector<uint64_t> SkipList::GetRevRange(size_t rank_start /* = 0 */,
+                                            size_t rank_end /* = 0 */) {
+  return std::move(GetRangeWithFlag(rank_start, rank_end, true));
+}
+
 uint16_t SkipList::GetType() { return type_; }
 
 void SkipList::PrintStorage() const {
@@ -221,6 +250,9 @@ void SkipList::PrintStorage() const {
     }
     fmt::print(os, "\n");
   }
+
+  fmt::print(os, "TAIL: UAKS {}-{}", tail_ ? tail_->GetUaks()[0] : 0,
+             tail_ ? tail_->GetUaks()[1] : 0);
 
   LOG_INFO("Rank Show : {}\n", os.str());
 }
@@ -260,6 +292,29 @@ SkipListNodeSptr SkipList::GetNodeByUid(uint64_t uid) {
   }
 
   return iter->second;
+}
+
+SkipListNodeSptr SkipList::GetNodeByRank(size_t rank) {
+  if (0 == rank) {
+    return nullptr;
+  }
+
+  SkipListNodeSptr x = header_;
+  size_t traversed   = 0;
+
+  for (int i = level_ - 1; i >= 0; --i) {
+    while (x->GetLevels()[i].GetForward() &&
+           (traversed + x->GetLevels()[i].GetSpan()) <= rank) {
+      traversed += x->GetLevels()[i].GetSpan();
+      x = x->GetLevels()[i].GetForward();
+    }
+
+    if (traversed == rank) {
+      return x;
+    }
+  }
+
+  return nullptr;
 }
 
 bool SkipList::Delete(SkipListNodeSptr node_sptr) {
@@ -316,6 +371,35 @@ bool SkipList::Delete(SkipListNodeSptr node_sptr,
   uid_umap_.erase(node_sptr->GetUid());
 
   return true;
+}
+
+std::vector<uint64_t> SkipList::GetRangeWithFlag(size_t rank_start /* = 0 */,
+                                                 size_t rank_end /* = 0 */,
+                                                 bool reverse /* = false */) {
+  if (0 == rank_start || rank_start > length_) {
+    rank_start = 1;
+  }
+
+  if (0 == rank_end || rank_end > length_) {
+    rank_end = length_;
+  }
+
+  if (rank_end < rank_start) {
+    rank_end = rank_start;
+  }
+
+  size_t range = rank_end - rank_start + 1;
+
+  std::vector<uint64_t> ans;
+
+  SkipListNodeSptr x = reverse ? GetNodeByRank(length_ + 1 - rank_start)
+                               : GetNodeByRank(rank_start);
+  while (range--) {
+    ans.emplace_back(x->GetUid());
+    x = reverse ? x->GetBackward() : x->GetLevels()[0].GetForward();
+  }
+
+  return std::move(ans);
 }
 
 bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {

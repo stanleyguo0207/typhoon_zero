@@ -397,6 +397,18 @@ TEST_CASE("rank", "[common]") {
               sp_list.GetRevRank(1005));
   }
 
+  {
+    LOG_DEBUG("rank1: {}, rank2: {}, rank3: {}", sp_list.GetUidByRank(1),
+              sp_list.GetUidByRank(2), sp_list.GetUidByRank(700));
+
+    LOG_DEBUG("revrank1: {}, revrank2: {}, revrank3: {}",
+              sp_list.GetUidByRevRank(1), sp_list.GetUidByRevRank(2),
+              sp_list.GetUidByRevRank(800));
+
+    LOG_DEBUG("range 1-10, {}", sp_list.GetRange(1, 10));
+    LOG_DEBUG("rev range 1-10, {}", sp_list.GetRevRange(1, 10));
+  }
+
   for (int i = 0; i < 20; ++i) {
     sp_list.Delete(1001 + i);
     sp_list.PrintStorage();

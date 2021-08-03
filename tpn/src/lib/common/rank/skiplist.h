@@ -183,6 +183,28 @@ class SkipList {
   ///  @return 返回排名 0 代表未找到 排名从1开始
   size_t GetRevRank(uint64_t uid);
 
+  /// 根据排名获取玩家id
+  ///  @param[in]   rank      排名 需要大于0
+  ///  @return 玩家id
+  uint64_t GetUidByRank(size_t rank);
+
+  /// 根据反向排名获取玩家id
+  ///  @param[in]   rank      排名 需要大于0
+  ///  @return 玩家id
+  uint64_t GetUidByRevRank(size_t rank);
+
+  /// 获取排名范围
+  ///  @param[in]   rank_start    起始排名
+  ///  @param[in]   rank_end      结束排名 默认0 从起始位置到整个排名范围
+  ///  @return 排名范围内的玩家id集合
+  std::vector<uint64_t> GetRange(size_t rank_start = 0, size_t rank_end = 0);
+
+  /// 获取反向排名范围
+  ///  @param[in]   rank_start    反向起始排名
+  ///  @param[in]   rank_end      反向结束排名 默认0 从起始位置到整个排名范围
+  ///  @return 排名范围内的玩家id集合
+  std::vector<uint64_t> GetRevRange(size_t rank_start = 0, size_t rank_end = 0);
+
   /// 获取跳表类型
   ///  @return 跳表类型
   uint16_t GetType();
@@ -206,6 +228,11 @@ class SkipList {
   ///  @return 存在返回节点，不存在返回nullptr
   SkipListNodeSptr GetNodeByUid(uint64_t uid);
 
+  /// 获取跳表节点
+  ///  @param[in]   rank      排名 排名需要大于0
+  ///  @return 存在返回节点，不存在返回nullptr
+  SkipListNodeSptr GetNodeByRank(size_t rank);
+
   /// 删除数据
   ///  @param[in]   node_sptr 节点数据
   ///  @return 成功返回true
@@ -216,6 +243,16 @@ class SkipList {
   ///  @param[in]   update    需要更新的查找路径节点
   ///  @return 成功返回true
   bool Delete(SkipListNodeSptr node_sptr, std::vector<SkipListNodeSptr> update);
+
+  /// 获取排名范围
+  ///  @param[in]   rank_start    反向起始排名
+  ///  @param[in]   rank_end      反向结束排名 默认0 从起始位置到整个排名范围
+  ///  @param[in]   reverse       是否反向
+  ///  @return 排名范围内的玩家id集合
+  std::vector<uint64_t> GetRangeWithFlag(size_t rank_start = 0,
+                                         size_t rank_end   = 0,
+                                         bool reverse      = false);
+
   /// 比较uaks的大小
   ///  @param[in]   left    对象1
   ///  @param[in]   right   对象2
