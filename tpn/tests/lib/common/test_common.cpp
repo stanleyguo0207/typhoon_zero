@@ -369,8 +369,7 @@ TEST_CASE("rank", "[common]") {
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
 
-  SkipList sp_list(SkipListType::kSkipListTypeS0 |
-                   SkipListType::kSkipListTypeOrderS0Asc);
+  SkipList sp_list(TransformRankType(RankType::kRankTypeTest));
 
   for (int i = 0; i < 20; ++i) {
     auto data = std::make_unique<uint64_t[]>(2);

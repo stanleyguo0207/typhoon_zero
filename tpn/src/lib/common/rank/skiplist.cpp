@@ -33,6 +33,25 @@
 
 namespace tpn {
 
+namespace {
+
+constexpr size_t kSkipListMaxLevel    = 32;    ///< 2 ^ 64 元素
+constexpr double kSkipListProbability = 0.25;  ///< 随机层数概率
+
+/// 获取节点层数
+/// 不能超过最高层数限制
+///  @return 返回随机后的节点层数
+TPN_INLINE int GetRandomLevel() {
+  int level = 1;
+  while ((RandI32() & 0xFFFF) < (kSkipListProbability * 0xFFFF)) {
+    ++level;
+  }
+
+  return (level < kSkipListMaxLevel) ? level : kSkipListMaxLevel;
+}
+
+}  // namespace
+
 SkipListLevel::SkipListLevel() {}
 
 SkipListLevel::~SkipListLevel() {}
@@ -64,6 +83,12 @@ SkipListNode::~SkipListNode() {}
 
 const uint64_t SkipListNode::GetUid() const { return uaks_[0]; }
 
+const uint64_t SkipListNode::GetScore() const { return uaks_[1]; }
+
+const uint64_t SkipListNode::GetP1() const { return uaks_[2]; }
+
+const uint64_t SkipListNode::GetP2() const { return uaks_[3]; }
+
 uint64_t *SkipListNode::GetUaks() { return uaks_.get(); }
 
 const uint64_t *SkipListNode::GetUaks() const { return uaks_.get(); }
@@ -88,7 +113,10 @@ void SkipListNode::SetLevels(SkipListLevelArrUptr levels) {
   levels_ = std::move(levels);
 }
 
-SkipList::SkipList(uint16_t type) : type_(type) {
+SkipList::SkipList(uint16_t type)
+    : type_(type), uaks_size_(GetSizeByRankKeyType(GetRankKeyType(type_))) {
+  TPN_ASSERT(0 != uaks_size_, "uaks_size error: {} type: {}", uaks_size_,
+             type_);
   header_ = std::make_shared<SkipListNode>(kSkipListMaxLevel);
 }
 
@@ -151,11 +179,6 @@ bool SkipList::Insert(SkipListNodeUakArrUptr uaks) {
 }
 
 bool SkipList::Update(SkipListNodeUakArrUptr uaks) {
-  size_t key_size = GetKeySizeByType(type_);
-  if (0 == key_size) {
-    return false;
-  }
-
   Delete(uaks[0]);
   Insert(std::move(uaks));
 
@@ -165,11 +188,7 @@ bool SkipList::Update(SkipListNodeUakArrUptr uaks) {
 bool SkipList::Delete(uint64_t uid) { return Delete(GetNodeByUid(uid)); }
 
 uint64_t SkipList::GetScore(uint64_t uid) {
-  auto node_sptr = GetNodeByUid(uid);
-  if (nullptr != node_sptr) {
-    return node_sptr->GetUaks()[1];
-  }
-  return 0;
+  return GetScore(GetNodeByUid(uid));
 }
 
 size_t SkipList::GetRank(uint64_t uid) {
@@ -204,21 +223,11 @@ size_t SkipList::GetRevRank(uint64_t uid) {
 }
 
 uint64_t SkipList::GetUidByRank(size_t rank) {
-  auto node_sptr = GetNodeByRank(rank);
-  if (nullptr == node_sptr) {
-    return 0;
-  }
-
-  return node_sptr->GetUid();
+  return GetUid(GetNodeByRank(rank));
 }
 
 uint64_t SkipList::GetUidByRevRank(size_t rank) {
-  auto node_sptr = GetNodeByRank(length_ + 1 - rank);
-  if (nullptr == node_sptr) {
-    return 0;
-  }
-
-  return node_sptr->GetUid();
+  return GetUid(GetNodeByRank(length_ + 1 - rank));
 }
 
 std::vector<uint64_t> SkipList::GetRange(size_t rank_start /* = 0 */,
@@ -255,34 +264,6 @@ void SkipList::PrintStorage() const {
              tail_ ? tail_->GetUaks()[1] : 0);
 
   LOG_INFO("Rank Show : {}\n", os.str());
-}
-
-constexpr size_t SkipList::GetKeySizeByType(uint16_t type) {
-  // 只验证低8位
-  switch (type & 0x00FF) {
-    case SkipListType::kSkipListTypeS0: {  // uid + score
-      return 2;
-    } break;
-    case SkipListType::kSkipListTypeS0P1: {  // uid + score + p1
-      return 3;
-    } break;
-    case SkipListType::kSkipListTypeS0P1P2: {  // uid + score + p1 + p2
-      return 4;
-    } break;
-    default:
-      break;
-  }
-
-  return 0;  // !!危险 外面使用注意0的情况
-}
-
-int SkipList::GetRandomLevel() {
-  int level = 1;
-  while ((RandI32() & 0xFFFF) < (kSkipListProbability * 0xFFFF)) {
-    ++level;
-  }
-
-  return (level < kSkipListMaxLevel) ? level : kSkipListMaxLevel;
 }
 
 SkipListNodeSptr SkipList::GetNodeByUid(uint64_t uid) {
@@ -402,24 +383,38 @@ std::vector<uint64_t> SkipList::GetRangeWithFlag(size_t rank_start /* = 0 */,
   return std::move(ans);
 }
 
-bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
-  size_t key_size = GetKeySizeByType(type_);
-  if (key_size > 0) {
-    uint16_t order = type_ & 0xFF00;
-    uint16_t mask  = (0x1 << 8);
-    for (size_t i = 1; i < key_size; ++i) {
-      if (mask & order) {  // asc
-        if (*(left + i) > *(right + i)) {
-          return true;
-        }
-      } else {  // desc
-        if (*(left + i) < *(right + i)) {
-          return true;
-        }
-      }
+const uint64_t SkipList::GetUid(SkipListNodeSptr node_sptr) const {
+  return nullptr == node_sptr ? 0 : (uaks_size_ > 0 ? node_sptr->GetUid() : 0);
+}
 
-      mask <<= 1;
+const uint64_t SkipList::GetScore(SkipListNodeSptr node_sptr) const {
+  return nullptr == node_sptr ? 0
+                              : (uaks_size_ > 1 ? node_sptr->GetScore() : 0);
+}
+
+const uint64_t SkipList::GetP1(SkipListNodeSptr node_sptr) const {
+  return nullptr == node_sptr ? 0 : (uaks_size_ > 2 ? node_sptr->GetP1() : 0);
+}
+
+const uint64_t SkipList::GetP2(SkipListNodeSptr node_sptr) const {
+  return nullptr == node_sptr ? 0 : (uaks_size_ > 3 ? node_sptr->GetP2() : 0);
+}
+
+bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
+  uint8_t order = GetRankKeyOrderType(type_);
+  uint8_t mask  = 0x1;
+  for (size_t i = 1; i < uaks_size_; ++i) {
+    if (mask & order) {  // asc
+      if (*(left + i) > *(right + i)) {
+        return true;
+      }
+    } else {  // desc
+      if (*(left + i) < *(right + i)) {
+        return true;
+      }
     }
+
+    mask <<= 1;
   }
   return false;
 }

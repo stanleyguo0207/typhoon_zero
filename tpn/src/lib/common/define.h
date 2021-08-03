@@ -252,11 +252,29 @@
 // uint8_t -> uint16_t
 #define MAKE_UINT16_T(h, l) ((((uint16_t)h) << 8) | (((uint16_t)l) & 0xFF))
 
+// uint16_t high
+#define GET_UINT16_T_H(n) ((uint8_t)((((uint16_t)n) >> 8) & 0xFF))
+
+// uint16_t low
+#define GET_UINT16_T_L(n) ((uint8_t)(((uint16_t)n) & 0xFF))
+
 // uint16_t -> uint32_t
 #define MAKE_UINT32_T(h, l) ((((uint32_t)h) << 16) | (((uint32_t)l) & 0xFFFF))
+
+// uint32_t high
+#define GET_UINT32_T_H(n) ((uint16_t)((((uint32_t)n) >> 16) & 0xFFFF))
+
+// uint32_t low
+#define GET_UINT32_T_L(n) ((uint16_t)(((uint32_t)n) & 0xFFFF))
 
 // uint32_t -> uint64_t
 #define MAKE_UINT64_T(h, l) \
   ((((uint64_t)h) << 32) | (((uint64_t)l) & 0xFFFFFFFF))
+
+// uint64_t high
+#define GET_UINT64_T_H(n) ((uint32_t)((((uint64_t)n) >> 32) & 0xFFFFFFFF))
+
+// uint64_t low
+#define GET_UINT64_T_L(n) ((uint32_t)(((uint64_t)n) & 0xFFFFFFFF))
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_
