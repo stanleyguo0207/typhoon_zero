@@ -30,6 +30,8 @@
 
 namespace tpn {
 
+namespace rank {
+
 class SkipListNode;
 using SkipListNodeSptr    = std::shared_ptr<SkipListNode>;
 using SkipListNodeArrSptr = std::shared_ptr<SkipListNode[]>;
@@ -297,6 +299,8 @@ class TPN_COMMON_API SkipList {
   int level_{1};                      ///< 跳表中最高层数
   SkipListUidNodeUMap uid_umap_;      ///< uid关联node
 };
+
+}  // namespace rank
 
 }  // namespace tpn
 

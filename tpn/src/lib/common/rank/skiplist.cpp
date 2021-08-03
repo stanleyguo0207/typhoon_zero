@@ -33,6 +33,8 @@
 
 namespace tpn {
 
+namespace rank {
+
 namespace {
 
 constexpr size_t kSkipListMaxLevel    = 32;    ///< 2 ^ 64 元素
@@ -418,5 +420,7 @@ bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
   }
   return false;
 }
+
+}  // namespace rank
 
 }  // namespace tpn

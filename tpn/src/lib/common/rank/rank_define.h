@@ -28,6 +28,8 @@
 
 namespace tpn {
 
+namespace rank {
+
 /// 排行榜排序依据key类型
 /// 与排序规则配合使用 @sa RankKeyOrderType
 enum RankKeyType : uint8_t {
@@ -97,6 +99,8 @@ TPN_COMMON_API constexpr size_t GetSizeByRankKeyType(uint8_t type) {
 
   return 0;  // !危险 外面使用注意0的情况
 }
+
+}  // namespace rank
 
 }  // namespace tpn
 

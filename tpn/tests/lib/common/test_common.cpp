@@ -354,6 +354,8 @@ TEST_CASE("banner", "[common]") {
 
 #include "skiplist.h"
 TEST_CASE("rank", "[common]") {
+  using namespace tpn::rank;
+
 #ifndef _TPN_COMMON_CONFIG_TEST_FILE
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
