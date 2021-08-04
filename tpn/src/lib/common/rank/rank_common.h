@@ -20,40 +20,37 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_DEFINE_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_DEFINE_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_COMMON_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_COMMON_H_
 
-#include "define.h"
+#include "rank_define.h"
 
 namespace tpn {
 
 namespace rank {
 
-/// 排行榜排序依据key类型
-/// 与排序规则配合使用 @sa RankKeyOrderType
-enum RankKeyType : uint8_t {
-  kRankKeyTypeNone   = 0x0,         ///< 0|uid
-  kRankKeyTypeS0     = 0x1,         ///< 0|uid 1|score
-  kRankKeyTypeS0P1   = (0x1 << 1),  ///< 0|uid 1|score 2|p1
-  kRankKeyTypeS0P1P2 = (0x1 << 2),  ///< 0|uid 1|score 2|p1 3|p2
-};
+/// 将排行榜类型转换为底层需要的类型
+///  @param[in]   type    排行类型
+///  @return 底层类型
+TPN_COMMON_API uint16_t TransformRankType(RankType type);
 
-/// 排行榜对应字段排序规则
-/// 默认0 Descending， 1 Ascending
-/// 与排序依据key配合使用 @sa RankKeyType
-enum RankKeyOrderType : uint8_t {
-  kRankKeyOrderTypeS0Asc = 0x1,         ///< 默认desc 1|score|asc
-  kRankKeyOrderTypeP1Asc = (0x1 << 1),  ///< 默认desc 2|p1|asc
-  kRankKeyOrderTypeP2Asc = (0x1 << 2),  ///< 默认desc 3|p2|asc
-};
+/// 获取排行榜排序依据key
+///  @param[in]   type    底层类型
+///  @return 排行榜排序依据key
+TPN_COMMON_API uint8_t GetRankKeyType(uint16_t type);
 
-/// 排行类型
-enum RankType : uint16_t {
-  kRankTypeTest = 0,  ///< 测试排行
-};
+/// 获取排行榜对应字段排序规则
+///  @param[in]   type    底层类型
+///  @return 排行榜对应字段排序规则
+TPN_COMMON_API uint8_t GetRankKeyOrderType(uint16_t type);
+
+/// 获取排序依据key类型对应的key大小
+///  @param[in]   type    排行依据key类型
+///  @return key对应的大小
+TPN_COMMON_API size_t GetSizeByRankKeyType(uint8_t type);
 
 }  // namespace rank
 
 }  // namespace tpn
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_DEFINE_H_
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_COMMON_H_

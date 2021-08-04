@@ -26,7 +26,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "rank_define.h"
+#include "rank_common.h"
 
 namespace tpn {
 

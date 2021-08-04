@@ -427,6 +427,7 @@ bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
 }
 
 void SkipList::CheckLength() {
+#if defined(TPN_DEBUG)
   size_t uid_size = uid_umap_.size();
   TPN_ASSERT(uid_size == length_, "uid map size: {} != length: {}", uid_size,
              length_);
@@ -440,6 +441,7 @@ void SkipList::CheckLength() {
 
   TPN_ASSERT(real_size == uid_size, "uid map size: {} != real_size: {}",
              uid_size, real_size);
+#endif
 }
 
 }  // namespace rank

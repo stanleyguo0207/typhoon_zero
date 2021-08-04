@@ -371,10 +371,13 @@ TEST_CASE("rank", "[common]") {
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
 
-  SkipList sp_list(TransformRankType(RankType::kRankTypeTest));
+  uint16_t sp_list_type = TransformRankType(RankType::kRankTypeTest);
+  SkipList sp_list(sp_list_type);
 
-  for (int i = 0; i < 5; ++i) {
-    auto data = std::make_unique<uint64_t[]>(2);
+  size_t uaks_size = GetSizeByRankKeyType(GetRankKeyType(sp_list_type));
+
+  for (int i = 0; i < 20000; ++i) {
+    auto data = std::make_unique<uint64_t[]>(uaks_size);
     data[0]   = 1001 + i;
     data[1]   = RandU32();
     sp_list.Insert(std::move(data));
@@ -386,7 +389,7 @@ TEST_CASE("rank", "[common]") {
             sp_list.GetRank(1005), sp_list.GetRevRank(1005));
 
   {
-    auto data = std::make_unique<uint64_t[]>(2);
+    auto data = std::make_unique<uint64_t[]>(uaks_size);
     data[0]   = 1005;
     data[1]   = RandU32();
     sp_list.Update(std::move(data));
@@ -410,14 +413,14 @@ TEST_CASE("rank", "[common]") {
     LOG_DEBUG("rev range 1-10, {}", sp_list.GetRevRange(1, 10));
   }
 
-  for (int i = 0; i < 5; ++i) {
+  for (int i = 0; i < 20000; ++i) {
     sp_list.Delete(1001 + i);
-    sp_list.PrintStorage();
-    fmt::print("\n");
+    // sp_list.PrintStorage();
+    // fmt::print("\n");
   }
 
   {
-    auto data = std::make_unique<uint64_t[]>(2);
+    auto data = std::make_unique<uint64_t[]>(uaks_size);
     data[0]   = 1010;
     data[1]   = RandU32();
     sp_list.Update(std::move(data));
