@@ -373,7 +373,7 @@ TEST_CASE("rank", "[common]") {
 
   SkipList sp_list(TransformRankType(RankType::kRankTypeTest));
 
-  for (int i = 0; i < 20; ++i) {
+  for (int i = 0; i < 5; ++i) {
     auto data = std::make_unique<uint64_t[]>(2);
     data[0]   = 1001 + i;
     data[1]   = RandU32();
@@ -410,7 +410,7 @@ TEST_CASE("rank", "[common]") {
     LOG_DEBUG("rev range 1-10, {}", sp_list.GetRevRange(1, 10));
   }
 
-  for (int i = 0; i < 20; ++i) {
+  for (int i = 0; i < 5; ++i) {
     sp_list.Delete(1001 + i);
     sp_list.PrintStorage();
     fmt::print("\n");

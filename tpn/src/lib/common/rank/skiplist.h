@@ -59,11 +59,11 @@ class TPN_COMMON_API SkipListLevel {
 
   /// 获取与后置节点的距离
   ///  @return 跨越的长度
-  size_t &GetSpan();
+  size_t GetSpan();
 
   /// 获取与后置节点的距离
   ///  @return 跨越的长度
-  const size_t &GetSpan() const;
+  const size_t GetSpan() const;
 
   /// 设置与后置节点的距离
   ///  @param[in]   span      与后置节点的距离
@@ -289,6 +289,9 @@ class TPN_COMMON_API SkipList {
   ///  @param[in]   right   对象2
   ///  @return 返回uaks的大小 用于rank中的排序规则 left < right 返回true
   bool CompUaks(uint64_t left[], uint64_t right[]);
+
+  /// 测试使用
+  void CheckLength();
 
  private:
   uint16_t type_{0};                  ///< 跳表节点类型

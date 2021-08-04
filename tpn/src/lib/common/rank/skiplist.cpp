@@ -66,9 +66,9 @@ void SkipListLevel::SetForward(SkipListNodeSptr node_sptr) {
   forward_ = std::move(node_sptr);
 }
 
-size_t &SkipListLevel::GetSpan() { return span_; }
+size_t SkipListLevel::GetSpan() { return span_; }
 
-const size_t &SkipListLevel::GetSpan() const { return span_; }
+const size_t SkipListLevel::GetSpan() const { return span_; }
 
 void SkipListLevel::SetSpan(size_t span) { span_ = span; }
 
@@ -162,7 +162,7 @@ bool SkipList::Insert(SkipListNodeUakArrUptr uaks) {
   }
 
   for (int i = level; i < level_; ++i) {
-    ++(update[i]->GetLevels()[i].GetSpan());
+    update[i]->GetLevels()[i].SetSpan(update[i]->GetLevels()[i].GetSpan() + 1);
   }
 
   x->SetBackward(update[0] == header_ ? nullptr : update[0]);
@@ -328,12 +328,15 @@ bool SkipList::Delete(SkipListNodeSptr node_sptr,
 
   for (int i = 0; i < level_; ++i) {
     if (update[i]->GetLevels()[i].GetForward() == node_sptr) {
-      update[i]->GetLevels()[i].GetSpan() +=
-          node_sptr->GetLevels()[i].GetSpan() - 1;
+      update[i]->GetLevels()[i].SetSpan(update[i]->GetLevels()[i].GetSpan() +
+                                        node_sptr->GetLevels()[i].GetSpan() -
+                                        1);
+
       update[i]->GetLevels()[i].SetForward(
           node_sptr->GetLevels()[i].GetForward());
     } else {
-      update[i]->GetLevels()[i].GetSpan() -= 1;
+      update[i]->GetLevels()[i].SetSpan(update[i]->GetLevels()[i].GetSpan() -
+                                        1);
     }
   }
 
@@ -352,6 +355,8 @@ bool SkipList::Delete(SkipListNodeSptr node_sptr,
   --length_;
 
   uid_umap_.erase(node_sptr->GetUid());
+
+  CheckLength();
 
   return true;
 }
@@ -419,6 +424,22 @@ bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
     mask <<= 1;
   }
   return false;
+}
+
+void SkipList::CheckLength() {
+  size_t uid_size = uid_umap_.size();
+  TPN_ASSERT(uid_size == length_, "uid map size: {} != length: {}", uid_size,
+             length_);
+
+  size_t real_size = 0;
+  auto x           = header_;
+  while (x->GetLevels()[0].GetForward()) {
+    ++real_size;
+    x = x->GetLevels()[0].GetForward();
+  }
+
+  TPN_ASSERT(real_size == uid_size, "uid map size: {} != real_size: {}",
+             uid_size, real_size);
 }
 
 }  // namespace rank
