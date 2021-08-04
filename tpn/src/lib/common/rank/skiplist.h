@@ -227,7 +227,11 @@ class TPN_COMMON_API SkipList {
 
   /// 获取跳表类型
   ///  @return 跳表类型
-  uint16_t GetType();
+  uint16_t GetType() const;
+
+  /// 获取uaks长度
+  ///  @return uaks长度
+  size_t GetUaksSize() const;
 
   /// 打印数据
   /// @note 测试用

@@ -353,7 +353,7 @@ TEST_CASE("banner", "[common]") {
 #include "log.h"
 
 #include "skiplist.h"
-TEST_CASE("rank", "[common]") {
+TEST_CASE("skiplist", "[common]") {
   using namespace tpn::rank;
 
 #ifndef _TPN_COMMON_CONFIG_TEST_FILE
@@ -431,6 +431,68 @@ TEST_CASE("rank", "[common]") {
               sp_list.GetScore(1010), sp_list.GetRank(1010),
               sp_list.GetRevRank(1010));
   }
+
+  LOG_INFO("rank test end");
+
+  std::this_thread::sleep_for(2s);
+}
+
+#include "rank_hub.h"
+TEST_CASE("rank", "[common]") {
+  using namespace tpn::rank;
+
+#ifndef _TPN_COMMON_CONFIG_TEST_FILE
+#  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
+#endif
+
+  std::string error;
+  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
+  if (!error.empty()) {
+    cout << error.c_str() << endl;
+    return;
+  }
+
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
+
+  g_rank_hub->Init();
+
+  LOG_INFO("rank test start");
+  LOG_INFO("rank test update start");
+
+  constexpr int test_max = 50000;
+
+  // 1000000 百分级别测试通过
+  for (int i = 0; i < test_max; ++i) {
+    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, RandU32());
+  }
+
+  LOG_INFO("rank test update end");
+
+  // g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+
+  LOG_INFO("rank test search start");
+
+  for (int i = 0; i < 2000; ++i) {
+    auto uid = 1000001 + i;
+    LOG_DEBUG("found {} score: {} rank: {} revrank: {}", uid,
+              g_rank_hub->GetScore(RankType::kRankTypeTest, uid),
+              g_rank_hub->GetRank(RankType::kRankTypeTest, uid),
+              g_rank_hub->GetRevRank(RankType::kRankTypeTest, uid));
+  }
+
+  LOG_INFO("rank test search end");
+
+  LOG_INFO("rank test remove start");
+
+  for (int i = 0; i < test_max; ++i) {
+    g_rank_hub->RemoveRank(RankType::kRankTypeTest, 1000001 + i);
+  }
+
+  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+
+  LOG_INFO("rank test remove end");
 
   LOG_INFO("rank test end");
 

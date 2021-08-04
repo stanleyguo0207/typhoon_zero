@@ -23,6 +23,8 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_DEFINE_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_COMMON_RANK_RANK_DEFINE_H_
 
+#include <memory>
+
 #include "define.h"
 
 namespace tpn {
@@ -50,7 +52,12 @@ enum RankKeyOrderType : uint8_t {
 /// 排行类型
 enum RankType : uint16_t {
   kRankTypeTest = 0,  ///< 测试排行
+  kRankTypeMax        ///< 排行榜总数 不要在这个值后面添加
 };
+
+class SkipList;
+using RankList     = SkipList;
+using RankListUptr = std::unique_ptr<RankList>;
 
 }  // namespace rank
 

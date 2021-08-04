@@ -242,7 +242,9 @@ std::vector<uint64_t> SkipList::GetRevRange(size_t rank_start /* = 0 */,
   return std::move(GetRangeWithFlag(rank_start, rank_end, true));
 }
 
-uint16_t SkipList::GetType() { return type_; }
+uint16_t SkipList::GetType() const { return type_; }
+
+size_t SkipList::GetUaksSize() const { return uaks_size_; }
 
 void SkipList::PrintStorage() const {
   std::ostringstream os;
@@ -356,7 +358,8 @@ bool SkipList::Delete(SkipListNodeSptr node_sptr,
 
   uid_umap_.erase(node_sptr->GetUid());
 
-  CheckLength();
+  // 检查底层结构是否发生错误
+  // CheckLength();
 
   return true;
 }
