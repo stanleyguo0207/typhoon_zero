@@ -461,20 +461,21 @@ TEST_CASE("rank", "[common]") {
   LOG_INFO("rank test start");
   LOG_INFO("rank test update start");
 
-  constexpr int test_max = 50000;
+  constexpr int test_max = 3;
 
   // 1000000 百分级别测试通过
   for (int i = 0; i < test_max; ++i) {
-    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, RandU32());
+    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, 400);
+    // g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, Rand32());
   }
 
   LOG_INFO("rank test update end");
 
-  // g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
 
   LOG_INFO("rank test search start");
 
-  for (int i = 0; i < 2000; ++i) {
+  for (int i = 0; i < test_max; ++i) {
     auto uid = 1000001 + i;
     LOG_DEBUG("found {} score: {} rank: {} revrank: {}", uid,
               g_rank_hub->GetScore(RankType::kRankTypeTest, uid),

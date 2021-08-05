@@ -200,7 +200,7 @@ size_t SkipList::GetRank(uint64_t uid) {
     SkipListNodeSptr x = header_;
     for (int i = level_ - 1; i >= 0; --i) {
       while (x->GetLevels()[i].GetForward() &&
-             (x->GetLevels()[i].GetForward()->GetUid() == uid ||
+             (uid == x->GetLevels()[i].GetForward()->GetUid() ||
               CompUaks(x->GetLevels()[i].GetForward()->GetUaks(),
                        node_sptr->GetUaks()))) {
         rank += x->GetLevels()[i].GetSpan();
@@ -411,22 +411,38 @@ const uint64_t SkipList::GetP2(SkipListNodeSptr node_sptr) const {
 }
 
 bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
+  std::ostringstream os;
   uint8_t order = GetRankKeyOrderType(type_);
-  uint8_t mask  = 0x1;
+  fmt::print(os, "left uid : {} right uid : {}\n", left[0], right[0]);
+  fmt::print(os, "order : {}\n", order);
+  uint8_t mask = 0x1;
   for (size_t i = 1; i < uaks_size_; ++i) {
-    if (mask & order) {  // asc
-      if (*(left + i) > *(right + i)) {
+    fmt::print(os, "i : {} mask : {}\n", i, mask);
+    fmt::print(os, "left : {} right : {}\n", left[i], right[i], mask);
+    if (mask & order) {  // desc
+      if (left[i] > right[i]) {
+        LOG_DEBUG("CompUaks true\n{}", os.str());
         return true;
+      } else if (left[i] < right[i]) {
+        LOG_DEBUG("CompUaks false\n{}", os.str());
+        return false;
       }
-    } else {  // desc
-      if (*(left + i) < *(right + i)) {
+    } else {  // asc
+      if (left[i] < right[i]) {
+        LOG_DEBUG("CompUaks true\n{}", os.str());
         return true;
+      } else if (left[i] > right[i]) {
+        LOG_DEBUG("CompUaks false\n{}", os.str());
+        return false;
       }
     }
 
     mask <<= 1;
   }
-  return false;
+
+  LOG_DEBUG("CompUaks default false\n{}", os.str());
+
+  return true;
 }
 
 void SkipList::CheckLength() {

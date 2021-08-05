@@ -41,12 +41,12 @@ enum RankKeyType : uint8_t {
 };
 
 /// 排行榜对应字段排序规则
-/// 默认0 Descending， 1 Ascending
+/// 默认0 Ascending， 1 Descending
 /// 与排序依据key配合使用 @sa RankKeyType
 enum RankKeyOrderType : uint8_t {
-  kRankKeyOrderTypeS0Asc = 0x1,         ///< 默认desc 1|score|asc
-  kRankKeyOrderTypeP1Asc = (0x1 << 1),  ///< 默认desc 2|p1|asc
-  kRankKeyOrderTypeP2Asc = (0x1 << 2),  ///< 默认desc 3|p2|asc
+  kRankKeyOrderTypeS0Desc = 0x1,         ///< 默认asc 1|score|desc
+  kRankKeyOrderTypeP1Desc = (0x1 << 1),  ///< 默认asc 2|p1|desc
+  kRankKeyOrderTypeP2Desc = (0x1 << 2),  ///< 默认asc 3|p2|desc
 };
 
 /// 排行类型

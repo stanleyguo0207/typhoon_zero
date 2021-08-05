@@ -33,7 +33,7 @@ namespace rank {
 uint16_t TransformRankType(RankType type) {
   switch (type) {
     case RankType::kRankTypeTest: {
-      return MAKE_UINT16_T(kRankKeyOrderTypeS0Asc | kRankKeyOrderTypeP1Asc,
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP1Desc,
                            kRankKeyTypeS0P1);
     } break;
     default:
