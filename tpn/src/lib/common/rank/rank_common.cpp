@@ -36,6 +36,55 @@ uint16_t TransformRankType(RankType type) {
       return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP1Desc,
                            kRankKeyTypeS0P1);
     } break;
+    case RankType::kRankTypeSA: {
+      return MAKE_UINT16_T(0, kRankKeyTypeS0);
+    } break;
+    case RankType::kRankTypeSD: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc, kRankKeyTypeS0);
+    } break;
+    case RankType::kRankTypeSAP1A: {
+      return MAKE_UINT16_T(0, kRankKeyTypeS0P1);
+    } break;
+    case RankType::kRankTypeSAP1D: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeP1Desc, kRankKeyTypeS0P1);
+    } break;
+    case RankType::kRankTypeSDP1A: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc, kRankKeyTypeS0P1);
+    } break;
+    case RankType::kRankTypeSDP1D: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP1Desc,
+                           kRankKeyTypeS0P1);
+    } break;
+    case RankType::kRankTypeSAP1AP2A: {
+      return MAKE_UINT16_T(0, kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSAP1AP2D: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeP2Desc, kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSAP1DP2A: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeP1Desc, kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSAP1DP2D: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeP1Desc | kRankKeyOrderTypeP2Desc,
+                           kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSDP1AP2A: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP1Desc,
+                           kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSDP1AP2D: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP2Desc,
+                           kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSDP1DP2A: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP1Desc,
+                           kRankKeyTypeS0P1P2);
+    } break;
+    case RankType::kRankTypeSDP1DP2D: {
+      return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc | kRankKeyOrderTypeP1Desc |
+                               kRankKeyOrderTypeP2Desc,
+                           kRankKeyTypeS0P1P2);
+    } break;
     default:
       break;
   }

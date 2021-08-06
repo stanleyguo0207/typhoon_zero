@@ -112,7 +112,7 @@ std::vector<uint64_t> RankHub::GetRange(RankType type,
   TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
              type, rank_start, rank_end);
 
-  return std::move(rank_ptr->GetRange(rank_start, rank_start));
+  return std::move(rank_ptr->GetRange(rank_start, rank_end));
 }
 
 std::vector<uint64_t> RankHub::GetRevRange(RankType type,
@@ -122,7 +122,7 @@ std::vector<uint64_t> RankHub::GetRevRange(RankType type,
   TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
              type, rank_start, rank_end);
 
-  return std::move(rank_ptr->GetRevRange(rank_start, rank_start));
+  return std::move(rank_ptr->GetRevRange(rank_start, rank_end));
 }
 
 std::vector<std::pair<uint64_t, uint64_t>> RankHub::GetRangeWithScore(
@@ -131,7 +131,7 @@ std::vector<std::pair<uint64_t, uint64_t>> RankHub::GetRangeWithScore(
   TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
              type, rank_start, rank_end);
 
-  return std::move(rank_ptr->GetRangeWithScore(rank_start, rank_start));
+  return std::move(rank_ptr->GetRangeWithScore(rank_start, rank_end));
 }
 
 std::vector<std::pair<uint64_t, uint64_t>> RankHub::GetRevRangeWithScore(
@@ -140,7 +140,7 @@ std::vector<std::pair<uint64_t, uint64_t>> RankHub::GetRevRangeWithScore(
   TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
              type, rank_start, rank_end);
 
-  return std::move(rank_ptr->GetRevRangeWithScore(rank_start, rank_start));
+  return std::move(rank_ptr->GetRevRangeWithScore(rank_start, rank_end));
 }
 
 void RankHub::PrintStorage(RankType type) const {

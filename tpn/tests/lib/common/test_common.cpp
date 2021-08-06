@@ -517,3 +517,86 @@ TEST_CASE("rank", "[common]") {
 
   std::this_thread::sleep_for(5s);
 }
+
+TEST_CASE("rank_bench", "[common]") {
+  using namespace tpn::rank;
+
+#ifndef _TPN_COMMON_CONFIG_TEST_FILE
+#  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
+#endif
+
+  std::string error;
+  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
+  if (!error.empty()) {
+    cout << error.c_str() << endl;
+    return;
+  }
+
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
+
+  g_rank_hub->Init();
+
+  LOG_INFO("rank test start");
+  LOG_INFO("rank test update start");
+
+  /// 一百万
+  constexpr int test_max = 1000000;
+
+  for (int i = 0; i < test_max; ++i) {
+    g_rank_hub->UpdateRank(RankType::kRankTypeSA, 1000001 + i, Rand32());
+  }
+
+  LOG_INFO("rank test update end");
+
+  LOG_INFO("rank test search start");
+
+  for (int i = 0; i < test_max; ++i) {
+    auto uid = 1000001 + i;
+    g_rank_hub->GetScore(RankType::kRankTypeSA, uid);
+    g_rank_hub->GetRank(RankType::kRankTypeSA, uid);
+    g_rank_hub->GetRevRank(RankType::kRankTypeSA, uid);
+  }
+
+  // 非法数据查询
+  for (int i = 0; i < test_max / 2; ++i) {
+    auto uid = 2000001 + i;
+    g_rank_hub->GetScore(RankType::kRankTypeSA, uid);
+    g_rank_hub->GetRank(RankType::kRankTypeSA, uid);
+    g_rank_hub->GetRevRank(RankType::kRankTypeSA, uid);
+  }
+
+  LOG_INFO("rank test search end");
+
+  LOG_INFO("rank test update start");
+
+  for (int i = 0; i < test_max; ++i) {
+    g_rank_hub->UpdateRank(RankType::kRankTypeSA, 1000001 + i, Rand32());
+  }
+
+  LOG_INFO("rank test update end");
+
+  LOG_DEBUG("range: {}", g_rank_hub->GetRange(RankType::kRankTypeSA, 1, 100));
+  LOG_DEBUG("range with score: {}",
+            g_rank_hub->GetRangeWithScore(RankType::kRankTypeSA, 1, 100));
+
+  LOG_DEBUG("rev range: {}",
+            g_rank_hub->GetRevRange(RankType::kRankTypeSA, 1, 100));
+  LOG_DEBUG("rev range with score: {}",
+            g_rank_hub->GetRevRangeWithScore(RankType::kRankTypeSA, 1, 100));
+
+  LOG_INFO("rank test remove start");
+
+  for (int i = 0; i < test_max; ++i) {
+    g_rank_hub->RemoveRank(RankType::kRankTypeTest, 1000001 + i);
+  }
+
+  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+
+  LOG_INFO("rank test remove end");
+
+  LOG_INFO("rank test end");
+
+  std::this_thread::sleep_for(5s);
+}
