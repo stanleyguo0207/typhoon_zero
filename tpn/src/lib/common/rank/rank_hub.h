@@ -99,6 +99,22 @@ class TPN_COMMON_API RankHub {
   std::vector<uint64_t> GetRevRange(RankType type, size_t rank_start = 0,
                                     size_t rank_end = 0);
 
+  /// 获取排名范围带分数
+  ///  @param[in]   type          排行榜类型
+  ///  @param[in]   rank_start    起始排名
+  ///  @param[in]   rank_end      结束排名 默认0 从起始位置到整个排名范围
+  ///  @return 排名范围内的玩家id，分数集合
+  std::vector<std::pair<uint64_t, uint64_t>> GetRangeWithScore(
+      RankType type, size_t rank_start = 0, size_t rank_end = 0);
+
+  /// 获取反向排名范围带分数
+  ///  @param[in]   type          排行榜类型
+  ///  @param[in]   rank_start    反向起始排名
+  ///  @param[in]   rank_end      反向结束排名 默认0 从起始位置到整个排名范围
+  ///  @return 排名范围内的玩家id，分数集合
+  std::vector<std::pair<uint64_t, uint64_t>> GetRevRangeWithScore(
+      RankType type, size_t rank_start = 0, size_t rank_end = 0);
+
   /// 打印数据
   ///  @param[in]   type    排行榜类型
   /// @note 测试用

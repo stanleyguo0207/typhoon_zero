@@ -225,6 +225,20 @@ class TPN_COMMON_API SkipList {
   ///  @return 排名范围内的玩家id集合
   std::vector<uint64_t> GetRevRange(size_t rank_start = 0, size_t rank_end = 0);
 
+  /// 获取排名范围带分数
+  ///  @param[in]   rank_start    起始排名
+  ///  @param[in]   rank_end      结束排名 默认0 从起始位置到整个排名范围
+  ///  @return 排名范围内的玩家id，分数集合
+  std::vector<std::pair<uint64_t, uint64_t>> GetRangeWithScore(
+      size_t rank_start = 0, size_t rank_end = 0);
+
+  /// 获取反向排名范围带分数
+  ///  @param[in]   rank_start    反向起始排名
+  ///  @param[in]   rank_end      反向结束排名 默认0 从起始位置到整个排名范围
+  ///  @return 排名范围内的玩家id，分数集合
+  std::vector<std::pair<uint64_t, uint64_t>> GetRevRangeWithScore(
+      size_t rank_start = 0, size_t rank_end = 0);
+
   /// 获取跳表类型
   ///  @return 跳表类型
   uint16_t GetType() const;
@@ -267,6 +281,14 @@ class TPN_COMMON_API SkipList {
   std::vector<uint64_t> GetRangeWithFlag(size_t rank_start = 0,
                                          size_t rank_end   = 0,
                                          bool reverse      = false);
+
+  /// 获取排名带分数范围
+  ///  @param[in]   rank_start    反向起始排名
+  ///  @param[in]   rank_end      反向结束排名 默认0 从起始位置到整个排名范围
+  ///  @param[in]   reverse       是否反向
+  ///  @return 排名范围内的玩家id，分数集合
+  std::vector<std::pair<uint64_t, uint64_t>> GetRangeWithScoreWithFlag(
+      size_t rank_start = 0, size_t rank_end = 0, bool reverse = false);
 
   /// 获取玩家id
   ///  @param[in]   node_sptr 节点数据

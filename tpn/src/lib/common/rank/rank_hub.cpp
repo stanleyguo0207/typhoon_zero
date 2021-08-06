@@ -112,7 +112,7 @@ std::vector<uint64_t> RankHub::GetRange(RankType type,
   TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
              type, rank_start, rank_end);
 
-  return rank_ptr->GetRange(rank_start, rank_start);
+  return std::move(rank_ptr->GetRange(rank_start, rank_start));
 }
 
 std::vector<uint64_t> RankHub::GetRevRange(RankType type,
@@ -122,7 +122,25 @@ std::vector<uint64_t> RankHub::GetRevRange(RankType type,
   TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
              type, rank_start, rank_end);
 
-  return rank_ptr->GetRevRange(rank_start, rank_start);
+  return std::move(rank_ptr->GetRevRange(rank_start, rank_start));
+}
+
+std::vector<std::pair<uint64_t, uint64_t>> RankHub::GetRangeWithScore(
+    RankType type, size_t rank_start /* = 0 */, size_t rank_end /* = 0 */) {
+  auto rank_ptr = ranks_[EnumToUnderlyType(type)].get();
+  TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
+             type, rank_start, rank_end);
+
+  return std::move(rank_ptr->GetRangeWithScore(rank_start, rank_start));
+}
+
+std::vector<std::pair<uint64_t, uint64_t>> RankHub::GetRevRangeWithScore(
+    RankType type, size_t rank_start /* = 0 */, size_t rank_end /* = 0 */) {
+  auto rank_ptr = ranks_[EnumToUnderlyType(type)].get();
+  TPN_ASSERT(rank_ptr, "rank not exist, type: {}, rank start: {} - end: {}",
+             type, rank_start, rank_end);
+
+  return std::move(rank_ptr->GetRevRangeWithScore(rank_start, rank_start));
 }
 
 void RankHub::PrintStorage(RankType type) const {

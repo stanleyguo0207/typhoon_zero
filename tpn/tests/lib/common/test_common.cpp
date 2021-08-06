@@ -461,7 +461,7 @@ TEST_CASE("rank", "[common]") {
   LOG_INFO("rank test start");
   LOG_INFO("rank test update start");
 
-  constexpr int test_max = 20000;
+  constexpr int test_max = 20;
 
   // 1000000 百分级别测试通过
   for (int i = 0; i < test_max; ++i) {
@@ -494,6 +494,14 @@ TEST_CASE("rank", "[common]") {
   g_rank_hub->PrintStorage(RankType::kRankTypeTest);
 
   LOG_INFO("rank test update end");
+
+  LOG_DEBUG("range: {}", g_rank_hub->GetRange(RankType::kRankTypeTest));
+  LOG_DEBUG("range with score: {}",
+            g_rank_hub->GetRangeWithScore(RankType::kRankTypeTest));
+
+  LOG_DEBUG("rev range: {}", g_rank_hub->GetRevRange(RankType::kRankTypeTest));
+  LOG_DEBUG("rev range with score: {}",
+            g_rank_hub->GetRevRangeWithScore(RankType::kRankTypeTest));
 
   LOG_INFO("rank test remove start");
 

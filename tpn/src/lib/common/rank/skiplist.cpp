@@ -242,6 +242,16 @@ std::vector<uint64_t> SkipList::GetRevRange(size_t rank_start /* = 0 */,
   return std::move(GetRangeWithFlag(rank_start, rank_end, true));
 }
 
+std::vector<std::pair<uint64_t, uint64_t>> SkipList::GetRangeWithScore(
+    size_t rank_start /* = 0 */, size_t rank_end /* = 0 */) {
+  return std::move(GetRangeWithScoreWithFlag(rank_start, rank_end));
+}
+
+std::vector<std::pair<uint64_t, uint64_t>> SkipList::GetRevRangeWithScore(
+    size_t rank_start /* = 0 */, size_t rank_end /* = 0 */) {
+  return std::move(GetRangeWithScoreWithFlag(rank_start, rank_end, true));
+}
+
 uint16_t SkipList::GetType() const { return type_; }
 
 size_t SkipList::GetUaksSize() const { return uaks_size_; }
@@ -386,7 +396,36 @@ std::vector<uint64_t> SkipList::GetRangeWithFlag(size_t rank_start /* = 0 */,
   SkipListNodeSptr x = reverse ? GetNodeByRank(length_ + 1 - rank_start)
                                : GetNodeByRank(rank_start);
   while (range--) {
-    ans.emplace_back(x->GetUid());
+    ans.emplace_back(GetUid(x));
+    x = reverse ? x->GetBackward() : x->GetLevels()[0].GetForward();
+  }
+
+  return std::move(ans);
+}
+
+std::vector<std::pair<uint64_t, uint64_t>> SkipList::GetRangeWithScoreWithFlag(
+    size_t rank_start /* = 0 */, size_t rank_end /* = 0 */,
+    bool reverse /* = false */) {
+  if (0 == rank_start || rank_start > length_) {
+    rank_start = 1;
+  }
+
+  if (0 == rank_end || rank_end > length_) {
+    rank_end = length_;
+  }
+
+  if (rank_end < rank_start) {
+    rank_end = rank_start;
+  }
+
+  size_t range = rank_end - rank_start + 1;
+
+  std::vector<std::pair<uint64_t, uint64_t>> ans;
+
+  SkipListNodeSptr x = reverse ? GetNodeByRank(length_ + 1 - rank_start)
+                               : GetNodeByRank(rank_start);
+  while (range--) {
+    ans.emplace_back(GetUid(x), GetScore(x));
     x = reverse ? x->GetBackward() : x->GetLevels()[0].GetForward();
   }
 
