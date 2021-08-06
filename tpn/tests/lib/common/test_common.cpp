@@ -461,12 +461,12 @@ TEST_CASE("rank", "[common]") {
   LOG_INFO("rank test start");
   LOG_INFO("rank test update start");
 
-  constexpr int test_max = 3;
+  constexpr int test_max = 20000;
 
   // 1000000 百分级别测试通过
   for (int i = 0; i < test_max; ++i) {
-    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, 400);
-    // g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, Rand32());
+    // g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, 400);
+    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, Rand32());
   }
 
   LOG_INFO("rank test update end");
@@ -485,6 +485,16 @@ TEST_CASE("rank", "[common]") {
 
   LOG_INFO("rank test search end");
 
+  LOG_INFO("rank test update start");
+
+  for (int i = 0; i < test_max; ++i) {
+    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, Rand32());
+  }
+
+  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+
+  LOG_INFO("rank test update end");
+
   LOG_INFO("rank test remove start");
 
   for (int i = 0; i < test_max; ++i) {
@@ -497,5 +507,5 @@ TEST_CASE("rank", "[common]") {
 
   LOG_INFO("rank test end");
 
-  std::this_thread::sleep_for(2s);
+  std::this_thread::sleep_for(5s);
 }

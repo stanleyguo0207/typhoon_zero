@@ -358,7 +358,7 @@ bool SkipList::Delete(SkipListNodeSptr node_sptr,
 
   uid_umap_.erase(node_sptr->GetUid());
 
-  // 检查底层结构是否发生错误
+  // 检查底层结构是否发生错误 这个函数很影响性能
   // CheckLength();
 
   return true;
@@ -411,28 +411,19 @@ const uint64_t SkipList::GetP2(SkipListNodeSptr node_sptr) const {
 }
 
 bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
-  std::ostringstream os;
   uint8_t order = GetRankKeyOrderType(type_);
-  fmt::print(os, "left uid : {} right uid : {}\n", left[0], right[0]);
-  fmt::print(os, "order : {}\n", order);
-  uint8_t mask = 0x1;
+  uint8_t mask  = 0x1;
   for (size_t i = 1; i < uaks_size_; ++i) {
-    fmt::print(os, "i : {} mask : {}\n", i, mask);
-    fmt::print(os, "left : {} right : {}\n", left[i], right[i], mask);
     if (mask & order) {  // desc
       if (left[i] > right[i]) {
-        LOG_DEBUG("CompUaks true\n{}", os.str());
         return true;
       } else if (left[i] < right[i]) {
-        LOG_DEBUG("CompUaks false\n{}", os.str());
         return false;
       }
     } else {  // asc
       if (left[i] < right[i]) {
-        LOG_DEBUG("CompUaks true\n{}", os.str());
         return true;
       } else if (left[i] > right[i]) {
-        LOG_DEBUG("CompUaks false\n{}", os.str());
         return false;
       }
     }
@@ -440,9 +431,7 @@ bool SkipList::CompUaks(uint64_t left[], uint64_t right[]) {
     mask <<= 1;
   }
 
-  LOG_DEBUG("CompUaks default false\n{}", os.str());
-
-  return true;
+  return left[0] < right[0];
 }
 
 void SkipList::CheckLength() {
