@@ -26,7 +26,7 @@
 
 #include "log.h"
 #include "debug_hub.h"
-#include "helper.h"
+#include "proto_generator.h"
 
 namespace fs = std::filesystem;
 
@@ -52,7 +52,7 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
     }
 
     if (xlsx_file_paths_.empty()) {
-      error = std::string("coun't find xlsx files in") + " (" + path_ + ") ";
+      error = std::string("coudn't find xlsx files in") + " (" + path_ + ") ";
       return false;
     }
   } catch (fs::filesystem_error &e) {
@@ -71,23 +71,11 @@ bool GeneratorHub::Reload(std::string &error) { return Load({}, error, true); }
 bool GeneratorHub::Generate() {
   LOG_INFO("xlsx generator start generate");
 
-  xlnt::workbook wb;
-
   for (auto &&path : xlsx_file_paths_) {
-    LOG_INFO("xlsx generator load path: {}", path);
-
-    wb.load(path);
-
-    for (auto &&sheet : wb) {
-      LOG_INFO("xlsx generator load sheet: {}", sheet.title());
-      if (!tpn::xlsx::SheetTitleIsOutput(sheet.title())) {
-        continue;
-      }
-      for (auto &&row : sheet.rows()) {
-        for (auto &&cell : row) {
-          printf("%s\n", cell.to_string().c_str());
-        }
-      }
+    if (!GenerateProtoFile(path)) {
+      LOG_ERROR("xlsx generator generate proto file fail, workbook path : {} ",
+                path);
+      return false;
     }
 
     ++index_;
@@ -97,6 +85,36 @@ bool GeneratorHub::Generate() {
 
   LOG_INFO("xlsx generator finish generate");
 
+  return true;
+}
+
+bool GeneratorHub::GenerateProtoFile(std::string_view workbook_path) {
+  LOG_INFO("xlsx generator start generate proto file, workbook path : {}",
+           workbook_path);
+
+  xlnt::workbook wb;
+
+  try {
+    wb.load(workbook_path.data());
+  } catch (xlnt::exception &e) {
+    LOG_ERROR("xlsx generator load workbook exception error : {}", e.what());
+    return false;
+  } catch (...) {
+    LOG_ERROR("xlsx generator load workbook exception ...");
+    return false;
+  }
+
+  ProtoGenerator proto_gr(wb);
+
+  // proto文件生成
+  if (!proto_gr.Generate()) {
+    LOG_INFO("xlsx generator generate proto file fail, workbook path : {}",
+             workbook_path);
+    return false;
+  }
+
+  LOG_INFO("xlsx generator finish generate proto file, workbook path : {}",
+           workbook_path);
   return true;
 }
 

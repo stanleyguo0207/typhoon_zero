@@ -462,25 +462,26 @@ TEST_CASE("rank", "[common]") {
   LOG_INFO("rank test update start");
 
   constexpr int test_max = 20;
+  RankType type          = RankType::kRankTypeTest;
 
   // 1000000 百分级别测试通过
   for (int i = 0; i < test_max; ++i) {
-    // g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, 400);
-    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, Rand32());
+    //g_rank_hub->UpdateRank(type, 1000001 + i, 400);
+    g_rank_hub->UpdateRank(type, 1000001 + i, Rand32());
   }
 
   LOG_INFO("rank test update end");
 
-  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+  g_rank_hub->PrintStorage(type);
 
   LOG_INFO("rank test search start");
 
   for (int i = 0; i < test_max; ++i) {
     auto uid = 1000001 + i;
     LOG_DEBUG("found {} score: {} rank: {} revrank: {}", uid,
-              g_rank_hub->GetScore(RankType::kRankTypeTest, uid),
-              g_rank_hub->GetRank(RankType::kRankTypeTest, uid),
-              g_rank_hub->GetRevRank(RankType::kRankTypeTest, uid));
+              g_rank_hub->GetScore(type, uid),
+              g_rank_hub->GetRank(type, uid),
+              g_rank_hub->GetRevRank(type, uid));
   }
 
   LOG_INFO("rank test search end");
@@ -488,28 +489,28 @@ TEST_CASE("rank", "[common]") {
   LOG_INFO("rank test update start");
 
   for (int i = 0; i < test_max; ++i) {
-    g_rank_hub->UpdateRank(RankType::kRankTypeTest, 1000001 + i, Rand32());
+    g_rank_hub->UpdateRank(type, 1000001 + i, Rand32());
   }
 
-  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+  g_rank_hub->PrintStorage(type);
 
   LOG_INFO("rank test update end");
 
-  LOG_DEBUG("range: {}", g_rank_hub->GetRange(RankType::kRankTypeTest));
+  LOG_DEBUG("range: {}", g_rank_hub->GetRange(type));
   LOG_DEBUG("range with score: {}",
-            g_rank_hub->GetRangeWithScore(RankType::kRankTypeTest));
+            g_rank_hub->GetRangeWithScore(type));
 
-  LOG_DEBUG("rev range: {}", g_rank_hub->GetRevRange(RankType::kRankTypeTest));
+  LOG_DEBUG("rev range: {}", g_rank_hub->GetRevRange(type));
   LOG_DEBUG("rev range with score: {}",
-            g_rank_hub->GetRevRangeWithScore(RankType::kRankTypeTest));
+            g_rank_hub->GetRevRangeWithScore(type));
 
   LOG_INFO("rank test remove start");
 
   for (int i = 0; i < test_max; ++i) {
-    g_rank_hub->RemoveRank(RankType::kRankTypeTest, 1000001 + i);
+    g_rank_hub->RemoveRank(type, 1000001 + i);
   }
 
-  g_rank_hub->PrintStorage(RankType::kRankTypeTest);
+  g_rank_hub->PrintStorage(type);
 
   LOG_INFO("rank test remove end");
 

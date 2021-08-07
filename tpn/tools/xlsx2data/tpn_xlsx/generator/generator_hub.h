@@ -53,6 +53,11 @@ class TPN_XLSX2DATA_API GeneratorHub {
   bool Generate();
 
  private:
+  /// 生成proto文件
+  ///  @return 生成成功返回true
+  bool GenerateProtoFile(std::string_view workbook_path);
+
+ private:
   std::string path_;                          ///< 数据文件夹路径
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
   size_t index_{0};                           ///< 当前处理文件位置

@@ -22,8 +22,45 @@
 
 #include "proto_generator.h"
 
+#include "log.h"
+#include "helper.h"
+#include "utils.h"
+
 namespace tpn {
 
-namespace xlsx {}  // namespace xlsx
+namespace xlsx {
+
+ProtoGenerator::ProtoGenerator(xlnt::workbook &workbook)
+    : workbook_(workbook) {}
+
+ProtoGenerator::~ProtoGenerator() {}
+
+bool ProtoGenerator::Generate() {
+  LOG_INFO("proto generator start generate");
+
+  for (auto &&sheet : workbook_) {
+    LOG_INFO("proto generator load sheet: {}", sheet.title());
+    if (!tpn::xlsx::SheetTitleIsOutput(sheet.title())) {
+      continue;
+    }
+
+    FmtMemoryBuf buf;
+
+    for (auto &&row : sheet.rows()) {
+      for (auto &&cell : row) {
+        fmt::format_to(FmtBufferAppender(buf), "{}\t", cell.to_string());
+      }
+      fmt::format_to(FmtBufferAppender(buf), "\n");
+    }
+
+    LOG_DEBUG("\n{}", std::string_view(buf.data(), buf.size()));
+  }
+
+  LOG_INFO("proto generator finish generate");
+
+  return true;
+}
+
+}  // namespace xlsx
 
 }  // namespace tpn

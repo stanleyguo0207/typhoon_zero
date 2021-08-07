@@ -32,7 +32,18 @@ namespace xlsx {
 /// proto文件生成器
 class TPN_XLSX2DATA_API ProtoGenerator {
  public:
+  /// 构造函数
+  ///  @param[in]   workbook    要转换的工作簿
+  ProtoGenerator(xlnt::workbook &workbook);
+
+  ~ProtoGenerator();
+
+  /// 生成proto文件
+  ///  @return 生成成功返回true
+  bool Generate();
+
  private:
+  xlnt::workbook &workbook_; ///< 当前处理的工作簿
 };
 
 }  // namespace xlsx
