@@ -37,13 +37,13 @@ uint16_t TransformRankType(RankType type) {
                            kRankKeyTypeS0P1);
     } break;
     case RankType::kRankTypeSA: {
-      return MAKE_UINT16_T(0, kRankKeyTypeS0);
+      return MAKE_UINT16_T(kRankKeyOrderTypeAsc, kRankKeyTypeS0);
     } break;
     case RankType::kRankTypeSD: {
       return MAKE_UINT16_T(kRankKeyOrderTypeS0Desc, kRankKeyTypeS0);
     } break;
     case RankType::kRankTypeSAP1A: {
-      return MAKE_UINT16_T(0, kRankKeyTypeS0P1);
+      return MAKE_UINT16_T(kRankKeyOrderTypeAsc, kRankKeyTypeS0P1);
     } break;
     case RankType::kRankTypeSAP1D: {
       return MAKE_UINT16_T(kRankKeyOrderTypeP1Desc, kRankKeyTypeS0P1);
@@ -56,7 +56,7 @@ uint16_t TransformRankType(RankType type) {
                            kRankKeyTypeS0P1);
     } break;
     case RankType::kRankTypeSAP1AP2A: {
-      return MAKE_UINT16_T(0, kRankKeyTypeS0P1P2);
+      return MAKE_UINT16_T(kRankKeyOrderTypeAsc, kRankKeyTypeS0P1P2);
     } break;
     case RankType::kRankTypeSAP1AP2D: {
       return MAKE_UINT16_T(kRankKeyOrderTypeP2Desc, kRankKeyTypeS0P1P2);

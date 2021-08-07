@@ -44,6 +44,7 @@ enum RankKeyType : uint8_t {
 /// 默认0 Ascending， 1 Descending
 /// 与排序依据key配合使用 @sa RankKeyType
 enum RankKeyOrderType : uint8_t {
+  kRankKeyOrderTypeAsc    = 0x0,         ///< 默认asc
   kRankKeyOrderTypeS0Desc = 0x1,         ///< 默认asc 1|score|desc
   kRankKeyOrderTypeP1Desc = (0x1 << 1),  ///< 默认asc 2|p1|desc
   kRankKeyOrderTypeP2Desc = (0x1 << 2),  ///< 默认asc 3|p2|desc
@@ -53,22 +54,22 @@ enum RankKeyOrderType : uint8_t {
 /// 基本够用了，如果需求不满足可以后面家类型
 /// 每种类型需要在 @sa TransformRankType 中处理转换类型
 enum RankType : uint16_t {
-  kRankTypeTest     = 0,   ///< 测试排行
-  kRankTypeSA       = 1,   ///< 0|uid 1|score|asc
-  kRankTypeSD       = 2,   ///< 0|uid 1|score|desc
-  kRankTypeSAP1A    = 3,   ///< 0|uid 1|score|asc 2|p1|asc
-  kRankTypeSAP1D    = 4,   ///< 0|uid 1|score|asc 2|p1|desc
-  kRankTypeSDP1A    = 5,   ///< 0|uid 1|score|desc 2|p1|asc
-  kRankTypeSDP1D    = 6,   ///< 0|uid 1|score|desc 2|p1|desc
-  kRankTypeSAP1AP2A = 7,   ///< 0|uid 1|score|asc 2|p1|asc 3|p2|asc
-  kRankTypeSAP1AP2D = 8,   ///< 0|uid 1|score|asc 2|p1|asc 3|p2|desc
-  kRankTypeSAP1DP2A = 9,   ///< 0|uid 1|score|asc 2|p1|desc 3|p2|asc
-  kRankTypeSAP1DP2D = 10,  ///< 0|uid 1|score|asc 2|p1|desc 3|p2|desc
-  kRankTypeSDP1AP2A = 11,  ///< 0|uid 1|score|desc 2|p1|asc 3|p2|asc
-  kRankTypeSDP1AP2D = 12,  ///< 0|uid 1|score|desc 2|p1|asc 3|p2|desc
-  kRankTypeSDP1DP2A = 13,  ///< 0|uid 1|score|desc 2|p1|desc 3|p2|asc
-  kRankTypeSDP1DP2D = 14,  ///< 0|uid 1|score|desc 2|p1|desc 3|p2|desc
-  kRankTypeMax             ///< 排行榜总数 不要在这个值后面添加
+  kRankTypeTest = 0,  ///< 测试排行
+  kRankTypeSA,        ///< 0|uid 1|score|asc
+  kRankTypeSD,        ///< 0|uid 1|score|desc
+  kRankTypeSAP1A,     ///< 0|uid 1|score|asc 2|p1|asc
+  kRankTypeSAP1D,     ///< 0|uid 1|score|asc 2|p1|desc
+  kRankTypeSDP1A,     ///< 0|uid 1|score|desc 2|p1|asc
+  kRankTypeSDP1D,     ///< 0|uid 1|score|desc 2|p1|desc
+  kRankTypeSAP1AP2A,  ///< 0|uid 1|score|asc 2|p1|asc 3|p2|asc
+  kRankTypeSAP1AP2D,  ///< 0|uid 1|score|asc 2|p1|asc 3|p2|desc
+  kRankTypeSAP1DP2A,  ///< 0|uid 1|score|asc 2|p1|desc 3|p2|asc
+  kRankTypeSAP1DP2D,  ///< 0|uid 1|score|asc 2|p1|desc 3|p2|desc
+  kRankTypeSDP1AP2A,  ///< 0|uid 1|score|desc 2|p1|asc 3|p2|asc
+  kRankTypeSDP1AP2D,  ///< 0|uid 1|score|desc 2|p1|asc 3|p2|desc
+  kRankTypeSDP1DP2A,  ///< 0|uid 1|score|desc 2|p1|desc 3|p2|asc
+  kRankTypeSDP1DP2D,  ///< 0|uid 1|score|desc 2|p1|desc 3|p2|desc
+  kRankTypeMax        ///< 排行榜总数 不要在这个值后面添加
 };
 
 class SkipList;
