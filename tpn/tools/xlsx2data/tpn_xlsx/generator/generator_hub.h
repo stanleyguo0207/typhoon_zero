@@ -27,6 +27,7 @@
 #include <string>
 #include <string_view>
 
+#include "file_helper.h"
 #include "xlsx2data_common.h"
 
 namespace tpn {
@@ -57,10 +58,13 @@ class TPN_XLSX2DATA_API GeneratorHub {
   ///  @return 生成成功返回true
   bool GenerateProtoFile(std::string_view workbook_path);
 
+  /// 生成proto文件头部分
+  void GenerateProtoFileHeader();
+
  private:
   std::string path_;                          ///< 数据文件夹路径
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
-  size_t index_{0};                           ///< 当前处理文件位置
+  FileHelper proto_file_;                     ///< proto文件句柄
 
   TPN_SINGLETON_DECL(GeneratorHub)
 };

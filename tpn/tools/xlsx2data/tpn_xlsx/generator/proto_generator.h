@@ -24,8 +24,11 @@
 #define TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_GENERATOR_PROTO_GENERATOR_H_
 
 #include "xlsx2data_common.h"
+#include "helper.h"
 
 namespace tpn {
+
+class FileHelper;
 
 namespace xlsx {
 
@@ -34,7 +37,8 @@ class TPN_XLSX2DATA_API ProtoGenerator {
  public:
   /// 构造函数
   ///  @param[in]   workbook    要转换的工作簿
-  ProtoGenerator(xlnt::workbook &workbook);
+  ///  @param[in]   out_file    输出文件句柄
+  ProtoGenerator(xlnt::workbook &workbook, FileHelper &out_file);
 
   ~ProtoGenerator();
 
@@ -43,7 +47,15 @@ class TPN_XLSX2DATA_API ProtoGenerator {
   bool Generate();
 
  private:
-  xlnt::workbook &workbook_; ///< 当前处理的工作簿
+  /// 生成sheet表的proto结构
+  ///  @param[in]   worksheet   工作表
+  ///  @return 生成成功返回true
+  bool GenerateSheetInfo(xlnt::worksheet &worksheet);
+
+ private:
+  xlnt::workbook &workbook_;  ///< 当前处理的工作簿
+  FileHelper &out_file_;      ///< 输出文件句柄
+  Printer printer_;           ///< 打印器
 };
 
 }  // namespace xlsx

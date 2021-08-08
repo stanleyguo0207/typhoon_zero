@@ -24,6 +24,13 @@
 
 #include <cstring>
 
+#if defined(_WIN32)
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#  undef WIN32_LEAN_AND_MEAN
+#  include <wchar.h>
+#endif
+
 #include <utfcpp/utf8.h>
 
 namespace tpn {
@@ -133,6 +140,39 @@ void Utf8Truncate(std::string &utf8str, size_t len) {
   } catch (const std::exception &) {
     utf8str.clear();
   }
+}
+
+std::string MaybeUtf8ToStr(std::string_view str) {
+  std::string ret;
+#if defined(_WIN32)
+  int w_len = MultiByteToWideChar(CP_UTF8, 0, str.data(), -1, NULL, 0);
+
+  wchar_t *wbuf_ptr = new wchar_t[w_len + 1];  //一定要加1，不然会出现尾巴
+  memset(wbuf_ptr, 0, w_len * 2 + 2);
+
+  MultiByteToWideChar(CP_UTF8, 0, str.data(), str.length(), wbuf_ptr, w_len);
+
+  int len =
+      WideCharToMultiByte(CP_ACP, 0, wbuf_ptr, -1, NULL, NULL, NULL, NULL);
+
+  char *buf_ptr = new char[len + 1];
+  memset(buf_ptr, 0, len + 1);
+
+  WideCharToMultiByte(CP_ACP, 0, wbuf_ptr, w_len, buf_ptr, len, NULL, NULL);
+
+  ret = buf_ptr;
+
+  delete[] buf_ptr;
+  delete[] wbuf_ptr;
+
+  buf_ptr  = nullptr;
+  wbuf_ptr = nullptr;
+
+  return ret;
+#else
+  ret.assign(str.data(), str.size());
+#endif
+  return ret;
 }
 
 std::string &TrimLeft(std::string &src) {

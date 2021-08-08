@@ -22,9 +22,17 @@
 
 #include "helper.h"
 
+#include <string_view>
+
 namespace tpn {
 
 namespace xlsx {
+
+namespace {
+
+static constexpr std::string_view s_formatter_char = " ";  // 缩进方式
+
+}  // namespace
 
 bool SheetTitleIsOutput(std::string_view title) {
   if (title.empty()) {
@@ -33,6 +41,31 @@ bool SheetTitleIsOutput(std::string_view title) {
 
   return '@' == title[0];
 }
+
+Printer::Printer() {}
+
+Printer::~Printer() {}
+
+void Printer::Indent() { space_ += 2; }
+
+void Printer::Outdent() {
+  space_ -= 2;
+  if (space_ < 0) {
+    space_ = 0;
+  }
+}
+
+void Printer::Reset() {
+  buf_.clear();
+  space_ = 0;
+}
+
+void Printer::Print(std::string_view strv) {
+  fmt::format_to(FmtBufferAppender(buf_), "{0:>{1}}", s_formatter_char, space_);
+  buf_.append(strv.data(), strv.data() + strv.size());
+}
+
+FmtMemoryBuf &Printer::GetBuf() { return buf_; }
 
 }  // namespace xlsx
 

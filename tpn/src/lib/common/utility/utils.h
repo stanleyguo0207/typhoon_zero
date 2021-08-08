@@ -79,6 +79,11 @@ TPN_COMMON_API size_t Utf8Length(std::string &utf8str);
 ///  @param[in]		len				要截断的长度
 TPN_COMMON_API void Utf8Truncate(std::string &utf8str, size_t len);
 
+/// windows下转换utf8
+///  @param[in]   str       可能要转换的字符串
+///  @return windows下会转换，非windows平台原样返回
+TPN_COMMON_API std::string MaybeUtf8ToStr(std::string_view str);
+
 /// 枚举转换为底层类型
 ///  @tparam			T				枚举类型
 ///  @param[in]		value		枚举值

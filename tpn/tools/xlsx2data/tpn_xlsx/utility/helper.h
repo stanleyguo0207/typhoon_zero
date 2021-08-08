@@ -26,6 +26,7 @@
 #include <string_view>
 
 #include "xlsx2data_common.h"
+#include "fmt_wrap.h"
 
 namespace tpn {
 
@@ -34,6 +35,32 @@ namespace xlsx {
 /// sheet表名是否需要输出
 ///  @return 需要输出返回true
 TPN_XLSX2DATA_API bool SheetTitleIsOutput(std::string_view title);
+
+/// 格式控制
+class TPN_XLSX2DATA_API Printer {
+ public:
+  Printer();
+  ~Printer();
+
+  // 向内 =》
+  void Indent();
+
+  // 向外 《=
+  void Outdent();
+
+  // 重置
+  void Reset();
+
+  // 打印到缓冲区
+  void Print(std::string_view strv);
+
+  // 获取缓冲区
+  FmtMemoryBuf &GetBuf();
+
+ private:
+  FmtMemoryBuf buf_;  ///< 数据缓冲区
+  int space_{0};      ///< 空格
+};
 
 }  // namespace xlsx
 
