@@ -22,8 +22,6 @@
 
 #include "helper.h"
 
-#include <string_view>
-
 namespace tpn {
 
 namespace xlsx {

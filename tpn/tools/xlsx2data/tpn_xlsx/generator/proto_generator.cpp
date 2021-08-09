@@ -141,12 +141,10 @@ bool ProtoGenerator::GenerateSheetInfo(xlnt::worksheet &worksheet) {
   if (ranges.length() > 1) {  // 第一行为此列字段的标签定义
     printer_.Reset();
 
-    std::string_view title_strv(worksheet.title().data(),
-                                worksheet.title().length());
-    title_strv.remove_prefix(1);
+    std::string title_str = worksheet.title().substr(1);
 
     printer_.Println(
-        fmt::format("message {} {{", GetDataHubItemName(title_strv)));
+        fmt::format("message {} {{", GetDataHubItemName(title_str)));
     printer_.Indent();
 
     auto row = ranges[0];
@@ -160,11 +158,11 @@ bool ProtoGenerator::GenerateSheetInfo(xlnt::worksheet &worksheet) {
     printer_.Println("");
 
     printer_.Println(
-        fmt::format("message {} {{", GetDataHubMapName(title_strv)));
+        fmt::format("message {} {{", GetDataHubMapName(title_str)));
     printer_.Indent();
 
     printer_.Println(fmt::format("map<{}, {}> map_data = 1;", "fixed32",
-                                 GetDataHubItemName(title_strv)));
+                                 GetDataHubItemName(title_str)));
 
     printer_.Outdent();
     printer_.Println("}");
