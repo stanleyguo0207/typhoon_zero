@@ -42,6 +42,14 @@ bool SheetTitleIsOutput(std::string_view title) {
   return '@' == title[0];
 }
 
+std::string GetDataHubItemName(std::string_view name) {
+  return fmt::format("DataHub{}Item", name);
+}
+
+std::string GetDataHubMapName(std::string_view name) {
+  return fmt::format("DataHub{}Map", name);
+}
+
 Printer::Printer() {}
 
 Printer::~Printer() {}
@@ -61,8 +69,20 @@ void Printer::Reset() {
 }
 
 void Printer::Print(std::string_view strv) {
-  fmt::format_to(FmtBufferAppender(buf_), "{0:>{1}}", s_formatter_char, space_);
+  if (strv.empty()) {
+    return;
+  }
+  if (space_ > 0) {
+    fmt::format_to(FmtBufferAppender(buf_), "{0:>{1}}", s_formatter_char,
+                   space_);
+  }
+
   buf_.append(strv.data(), strv.data() + strv.size());
+}
+
+void Printer::Println(std::string_view strv) {
+  Print(strv);
+  buf_.push_back('\n');
 }
 
 FmtMemoryBuf &Printer::GetBuf() { return buf_; }

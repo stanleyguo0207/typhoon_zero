@@ -23,6 +23,7 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_UTILITY_HELPER_H_
 #define TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_UTILITY_HELPER_H_
 
+#include <string>
 #include <string_view>
 
 #include "xlsx2data_common.h"
@@ -35,6 +36,16 @@ namespace xlsx {
 /// sheet表名是否需要输出
 ///  @return 需要输出返回true
 TPN_XLSX2DATA_API bool SheetTitleIsOutput(std::string_view title);
+
+/// 获取data_hub内树节点名称
+///  @param[in]   name    名称
+///  @return 树节点名称
+TPN_XLSX2DATA_API std::string GetDataHubItemName(std::string_view name);
+
+/// 获取data_hub内树结构名称
+///  @param[in]   name    名称
+///  @return 树结构名称
+TPN_XLSX2DATA_API std::string GetDataHubMapName(std::string_view name);
 
 /// 格式控制
 class TPN_XLSX2DATA_API Printer {
@@ -53,6 +64,9 @@ class TPN_XLSX2DATA_API Printer {
 
   // 打印到缓冲区
   void Print(std::string_view strv);
+
+  // 打印到缓冲区，后加换行符
+  void Println(std::string_view strv);
 
   // 获取缓冲区
   FmtMemoryBuf &GetBuf();

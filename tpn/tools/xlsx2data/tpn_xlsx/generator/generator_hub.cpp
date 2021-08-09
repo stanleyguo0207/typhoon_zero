@@ -123,7 +123,7 @@ bool GeneratorHub::GenerateProtoFile(std::string_view workbook_path) {
   return true;
 }
 
-static const char *s_proto3_header = R"Header(//
+static constexpr std::string_view s_proto3_header = R"Header(//
 //           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
 //            │ └┬┘├─┘├─┤│ ││ ││││
 //            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
@@ -156,7 +156,9 @@ option cc_generic_services = false;
 
 void GeneratorHub::GenerateProtoFileHeader() {
   FmtMemoryBuf buf;
-  fmt::format_to(FmtBufferAppender(buf), s_proto3_header);
+  buf.append(s_proto3_header.data(),
+             s_proto3_header.data() + s_proto3_header.size());
+  //fmt::format_to(FmtBufferAppender(buf), s_proto3_header);
   proto_file_.Write(buf);
 }
 

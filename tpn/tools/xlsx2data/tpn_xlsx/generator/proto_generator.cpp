@@ -141,18 +141,34 @@ bool ProtoGenerator::GenerateSheetInfo(xlnt::worksheet &worksheet) {
   if (ranges.length() > 1) {  // 第一行为此列字段的标签定义
     printer_.Reset();
 
-    printer_.Print(
-        fmt::format("message DataHub{}Info {{\n", worksheet.title().substr(1)));
+    std::string_view title_strv(worksheet.title().data(),
+                                worksheet.title().length());
+    title_strv.remove_prefix(1);
 
+    printer_.Println(
+        fmt::format("message {} {{", GetDataHubItemName(title_strv)));
     printer_.Indent();
 
     auto row = ranges[0];
 
     for (auto &&cell : row) {
-      printer_.Print(fmt::format("{}\n", cell.to_string()));
+      printer_.Println(fmt::format("{}", cell.to_string()));
     }
+
     printer_.Outdent();
-    printer_.Print("}\n\n");
+    printer_.Println("}");
+    printer_.Println("");
+
+    printer_.Println(
+        fmt::format("message {} {{", GetDataHubMapName(title_strv)));
+    printer_.Indent();
+
+    printer_.Println(fmt::format("map<{}, {}> map_data = 1;", "fixed32",
+                                 GetDataHubItemName(title_strv)));
+
+    printer_.Outdent();
+    printer_.Println("}");
+    printer_.Println("");
 
     out_file_.Write(printer_.GetBuf());
   }
