@@ -54,16 +54,35 @@ class TPN_XLSX2DATA_API GeneratorHub {
   bool Generate();
 
  private:
+  /// 生成json
+  bool GenerateJson();
+
+  /// 生成json文件
+  ///  @param[in]   workbook_path     工作簿路径
+  ///  @return 成功返回true
+  bool GenerateJsonFile(std::string_view workbook_path);
+
+  /// 生成json文件头信息
+  void GenerateJsonFileHead();
+
+  /// 生成json文件尾信息
+  void GenerateJsonFileTail();
+
+  /// 生成proto
+  bool GenerateProto();
+
   /// 生成proto文件
+  ///  @param[in]   workbook_path     工作簿路径
   ///  @return 生成成功返回true
   bool GenerateProtoFile(std::string_view workbook_path);
 
   /// 生成proto文件头部分
-  void GenerateProtoFileHeader();
+  void GenerateProtoFileHead();
 
  private:
   std::string path_;                          ///< 数据文件夹路径
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
+  FileHelper json_file_;                      ///< json文件句柄
   FileHelper proto_file_;                     ///< proto文件句柄
 
   TPN_SINGLETON_DECL(GeneratorHub)

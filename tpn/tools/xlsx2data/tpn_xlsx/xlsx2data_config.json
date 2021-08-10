@@ -75,6 +75,9 @@
   /// proto文件输出目录路径
   // @type  string  默认值 "proto"
   "xlsx_proto_dir": "proto",
+  /// json文件输出目录路径
+  // @type  string  默认值 "json"
+  "xlsx_json_dir": "json",
   /// client文件目录路径
   // @type  string  默认值 "client"
   "xlsx_client_dir": "client",
