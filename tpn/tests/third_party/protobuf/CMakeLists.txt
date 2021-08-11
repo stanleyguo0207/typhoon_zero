@@ -30,6 +30,15 @@ add_executable(test_protobuf
 	"test_protobuf.cpp"
 	"addressbook.pb.cc"
   "complex_type.pb.cc"
+  "data.pb.cc"
+	)
+
+set_property(TARGET
+	test_protobuf	
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+		_TPN_PROTOBUF_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_protobuf_test.json"
 	)
 
 target_link_libraries(test_protobuf
@@ -42,3 +51,14 @@ install(TARGETS test_protobuf DESTINATION ${BIN_DIR}/tests)
 include(CTest)
 include(Catch)
 catch_discover_tests(test_protobuf)
+  
+if(WIN32)
+  add_custom_command(TARGET
+		test_protobuf
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/config_protobuf_test.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

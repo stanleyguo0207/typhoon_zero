@@ -29,11 +29,21 @@
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/util/json_util.h>
 
+#include "config.h"
 #include "fmt_wrap.h"
+#include "file_helper.h"
+#include "random_hub.h"
+
 #include "addressbook.pb.h"
 
 using namespace std;
 using namespace tpn;
+using namespace google::protobuf::util;
+using namespace rapidjson;
+
+#ifndef _TPN_PROTOBUF_CONFIG_TEST_FILE
+#  define _TPN_PROTOBUF_CONFIG_TEST_FILE "config_protobuf_test.json"
+#endif
 
 void PromptForAddress(tutorial::Person *person) {
   fmt::print("Enter person ID number: ");
@@ -260,4 +270,147 @@ TEST_CASE("complex read", "[protobuf]") {
   MessageToJsonString(obj, &json_string, options);
 
   fmt::print("JSON: {}", json_string);
+}
+
+#include "data.pb.h"
+
+TEST_CASE("data write", "[protobuf]") {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  std::shared_ptr<void> protobuf_handle(
+      nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
+
+  string config_error;
+  if (!g_config->Load(_TPN_PROTOBUF_CONFIG_TEST_FILE, {}, config_error)) {
+    fmt::print(stderr, "Error in config file {}, error {}\n",
+               _TPN_PROTOBUF_CONFIG_TEST_FILE, config_error);
+    return;
+  }
+
+  data::DataHubEntryItem item;
+
+  auto item_data1 = item.add_datas();
+  item_data1->set_id(1);
+  item_data1->set_type(1);
+  item_data1->set_sub_type(1);
+  item_data1->set_name("道具1");
+  item_data1->set_quality(1);
+
+  auto item_data2 = item.add_datas();
+  item_data2->set_id(2);
+  item_data2->set_type(2);
+  item_data2->set_sub_type(1);
+  item_data2->set_name("道具2");
+  item_data2->set_quality(2);
+
+  data::DataHubEntryLevel level;
+
+  for (int i = 1; i <= 5; ++i) {
+    auto level_data = level.add_datas();
+    level_data->set_level(i);
+    level_data->set_exp(i * 1000);
+  }
+
+  data::DataHubEntryShop shop;
+
+  for (int i = 0; i < 3; ++i) {
+    auto shop_data = shop.add_datas();
+    shop_data->set_id(i + 1);
+    shop_data->set_type(RandU32(1, 5));
+    shop_data->mutable_item()->set_p1(RandU32(1, 20));
+    shop_data->mutable_item()->set_p2(RandU32(100, 1000));
+    shop_data->mutable_price()->set_p1(RandU32(9000, 9001));
+    shop_data->mutable_price()->set_p2(RandU32(100, 1000));
+  }
+
+  data::DataHubEntryPack pack;
+
+  for (int i = 0; i < 2; ++i) {
+    auto pack_data = pack.add_datas();
+    pack_data->set_id(i + 1);
+    for (int i = 0; i < RandU32(2, 4); ++i) {
+      auto pool_data = pack_data->add_pool();
+      pool_data->set_p1(RandU32(1, 1000));
+      pool_data->set_p2(RandU32(100, 1000));
+      pool_data->set_p3(RandU32(1, 10000));
+    }
+  }
+
+  data::DataHubMap data_map;
+  (*data_map.mutable_datas())["item"].PackFrom(item);
+  (*data_map.mutable_datas())["level"].PackFrom(level);
+  (*data_map.mutable_datas())["shop"].PackFrom(shop);
+  (*data_map.mutable_datas())["pack"].PackFrom(pack);
+
+  std::string json_string;
+
+  JsonPrintOptions options;
+  options.add_whitespace                = true;
+  options.always_print_primitive_fields = true;
+  options.preserve_proto_field_names    = true;
+
+  MessageToJsonString(data_map, &json_string, options);
+
+  FileHelper helper;
+  helper.Open("data.json", true);
+
+  FmtMemoryBuf buf;
+  buf.append(json_string.data(), json_string.data() + json_string.length());
+  helper.Write(buf);
+}
+
+#include <filesystem>
+
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/filereadstream.h>
+
+TEST_CASE("data read", "[protobuf]") {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  std::shared_ptr<void> protobuf_handle(
+      nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
+
+  string config_error;
+  if (!g_config->Load(_TPN_PROTOBUF_CONFIG_TEST_FILE, {}, config_error)) {
+    fmt::print(stderr, "Error in config file {}, error {}\n",
+               _TPN_PROTOBUF_CONFIG_TEST_FILE, config_error);
+    return;
+  }
+
+  namespace fs   = std::filesystem;
+  auto json_file = fs::absolute("data.json");
+#ifdef _WIN32
+  FILE *fp = fopen(json_file.generic_string().c_str(), "rb");
+#else
+  FILE *fp = fopen(json_file.generic_string().c_str(), "r");
+#endif
+  char readBuffer[65536];
+  FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+  Document d;
+  d.ParseStream<kParseCommentsFlag>(is);
+  if (d.HasParseError()) {
+    fmt::print(stderr, "parse json error, {}", d.GetParseError());
+    return;
+  }
+
+  StringBuffer buffer;
+  Writer<StringBuffer> writer(buffer);
+  d.Accept(writer);
+
+  data::DataHubMap data_map;
+
+  JsonStringToMessage(buffer.GetString(), &data_map);
+
+  std::string json_string;
+
+  JsonPrintOptions options;
+  options.add_whitespace                = true;
+  options.always_print_primitive_fields = true;
+  options.preserve_proto_field_names    = true;
+
+  MessageToJsonString(data_map, &json_string, options);
+
+  fmt::print("Json : \n{}\n", json_string);
 }

@@ -1,0 +1,84 @@
+//
+//           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
+//            │ └┬┘├─┘├─┤│ ││ ││││
+//            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
+//
+// This file is part of the typhoon Project.
+// Copyright (C) 2021 stanley0207@163.com
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package data;
+
+option optimize_for = SPEED;
+option cc_generic_services = false;
+
+message DataHubEntryItem {
+  message Item {
+    uint32 id = 1;
+    uint32 type = 2;
+    uint32 sub_type = 3;
+    string name = 4;
+    uint32 quality = 5;
+  }
+  repeated Item datas = 1;
+}
+
+message DataHubEntryLevel {
+  message Level {
+    uint32 level = 1;
+    uint64 exp = 2;
+  }
+  repeated Level datas = 1;
+}
+
+message DataHubEntryShop {
+  message Shop {
+    uint32 id = 1;
+    uint32 type = 2;
+    message Item {
+      uint32 p1 = 1;  // id
+      uint32 p2 = 2;  // num
+    }
+    Item item = 3;
+    message Price {
+      uint32 p1 = 1;  // id
+      uint32 p2 = 2;  // num
+    }
+    Price price = 4;
+  }
+  repeated Shop datas = 1;
+}
+
+message DataHubEntryPack {
+  message Pack {
+    uint32 id = 1;
+    message Pool {
+      uint32 p1 = 1;  // id
+      uint32 p2 = 2;  // num
+      uint32 p3 = 3;  // weight
+    }
+    repeated Pool pool = 2;
+  }
+  repeated Pack datas = 1;
+}
+
+message DataHubMap {
+  map<string, google.protobuf.Any> datas = 1;
+}
