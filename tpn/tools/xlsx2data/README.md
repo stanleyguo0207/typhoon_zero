@@ -55,7 +55,6 @@
   | :-----: | :----: | :------: |
   | double  | double |  double  |
   |  float  | double |  float   |
-  |  float  | double |  float   |
   |   i32   |  int   |  int32   |
   |   i64   | int64  |  int64   |
   |   u32   |  uint  |  uint32  |

@@ -32,31 +32,31 @@ class FileHelper;
 
 namespace xlsx {
 
-/// proto文件生成器
-class TPN_XLSX2DATA_API ProtoGenerator {
- public:
-  /// 构造函数
-  ///  @param[in]   workbook    要转换的工作簿
-  ///  @param[in]   out_file    输出文件句柄
-  ProtoGenerator(xlnt::workbook &workbook, FileHelper &out_file);
-
-  ~ProtoGenerator();
-
-  /// 生成proto文件
-  ///  @return 生成成功返回true
-  bool Generate();
-
- private:
-  /// 生成sheet表的proto结构
-  ///  @param[in]   worksheet   工作表
-  ///  @return 生成成功返回true
-  bool GenerateSheetInfo(xlnt::worksheet &worksheet);
-
- private:
-  xlnt::workbook &workbook_;  ///< 当前处理的工作簿
-  FileHelper &out_file_;      ///< 输出文件句柄
-  Printer printer_;           ///< 打印器
-};
+///// proto文件生成器
+//class TPN_XLSX2DATA_API ProtoGenerator {
+// public:
+//  /// 构造函数
+//  ///  @param[in]   workbook    要转换的工作簿
+//  ///  @param[in]   out_file    输出文件句柄
+//  ProtoGenerator(xlnt::workbook &workbook, FileHelper &out_file);
+//
+//  ~ProtoGenerator();
+//
+//  /// 生成proto文件
+//  ///  @return 生成成功返回true
+//  bool Generate();
+//
+// private:
+//  /// 生成sheet表的proto结构
+//  ///  @param[in]   worksheet   工作表
+//  ///  @return 生成成功返回true
+//  bool GenerateSheetInfo(xlnt::worksheet &worksheet);
+//
+// private:
+//  xlnt::workbook &workbook_;  ///< 当前处理的工作簿
+//  FileHelper &out_file_;      ///< 输出文件句柄
+//  Printer printer_;           ///< 打印器
+//};
 
 }  // namespace xlsx
 

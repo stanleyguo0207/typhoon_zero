@@ -23,4 +23,15 @@
 #ifndef TPN_TOOLS_XLSX2DATA_TPN_XLSX_PCH_PCH_TPN_XLSX_H_
 #define TPN_TOOLS_XLSX2DATA_TPN_XLSX_PCH_PCH_TPN_XLSX_H_
 
+#include <vector>
+#include <string>
+#include <string_view>
+#include <filesystem>
+
+#include <xlnt/xlnt.hpp>
+
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
+
 #endif // TPN_TOOLS_XLSX2DATA_TPN_XLSX_PCH_PCH_TPN_XLSX_H_

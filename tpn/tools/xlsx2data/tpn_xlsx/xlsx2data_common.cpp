@@ -33,26 +33,23 @@ namespace xlsx {
 static const std::unordered_map<std::string_view, XlsxDataType> s_name_2_type =
     {{"double", XlsxDataType::kXlsxDataTypeDouble},
      {"float", XlsxDataType::kXlsxDataTypeFloat},
-     {"i8", XlsxDataType::kXlsxDataTypeI8},
-     {"i16", XlsxDataType::kXlsxDataTypeI16},
      {"i32", XlsxDataType::kXlsxDataTypeI32},
      {"i64", XlsxDataType::kXlsxDataTypeI64},
-     {"u8", XlsxDataType::kXlsxDataTypeU8},
-     {"u16", XlsxDataType::kXlsxDataTypeU16},
      {"u32", XlsxDataType::kXlsxDataTypeU32},
      {"u64", XlsxDataType::kXlsxDataTypeU64},
+     {"bool", XlsxDataType::kXlsxDataTypeBool},
      {"str", XlsxDataType::kXlsxDataTypeStr},
-     {"desc", XlsxDataType::kXlsxDataTypeDesc},
+     {"#", XlsxDataType::kXlsxDataTypeDesc},
      {"complex", XlsxDataType::kXlsxDataTypeComplex}};
 
-/// - | ; % #
+/// ! " & + - = ? ^ | ~
 static constexpr uint8_t s_complex_sign[128] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0,
-    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1,
+    0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0};
+    0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
 
 bool IsTypeNameComplex(std::string_view type_name) {
   for (auto &&c : type_name) {

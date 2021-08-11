@@ -23,6 +23,11 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_GENERATOR_JSON_GENERATOR_H_
 #define TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_GENERATOR_JSON_GENERATOR_H_
 
+#include <string_view>
+#include <rapidjson/document.h>
+
+#include "file_helper.h"
+
 #include "xlsx2data_common.h"
 
 namespace tpn {
@@ -34,7 +39,32 @@ namespace xlsx {
 /// json文件生成器
 class TPN_XLSX2DATA_API JsonGenerator {
  public:
+  JsonGenerator();
+  ~JsonGenerator();
+
+  /// 加载配置
+  ///  @param[out]  error     读取数据错误信息
+  ///  @return 加载成功返回true
+  bool Load(std::string &error);
+
+  /// 分析数据
+  ///  @param[in]   workbook_path     工作簿路径
+  ///  @return 成功返回true
+  bool Analyze(std::string_view workbook_path);
+
+  /// 生成数据
+  ///  @return 成功返回true
+  bool Generate();
+
  private:
+  /// 分析数据
+  ///  @param[in]   worksheet         工作表
+  ///  @return 成功返回true
+  bool Analyze(xlnt::worksheet &worksheet);
+
+ private:
+  rapidjson::Document document_;  ///< json数据
+  FileHelper json_file_;          ///< json文件句柄
 };
 
 }  // namespace xlsx

@@ -27,7 +27,7 @@
 #include "log.h"
 #include "config.h"
 #include "debug_hub.h"
-#include "proto_generator.h"
+//#include "proto_generator.h"
 
 namespace fs = std::filesystem;
 
@@ -92,28 +92,24 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
       error = std::string("coudn't find xlsx files in") + " (" + path_ + ") ";
       return false;
     }
-
-    if (!reload) {
-      // json生成路径
-      std::string json_file_path =
-          g_config->GetStringDefault("xlsx_json_dir", "json") +
-          "/data_hub.json";
-      json_file_.Open(json_file_path, true);
-
-      // proto生成路径
-      std::string proto_file_path =
-          g_config->GetStringDefault("xlsx_proto_dir", "proto") +
-          "/data_hub.proto";
-      proto_file_.Open(proto_file_path, true);
-    } else {
-      json_file_.Reopen(true);
-      proto_file_.Reopen(true);
-    }
+    //if (!reload) {
+    //  // proto生成路径
+    //  std::string proto_file_path =
+    //      g_config->GetStringDefault("xlsx_proto_dir", "proto") +
+    //      "/data_hub.proto";
+    //  proto_file_.Open(proto_file_path, true);
+    //} else {
+    //  proto_file_.Reopen(true);
+    //}
   } catch (fs::filesystem_error &e) {
     error = std::string{e.what()} + " (" + path_ + ") ";
     return false;
   } catch (const std::exception &ex) {
     error = std::string{ex.what()} + " (" + path_ + ") ";
+    return false;
+  }
+
+  if (!json_gen_.Load(error)) {
     return false;
   }
 
@@ -145,56 +141,31 @@ bool GeneratorHub::Generate() {
 bool GeneratorHub::GenerateJson() {
   LOG_INFO("start generate json");
 
-  GenerateJsonFileHead();
-
   for (auto &&path : xlsx_file_paths_) {
-    if (!GenerateJsonFile(path)) {
+    if (!json_gen_.Analyze(path)) {
       LOG_ERROR("generate json file fail, workbook path : {} ", path);
       return false;
     }
   }
 
-  GenerateJsonFileTail();
+  json_gen_.Generate();
 
   LOG_INFO("finish generate json");
 
   return true;
 }
 
-bool GeneratorHub::GenerateJsonFile(std::string_view workbook_path) {
-  LOG_INFO("start generate json file, workbook path : {}", workbook_path);
-
-  LOG_INFO("finish generate json file, workbook path : {}", workbook_path);
-
-  return true;
-}
-
-void GeneratorHub::GenerateJsonFileHead() {
-  FmtMemoryBuf buf;
-  buf.append(s_generator_licenses.data(),
-             s_generator_licenses.data() + s_generator_licenses.size());
-  buf.push_back('{');
-  buf.push_back('\n');
-  json_file_.Write(buf);
-}
-
-void GeneratorHub::GenerateJsonFileTail() {
-  FmtMemoryBuf buf;
-  fmt::format_to(FmtBufferAppender(buf), "}}\n// vim: ft=jsonc");
-  json_file_.Write(buf);
-}
-
 bool GeneratorHub::GenerateProto() {
   LOG_INFO("start generate proto");
 
-  GenerateProtoFileHead();
+  //GenerateProtoFileHead();
 
-  for (auto &&path : xlsx_file_paths_) {
-    if (!GenerateProtoFile(path)) {
-      LOG_ERROR("generate proto file fail, workbook path : {} ", path);
-      return false;
-    }
-  }
+  //for (auto &&path : xlsx_file_paths_) {
+  //  if (!GenerateProtoFile(path)) {
+  //    LOG_ERROR("generate proto file fail, workbook path : {} ", path);
+  //    return false;
+  //  }
+  //}
 
   LOG_INFO("start generate proto");
 
@@ -202,41 +173,41 @@ bool GeneratorHub::GenerateProto() {
 }
 
 bool GeneratorHub::GenerateProtoFile(std::string_view workbook_path) {
-  LOG_INFO("xlsx generator start generate proto file, workbook path : {}",
-           workbook_path);
+  //LOG_INFO("xlsx generator start generate proto file, workbook path : {}",
+  //         workbook_path);
 
-  xlnt::workbook wb;
+  //xlnt::workbook wb;
 
-  try {
-    wb.load(workbook_path.data());
-  } catch (xlnt::exception &e) {
-    LOG_ERROR("xlsx generator load workbook exception error : {}", e.what());
-    return false;
-  } catch (...) {
-    LOG_ERROR("xlsx generator load workbook exception ...");
-    return false;
-  }
+  //try {
+  //  wb.load(workbook_path.data());
+  //} catch (xlnt::exception &e) {
+  //  LOG_ERROR("xlsx generator load workbook exception error : {}", e.what());
+  //  return false;
+  //} catch (...) {
+  //  LOG_ERROR("xlsx generator load workbook exception ...");
+  //  return false;
+  //}
 
-  ProtoGenerator proto_gr(wb, proto_file_);
+  //ProtoGenerator proto_gr(wb, proto_file_);
 
-  // proto文件生成
-  if (!proto_gr.Generate()) {
-    LOG_INFO("xlsx generator generate proto file fail, workbook path : {}",
-             workbook_path);
-    return false;
-  }
+  //// proto文件生成
+  //if (!proto_gr.Generate()) {
+  //  LOG_INFO("xlsx generator generate proto file fail, workbook path : {}",
+  //           workbook_path);
+  //  return false;
+  //}
 
-  LOG_INFO("xlsx generator finish generate proto file, workbook path : {}",
-           workbook_path);
+  //LOG_INFO("xlsx generator finish generate proto file, workbook path : {}",
+  //         workbook_path);
   return true;
 }
 
 void GeneratorHub::GenerateProtoFileHead() {
-  FmtMemoryBuf buf;
-  buf.append(s_generator_licenses.data(),
-             s_generator_licenses.data() + s_generator_licenses.size());
-  buf.append(s_proto3_head.data(), s_proto3_head.data() + s_proto3_head.size());
-  proto_file_.Write(buf);
+  //FmtMemoryBuf buf;
+  //buf.append(s_generator_licenses.data(),
+  //           s_generator_licenses.data() + s_generator_licenses.size());
+  //buf.append(s_proto3_head.data(), s_proto3_head.data() + s_proto3_head.size());
+  //proto_file_.Write(buf);
 }
 
 TPN_SINGLETON_IMPL(GeneratorHub)

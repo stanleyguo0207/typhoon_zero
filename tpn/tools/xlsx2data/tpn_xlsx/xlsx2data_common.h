@@ -38,21 +38,19 @@ enum class XlsxDataType : uint8_t {
   kXlsxDataTypeNone    = 0,   ///< 默认
   kXlsxDataTypeDouble  = 1,   ///< double
   kXlsxDataTypeFloat   = 2,   ///< float
-  kXlsxDataTypeI8      = 3,   ///< i8
-  kXlsxDataTypeI16     = 4,   ///< i16
-  kXlsxDataTypeI32     = 5,   ///< i32
-  kXlsxDataTypeI64     = 6,   ///< i64
-  kXlsxDataTypeU8      = 7,   ///< u8
-  kXlsxDataTypeU16     = 8,   ///< u16
-  kXlsxDataTypeU32     = 9,   ///< u32
-  kXlsxDataTypeU64     = 10,  ///< u64
-  kXlsxDataTypeStr     = 11,  ///< str
-  kXlsxDataTypeDesc    = 12,  ///< desc
-  kXlsxDataTypeComplex = 13,  ///< complex
+  kXlsxDataTypeI32     = 3,   ///< i32
+  kXlsxDataTypeI64     = 4,   ///< i64
+  kXlsxDataTypeU32     = 5,   ///< u32
+  kXlsxDataTypeU64     = 6,   ///< u64
+  kXlsxDataTypeBool    = 7,   ///< bool
+  kXlsxDataTypeStr     = 8,   ///< str
+  kXlsxDataTypeDesc    = 9,   ///< #
+  kXlsxDataTypeComplex = 10,  ///< complex
 };
 
 /// 是否为复杂类型
-/// 支持 - | ; % #
+/// 支持 ! " & + - = ? ^ | ~
+/// 常用 - | 
 ///  @param[in]   type_name     表约定类型
 ///  @return 包含特殊解析字符的，视为复杂类型，返回true
 TPN_XLSX2DATA_API bool IsTypeNameComplex(std::string_view type_name);
