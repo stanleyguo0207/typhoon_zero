@@ -109,8 +109,8 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
     std::string title_raw = GetSheetTitle(worksheet.title());
     TPN_ASSERT(!title_raw.empty(), "sheet title error, title : {}",
                worksheet.title());
-    std::string title = LowercaseString(title_raw);
 
+    // 获取json的根节点
     rapidjson::Value key;
     key.SetString(GetMapVarName().data(), GetMapVarName().length());
     auto &datas = document_[key.Move()];
@@ -118,10 +118,50 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
                key.GetString());
 
     rapidjson::Value title_key;
+    // json 工作表节点
+    std::string title = LowercaseString(title_raw);
     title_key.SetString(title.data(), title.length(), document_.GetAllocator());
 
-    rapidjson::Value val(rapidjson::kObjectType);
-    datas.AddMember(title_key.Move(), val.Move(), document_.GetAllocator());
+    rapidjson::Value title_val(rapidjson::kObjectType);
+
+    std::string type_name = GetJsonTypeName(GetDataHubEntryName(title_raw));
+
+    // any 类型的反射type
+    rapidjson::Value type_val;
+    type_val.SetString(type_name.data(), type_name.length(),
+                       document_.GetAllocator());
+
+    title_val.AddMember("@type", type_val.Move(), document_.GetAllocator());
+
+    // repeated 数据
+    rapidjson::Value data_key;
+    data_key.SetString(GetArrVarName().data(), GetArrVarName().length());
+
+    rapidjson::Value data_val;
+    data_val.SetArray();
+
+    for (size_t idx = 0; idx < ranges.length(); ++idx) {
+      if (0 == idx) {  // 头解析
+        fmt::print("head => ");
+        for (auto &&cell : ranges[idx]) {
+          fmt::print("{}\t", cell.to_string());
+        }
+        fmt::print("\n");
+      } else if (1 == idx) {  // 注释跳过
+        ;
+      } else {
+        for (auto &&cell : ranges[idx]) {  // 数据解析
+          fmt::print("{}\t", cell.to_string());
+        }
+        fmt::print("\n");
+      }
+    }
+
+    title_val.AddMember(data_key.Move(), data_val.Move(),
+                        document_.GetAllocator());
+
+    datas.AddMember(title_key.Move(), title_val.Move(),
+                    document_.GetAllocator());
   }
 
   LOG_INFO("json generator finish analyze worksheet : {}", worksheet.title());
@@ -133,6 +173,7 @@ bool JsonGenerator::Generate() {
 
   rapidjson::StringBuffer str_buf;
   rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(str_buf);
+  writer.SetIndent(' ', 1);
   document_.Accept(writer);
 
   FmtMemoryBuf buf;

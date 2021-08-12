@@ -42,7 +42,7 @@ static const std::unordered_map<std::string_view, XlsxDataType> s_name_2_type =
      {"bool", XlsxDataType::kXlsxDataTypeBool},
      {"str", XlsxDataType::kXlsxDataTypeStr},
      {"#", XlsxDataType::kXlsxDataTypeDesc},
-     {"complex", XlsxDataType::kXlsxDataTypeComplex}};
+     {"desc", XlsxDataType::kXlsxDataTypeDesc}};
 
 /// ! " & + - = ? ^ | ~
 static constexpr uint8_t s_complex_sign[128] = {
@@ -54,24 +54,45 @@ static constexpr uint8_t s_complex_sign[128] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
 
 static constexpr std::string_view s_map_var_name = "datas";
+static constexpr std::string_view s_arr_var_name = "datas";
+
+static constexpr char s_constraint_primary_key = '!';
+static constexpr char s_constraint_not_empty   = '*';
+
+static constexpr char s_export_client = 'c';
+static constexpr char s_export_server = 's';
 
 }  // namespace
 
-bool IsTypeNameComplex(std::string_view type_name) {
-  for (auto &&c : type_name) {
-    if (1 == s_complex_sign[c]) {
-      return true;
+bool IsTypeNameComplexObj(std::string_view type_name) {
+  if (!type_name.empty()) {
+    for (auto &&c : type_name) {
+      if (1 == s_complex_sign[c]) {
+        return true;
+      }
     }
   }
 
   return false;
 }
 
+bool IsTypeNameComplexArr(std::string_view type_name) {
+  return type_name.empty()
+             ? false
+             : (1 == s_complex_sign[type_name[type_name.length() - 1]]);
+}
+
 XlsxDataType GetTypeByTypeName(std::string_view type_name) {
+  if (type_name.empty()) {
+    return XlsxDataType::kXlsxDataTypeNone;
+  }
+
   auto iter = s_name_2_type.find(type_name);
   if (s_name_2_type.end() == iter) {
-    if (IsTypeNameComplex(type_name)) {
-      return XlsxDataType::kXlsxDataTypeComplex;
+    if (IsTypeNameComplexObj(type_name)) {
+      return IsTypeNameComplexArr(type_name)
+                 ? XlsxDataType::kXlsxDataTypeComplexArr
+                 : XlsxDataType::kXlsxDataTypeComplexObj;
     }
     return XlsxDataType::kXlsxDataTypeNone;
   } else {
@@ -79,7 +100,46 @@ XlsxDataType GetTypeByTypeName(std::string_view type_name) {
   }
 }
 
+XlsxDataConstraintType GetConstraintTypeByTypeName(std::string_view type_name) {
+  if (!type_name.empty()) {
+    // 先搜索主键
+    if (std::string_view::npos != type_name.find(s_constraint_primary_key)) {
+      return XlsxDataConstraintType::XlsxDataCheckTypePrimaryKey;
+    }
+
+    // 再搜索非空
+    if (std::string_view::npos != type_name.find(s_constraint_not_empty)) {
+      return XlsxDataConstraintType::XlsxDataCheckTypeNotEmpty;
+    }
+  }
+
+  return XlsxDataConstraintType::XlsxDataCheckTypeNone;
+}
+
+XlsxDataExportType GetExportTypeByTypeName(std::string_view type_name) {
+  if (!type_name.empty()) {
+    bool client = std::string_view::npos != type_name.find(s_export_client);
+    bool server = std::string_view::npos != type_name.find(s_export_server);
+
+    if (client && server) {
+      return XlsxDataExportType::kXlsxDataExportTypeBoth;
+    }
+
+    if (client) {
+      return XlsxDataExportType::kXlsxDataExportTypeClient;
+    }
+
+    if (server) {
+      return XlsxDataExportType::kXlsxDataExportTypeServer;
+    }
+  }
+
+  return XlsxDataExportType::kXlsxDataExportTypeBoth;
+}
+
 std::string_view GetMapVarName() { return s_map_var_name; }
+
+std::string_view GetArrVarName() { return s_arr_var_name; }
 
 }  // namespace xlsx
 

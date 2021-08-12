@@ -35,34 +35,75 @@ namespace xlsx {
 
 /// 自定义类型
 enum class XlsxDataType : uint8_t {
-  kXlsxDataTypeNone    = 0,   ///< 默认
-  kXlsxDataTypeDouble  = 1,   ///< double
-  kXlsxDataTypeFloat   = 2,   ///< float
-  kXlsxDataTypeI32     = 3,   ///< i32
-  kXlsxDataTypeI64     = 4,   ///< i64
-  kXlsxDataTypeU32     = 5,   ///< u32
-  kXlsxDataTypeU64     = 6,   ///< u64
-  kXlsxDataTypeBool    = 7,   ///< bool
-  kXlsxDataTypeStr     = 8,   ///< str
-  kXlsxDataTypeDesc    = 9,   ///< #
-  kXlsxDataTypeComplex = 10,  ///< complex
+  kXlsxDataTypeNone       = 0,   ///< 默认
+  kXlsxDataTypeDouble     = 1,   ///< double
+  kXlsxDataTypeFloat      = 2,   ///< float
+  kXlsxDataTypeI32        = 3,   ///< i32
+  kXlsxDataTypeI64        = 4,   ///< i64
+  kXlsxDataTypeU32        = 5,   ///< u32
+  kXlsxDataTypeU64        = 6,   ///< u64
+  kXlsxDataTypeBool       = 7,   ///< bool
+  kXlsxDataTypeStr        = 8,   ///< str
+  kXlsxDataTypeDesc       = 9,   ///< # or desc
+  kXlsxDataTypeComplexObj = 10,  ///< complex obj
+  kXlsxDataTypeComplexArr = 11,  ///< complex array
 };
 
-/// 是否为复杂类型
+/// 约束类型
+enum class XlsxDataConstraintType : uint8_t {
+  XlsxDataCheckTypeNone       = 0,  ///< 无约束
+  XlsxDataCheckTypePrimaryKey = 1,  ///< 主键 !
+  XlsxDataCheckTypeNotEmpty   = 2,  ///< 非空 *
+};
+
+/// 导出类型
+enum class XlsxDataExportType : uint8_t {
+  kXlsxDataExportTypeBoth   = 0,  ///< 都导出
+  kXlsxDataExportTypeClient = 1,  ///< 仅客户端导出 c
+  kXlsxDataExportTypeServer = 2,  ///< 仅服务器导出 s
+};
+
+/// 是否为复杂类型对象
 /// 支持 ! " & + - = ? ^ | ~
-/// 常用 - | 
+/// 常用 - |
 ///  @param[in]   type_name     表约定类型
 ///  @return 包含特殊解析字符的，视为复杂类型，返回true
-TPN_XLSX2DATA_API bool IsTypeNameComplex(std::string_view type_name);
+/// @note u32-u32
+TPN_XLSX2DATA_API bool IsTypeNameComplexObj(std::string_view type_name);
+
+/// 是否为复杂类型对象数组
+/// 最后一位如果是特殊字符则为数组
+/// 支持 ! " & + - = ? ^ | ~
+/// 常用 - |
+///  @param[in]   type_name     表约定类型
+///  @return 包含特殊解析字符的，视为复杂类型，返回true
+/// @note u32-u32|
+TPN_XLSX2DATA_API bool IsTypeNameComplexArr(std::string_view type_name);
 
 /// 根据类型名获取类型
 ///  @param[in]   type_name     表约定类型
 ///  @return 返回约定类型对应的内部自定义类型
 TPN_XLSX2DATA_API XlsxDataType GetTypeByTypeName(std::string_view type_name);
 
+/// 根据类型名获取约束类型
+///  @param[in]   type_name     表约定类型
+///  @return 返回约定类型对应的内部约束类型
+TPN_XLSX2DATA_API XlsxDataConstraintType
+GetConstraintTypeByTypeName(std::string_view type_name);
+
+/// 根据类型名获取导出类型
+///  @param[in]   type_name     表约定类型
+///  @return 返回约定类型对应的内部导出类型
+TPN_XLSX2DATA_API XlsxDataExportType
+GetExportTypeByTypeName(std::string_view type_name);
+
 /// 获取proto文件DataHubMap变量名
 ///  @return DataHubMap变量名
 TPN_XLSX2DATA_API std::string_view GetMapVarName();
+
+/// 获取proto文件DataHubEntry repeated 变量名
+///  @return DataHubEntry repeated 变量名
+TPN_XLSX2DATA_API std::string_view GetArrVarName();
 
 }  // namespace xlsx
 

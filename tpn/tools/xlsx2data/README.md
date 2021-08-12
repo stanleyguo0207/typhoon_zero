@@ -51,18 +51,18 @@
   因为要转换为`json`与`protobuf`，所以类型有所取舍。
 
   支持类型如下：
-  |  xlsx   |  json  | protobuf |
-  | :-----: | :----: | :------: |
-  | double  | double |  double  |
-  |  float  | double |  float   |
-  |   i32   |  int   |  int32   |
-  |   i64   | int64  |  int64   |
-  |   u32   |  uint  |  uint32  |
-  |   u64   | unt64  |  uint64  |
-  |  bool   |  bool  |   bool   |
-  |   str   | string |  string  |
-  |    #    |        |          |
-  | complex |        |          |
+  |   xlsx    |  json  | protobuf |
+  | :-------: | :----: | :------: |
+  |  double   | double |  double  |
+  |   float   | double |  float   |
+  |    i32    |  int   |  int32   |
+  |    i64    | int64  |  int64   |
+  |    u32    |  uint  |  uint32  |
+  |    u64    | unt64  |  uint64  |
+  |   bool    |  bool  |   bool   |
+  |    str    | string |  string  |
+  | desc or # |        |          |
+  |  complex  |        |          |
   
   其中`#`为描述内容，该列数据不会被解析。
 
