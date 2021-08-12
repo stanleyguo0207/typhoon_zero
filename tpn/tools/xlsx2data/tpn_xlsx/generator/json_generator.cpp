@@ -31,7 +31,9 @@
 #include "config.h"
 #include "debug_hub.h"
 #include "fmt_wrap.h"
+#include "utils.h"
 #include "helper.h"
+#include "generator_hub.h"
 
 namespace fs = std::filesystem;
 
@@ -44,11 +46,25 @@ JsonGenerator::JsonGenerator() {}
 JsonGenerator::~JsonGenerator() {}
 
 bool JsonGenerator::Load(std::string &error) {
-  std::string json_file_path =
-      g_config->GetStringDefault("xlsx_json_dir", "json") + "/data_hub.json";
+  std::string json_file_path = fmt::format(
+      "{}/{}.json", g_config->GetStringDefault("xlsx_json_dir", "json"),
+      g_xlsx2data_generator->GetFilePrefix());
   try {
     json_file_.Open(json_file_path, true);
+
+    document_.SetNull();
+    document_.SetObject();
+
+    rapidjson::Value key;
+    key.SetString(GetMapVarName().data(), GetMapVarName().length());
+
+    rapidjson::Value val(rapidjson::kObjectType);
+
+    document_.AddMember(key.Move(), val.Move(), document_.GetAllocator());
   } catch (FileException &ex) {
+    error = std::string{ex.what()};
+    return false;
+  } catch (const std::exception &ex) {
     error = std::string{ex.what()};
     return false;
   }
@@ -90,6 +106,22 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
 
   auto &&ranges = worksheet.rows();
   if (ranges.length() > 1) {  // 第一行为此列字段的标签定义
+    std::string title_raw = GetSheetTitle(worksheet.title());
+    TPN_ASSERT(!title_raw.empty(), "sheet title error, title : {}",
+               worksheet.title());
+    std::string title = LowercaseString(title_raw);
+
+    rapidjson::Value key;
+    key.SetString(GetMapVarName().data(), GetMapVarName().length());
+    auto &datas = document_[key.Move()];
+    TPN_ASSERT(datas.IsObject(), "document_ encode error, key : {}",
+               key.GetString());
+
+    rapidjson::Value title_key;
+    title_key.SetString(title.data(), title.length(), document_.GetAllocator());
+
+    rapidjson::Value val(rapidjson::kObjectType);
+    datas.AddMember(title_key.Move(), val.Move(), document_.GetAllocator());
   }
 
   LOG_INFO("json generator finish analyze worksheet : {}", worksheet.title());

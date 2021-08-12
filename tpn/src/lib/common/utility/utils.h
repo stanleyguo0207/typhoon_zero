@@ -196,6 +196,14 @@ decltype(auto) ForwardAsLambda(Func &&func, Args &&...args) {
   };
 }
 
+/// 大写转换字符串
+///  @return 转换后的大写字符串
+TPN_COMMON_API std::string UppercaseString(std::string_view strv);
+
+/// 小写转换字符串
+///  @return 转换后的小写字符串
+TPN_COMMON_API std::string LowercaseString(std::string_view strv);
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_

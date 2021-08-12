@@ -60,6 +60,10 @@ TPN_XLSX2DATA_API bool IsTypeNameComplex(std::string_view type_name);
 ///  @return 返回约定类型对应的内部自定义类型
 TPN_XLSX2DATA_API XlsxDataType GetTypeByTypeName(std::string_view type_name);
 
+/// 获取proto文件DataHubMap变量名
+///  @return DataHubMap变量名
+TPN_XLSX2DATA_API std::string_view GetMapVarName();
+
 }  // namespace xlsx
 
 }  // namespace tpn

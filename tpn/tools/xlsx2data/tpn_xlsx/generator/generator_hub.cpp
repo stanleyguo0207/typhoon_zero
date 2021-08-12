@@ -92,6 +92,9 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
       error = std::string("coudn't find xlsx files in") + " (" + path_ + ") ";
       return false;
     }
+
+    file_prefix_ = g_config->GetStringDefault("xlsx_file_prefix", "data_hub");
+
     //if (!reload) {
     //  // proto生成路径
     //  std::string proto_file_path =
@@ -137,6 +140,8 @@ bool GeneratorHub::Generate() {
 
   return true;
 }
+
+std::string_view GeneratorHub::GetFilePrefix() const { return file_prefix_; }
 
 bool GeneratorHub::GenerateJson() {
   LOG_INFO("start generate json");

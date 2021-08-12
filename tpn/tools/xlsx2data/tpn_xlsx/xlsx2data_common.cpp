@@ -29,6 +29,8 @@ namespace tpn {
 
 namespace xlsx {
 
+namespace {
+
 /// 内部类型转枚举
 static const std::unordered_map<std::string_view, XlsxDataType> s_name_2_type =
     {{"double", XlsxDataType::kXlsxDataTypeDouble},
@@ -51,6 +53,10 @@ static constexpr uint8_t s_complex_sign[128] = {
     0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0};
 
+static constexpr std::string_view s_map_var_name = "datas";
+
+}  // namespace
+
 bool IsTypeNameComplex(std::string_view type_name) {
   for (auto &&c : type_name) {
     if (1 == s_complex_sign[c]) {
@@ -72,6 +78,8 @@ XlsxDataType GetTypeByTypeName(std::string_view type_name) {
     return iter->second;
   }
 }
+
+std::string_view GetMapVarName() { return s_map_var_name; }
 
 }  // namespace xlsx
 

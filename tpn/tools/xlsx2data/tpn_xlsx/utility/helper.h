@@ -34,18 +34,34 @@ namespace tpn {
 namespace xlsx {
 
 /// sheet表名是否需要输出
+///  @param[in]   title     sheet表名称
 ///  @return 需要输出返回true
 TPN_XLSX2DATA_API bool SheetTitleIsOutput(std::string_view title);
 
-/// 获取data_hub内树节点名称
-///  @param[in]   name    名称
-///  @return 树节点名称
-TPN_XLSX2DATA_API std::string GetDataHubItemName(std::string_view name);
+/// 获取sheet表名
+///  @param[in]   title     sheet表名称
+///  @return sheet表名
+TPN_XLSX2DATA_API std::string GetSheetTitle(std::string_view title);
 
-/// 获取data_hub内树结构名称
+/// 获取data_hub节点名称
 ///  @param[in]   name    名称
-///  @return 树结构名称
-TPN_XLSX2DATA_API std::string GetDataHubMapName(std::string_view name);
+///  @return 节点名称
+TPN_XLSX2DATA_API std::string GetDataHubEntryName(std::string_view name);
+
+/// 获取data_hub的json数据类型
+///  @param[in]   name    名称
+///  @return json数据类型
+TPN_XLSX2DATA_API std::string GetJsonTypeName(std::string_view name);
+
+/// 首字母大写
+///  @param[in]   strv    需要转化的字符视图
+///  @return 转换后的字符串
+TPN_XLSX2DATA_API std::string CapitalizeFirstLetter(std::string_view strv);
+
+/// 首字母小写
+///  @param[in]   strv    需要转化的字符视图
+///  @return 转换后的字符串
+TPN_XLSX2DATA_API std::string LowercaseFirstLetter(std::string_view strv);
 
 /// 格式控制
 class TPN_XLSX2DATA_API Printer {

@@ -22,6 +22,8 @@
 
 #include "helper.h"
 
+#include "generator_hub.h"
+
 namespace tpn {
 
 namespace xlsx {
@@ -40,12 +42,42 @@ bool SheetTitleIsOutput(std::string_view title) {
   return '@' == title[0];
 }
 
-std::string GetDataHubItemName(std::string_view name) {
-  return fmt::format("DataHub{}Item", name);
+std::string GetSheetTitle(std::string_view title) {
+  if (!SheetTitleIsOutput(title)) {
+    return "";
+  }
+
+  title.remove_prefix(1);
+  return std::string(title.data(), title.length());
 }
 
-std::string GetDataHubMapName(std::string_view name) {
-  return fmt::format("DataHub{}Map", name);
+std::string GetDataHubEntryName(std::string_view name) {
+  return fmt::format("DataHubEntry{}", name);
+}
+
+std::string GetJsonTypeName(std::string_view name) {
+  return fmt::format("type.googleapis.com/{}.{}",
+                     g_xlsx2data_generator->GetFilePrefix(), name);
+}
+
+std::string CapitalizeFirstLetter(std::string_view strv) {
+  std::string ret(strv.data(), strv.length());
+  if (ret.empty()) {
+    return ret;
+  }
+
+  ret[0] = ::toupper(ret[0]);
+  return ret;
+}
+
+std::string LowercaseFirstLetter(std::string_view strv) {
+  std::string ret(strv.data(), strv.length());
+  if (ret.empty()) {
+    return ret;
+  }
+
+  ret[0] = ::tolower(ret[0]);
+  return ret;
 }
 
 Printer::Printer() {}

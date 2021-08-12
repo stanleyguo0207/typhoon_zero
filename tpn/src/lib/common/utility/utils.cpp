@@ -24,6 +24,8 @@
 
 #include <cstring>
 
+#include <algorithm>
+
 #if defined(_WIN32)
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
@@ -249,6 +251,30 @@ Tokenizer::Tokenizer(std::string_view src, char delimiter,
 
     ++pos_new;
   }
+}
+
+std::string UppercaseString(std::string_view strv) {
+  if (strv.empty()) {
+    return "";
+  }
+
+  std::string ret(strv.data(), strv.length());
+
+  std::transform(ret.begin(), ret.end(), ret.begin(), ::toupper);
+
+  return ret;
+}
+
+std::string LowercaseString(std::string_view strv) {
+  if (strv.empty()) {
+    return "";
+  }
+
+  std::string ret(strv.data(), strv.length());
+
+  std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
+
+  return ret;
 }
 
 }  // namespace tpn

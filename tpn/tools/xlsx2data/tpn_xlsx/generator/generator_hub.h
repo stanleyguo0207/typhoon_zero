@@ -54,6 +54,10 @@ class TPN_XLSX2DATA_API GeneratorHub {
   ///  @return 生成成功返回true
   bool Generate();
 
+  /// 获取文件前缀
+  ///  @return 文件前缀
+  std::string_view GetFilePrefix() const;
+
  private:
   /// 生成json
   bool GenerateJson();
@@ -72,6 +76,7 @@ class TPN_XLSX2DATA_API GeneratorHub {
  private:
   std::string path_;                          ///< 数据文件夹路径
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
+  std::string file_prefix_;                   ///< 文件前缀
   JsonGenerator json_gen_;                    ///< json生成器
 
   TPN_SINGLETON_DECL(GeneratorHub)
