@@ -30,6 +30,7 @@
 #include "file_helper.h"
 #include "xlsx2data_common.h"
 #include "json_generator.h"
+#include "analyst.h"
 
 namespace tpn {
 
@@ -58,6 +59,8 @@ class TPN_XLSX2DATA_API GeneratorHub {
   ///  @return 文件前缀
   std::string_view GetFilePrefix() const;
 
+  Analyst &GetAnalyst() { return analyst_; }
+
  private:
   /// 生成json
   bool GenerateJson();
@@ -78,6 +81,7 @@ class TPN_XLSX2DATA_API GeneratorHub {
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
   std::string file_prefix_;                   ///< 文件前缀
   JsonGenerator json_gen_;                    ///< json生成器
+  Analyst analyst_;                           ///< 分析器
 
   TPN_SINGLETON_DECL(GeneratorHub)
 };

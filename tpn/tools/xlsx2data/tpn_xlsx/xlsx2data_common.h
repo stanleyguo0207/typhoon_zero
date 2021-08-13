@@ -51,9 +51,9 @@ enum class XlsxDataType : uint8_t {
 
 /// 约束类型
 enum class XlsxDataConstraintType : uint8_t {
-  XlsxDataCheckTypeNone       = 0,  ///< 无约束
-  XlsxDataCheckTypePrimaryKey = 1,  ///< 主键 !
-  XlsxDataCheckTypeNotEmpty   = 2,  ///< 非空 *
+  kXlsxDataConstraintTypeNone       = 0,  ///< 无约束
+  kXlsxDataConstraintTypePrimaryKey = 1,  ///< 主键 !
+  kXlsxDataConstraintTypeNotEmpty   = 2,  ///< 非空 *
 };
 
 /// 导出类型
@@ -62,6 +62,12 @@ enum class XlsxDataExportType : uint8_t {
   kXlsxDataExportTypeClient = 1,  ///< 仅客户端导出 c
   kXlsxDataExportTypeServer = 2,  ///< 仅服务器导出 s
 };
+
+/// 是否为复杂类型分隔符
+/// 支持 ! " & + - = ? ^ | ~
+///  @param[in]   ch    分隔符
+///  @reutrn 是复杂类型分隔符返回true
+TPN_XLSX2DATA_API bool IsTypeNameComplexDelimiter(char ch);
 
 /// 是否为复杂类型对象
 /// 支持 ! " & + - = ? ^ | ~
@@ -104,6 +110,10 @@ TPN_XLSX2DATA_API std::string_view GetMapVarName();
 /// 获取proto文件DataHubEntry repeated 变量名
 ///  @return DataHubEntry repeated 变量名
 TPN_XLSX2DATA_API std::string_view GetArrVarName();
+
+/// 获取字段分隔符
+///  @return 字段分隔符
+TPN_XLSX2DATA_API std::string_view GetFieldDelimiters();
 
 }  // namespace xlsx
 

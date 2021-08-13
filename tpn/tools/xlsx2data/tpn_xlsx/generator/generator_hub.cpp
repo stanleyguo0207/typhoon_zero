@@ -136,6 +136,8 @@ bool GeneratorHub::Generate() {
     return false;
   }
 
+  analyst_.PrintStorage();
+
   LOG_INFO("xlsx generator finish generate");
 
   return true;

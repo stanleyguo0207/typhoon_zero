@@ -34,6 +34,7 @@
 #include "utils.h"
 #include "helper.h"
 #include "generator_hub.h"
+#include "analyst.h"
 
 namespace fs = std::filesystem;
 
@@ -142,11 +143,9 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
 
     for (size_t idx = 0; idx < ranges.length(); ++idx) {
       if (0 == idx) {  // 头解析
-        fmt::print("head => ");
         for (auto &&cell : ranges[idx]) {
-          fmt::print("{}\t", cell.to_string());
+          g_xlsx2data_generator->GetAnalyst().Analyze(title, cell.to_string());
         }
-        fmt::print("\n");
       } else if (1 == idx) {  // 注释跳过
         ;
       } else {
