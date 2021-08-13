@@ -59,14 +59,29 @@ class TPN_XLSX2DATA_API GeneratorHub {
   ///  @return 文件前缀
   std::string_view GetFilePrefix() const;
 
-  Analyst &GetAnalyst() { return analyst_; }
+  /// 获取分析器
+  ///  @return 分析器
+  Analyst &GetAnalyst();
 
  private:
+  /// 生成分析器
+  ///  @param[in]   worksheet     工作表
+  ///  @return 成功返回true
+  bool GenerateAnlayst(xlnt::worksheet &worksheet);
+
   /// 生成json
-  bool GenerateJson();
+  ///  @param[in]   worksheet     工作表
+  ///  @return 成功返回true
+  bool GenerateJson(xlnt::worksheet &worksheet);
 
   /// 生成proto
-  bool GenerateProto();
+  ///  @param[in]   worksheet     工作表
+  ///  @return 成功返回true
+  bool GenerateProto(xlnt::worksheet &worksheet);
+
+  /// 生成json文件
+  ///  @return 成功返回true
+  bool GenerateJsonFile();
 
   /// 生成proto文件
   ///  @param[in]   workbook_path     工作簿路径
@@ -80,8 +95,8 @@ class TPN_XLSX2DATA_API GeneratorHub {
   std::string path_;                          ///< 数据文件夹路径
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
   std::string file_prefix_;                   ///< 文件前缀
-  JsonGenerator json_gen_;                    ///< json生成器
   Analyst analyst_;                           ///< 分析器
+  JsonGenerator json_gen_;                    ///< json生成器
 
   TPN_SINGLETON_DECL(GeneratorHub)
 };

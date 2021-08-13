@@ -48,19 +48,13 @@ class TPN_XLSX2DATA_API JsonGenerator {
   bool Load(std::string &error);
 
   /// 分析数据
-  ///  @param[in]   workbook_path     工作簿路径
+  ///  @param[in]   worksheet         工作表
   ///  @return 成功返回true
-  bool Analyze(std::string_view workbook_path);
+  bool Analyze(xlnt::worksheet &worksheet);
 
   /// 生成数据
   ///  @return 成功返回true
   bool Generate();
-
- private:
-  /// 分析数据
-  ///  @param[in]   worksheet         工作表
-  ///  @return 成功返回true
-  bool Analyze(xlnt::worksheet &worksheet);
 
  private:
   rapidjson::Document document_;  ///< json数据

@@ -204,6 +204,11 @@ TPN_COMMON_API std::string UppercaseString(std::string_view strv);
 ///  @return 转换后的小写字符串
 TPN_COMMON_API std::string LowercaseString(std::string_view strv);
 
+/// 字符串转换为bool类型
+/// 1,TRUE,true,YES,yes
+///  @return 转换后的结果
+TPN_COMMON_API bool StringToBool(std::string_view strv);
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_UTILITY_UTILS_H_

@@ -277,4 +277,9 @@ std::string LowercaseString(std::string_view strv) {
   return ret;
 }
 
+bool StringToBool(std::string_view strv) {
+  auto lower_str = LowercaseString(strv);
+  return "1" == lower_str || "true" == lower_str || "yes" == lower_str;
+}
+
 }  // namespace tpn

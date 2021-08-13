@@ -33,8 +33,8 @@
 #include "fmt_wrap.h"
 #include "utils.h"
 #include "helper.h"
-#include "generator_hub.h"
 #include "analyst.h"
+#include "generator_hub.h"
 
 namespace fs = std::filesystem;
 
@@ -57,7 +57,8 @@ bool JsonGenerator::Load(std::string &error) {
     document_.SetObject();
 
     rapidjson::Value key;
-    key.SetString(GetMapVarName().data(), GetMapVarName().length());
+    key.SetString(GetMapVarName().data(), GetMapVarName().length(),
+                  document_.GetAllocator());
 
     rapidjson::Value val(rapidjson::kObjectType);
 
@@ -73,35 +74,6 @@ bool JsonGenerator::Load(std::string &error) {
   return true;
 }
 
-bool JsonGenerator::Analyze(std::string_view workbook_path) {
-  LOG_INFO("json generator start analyze workbook : {}", workbook_path);
-
-  xlnt::workbook wb;
-
-  try {
-    wb.load(workbook_path.data());
-  } catch (xlnt::exception &e) {
-    LOG_ERROR("json generator load workbook exception error : {}", e.what());
-    return false;
-  } catch (...) {
-    LOG_ERROR("json generator load workbook exception ...");
-    return false;
-  }
-
-  for (auto &&sheet : wb) {
-    if (!SheetTitleIsOutput(sheet.title())) {
-      continue;
-    }
-
-    if (!Analyze(sheet)) {
-      return false;
-    }
-  }
-
-  LOG_INFO("json generator finish analyze workbook : {}", workbook_path);
-  return true;
-}
-
 bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
   LOG_INFO("json generator start analyze worksheet : {}", worksheet.title());
 
@@ -113,7 +85,8 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
 
     // 获取json的根节点
     rapidjson::Value key;
-    key.SetString(GetMapVarName().data(), GetMapVarName().length());
+    key.SetString(GetMapVarName().data(), GetMapVarName().length(),
+                  document_.GetAllocator());
     auto &datas = document_[key.Move()];
     TPN_ASSERT(datas.IsObject(), "document_ encode error, key : {}",
                key.GetString());
@@ -136,24 +109,27 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
 
     // repeated 数据
     rapidjson::Value data_key;
-    data_key.SetString(GetArrVarName().data(), GetArrVarName().length());
+    data_key.SetString(GetArrVarName().data(), GetArrVarName().length(),
+                       document_.GetAllocator());
 
     rapidjson::Value data_val;
     data_val.SetArray();
 
-    for (size_t idx = 0; idx < ranges.length(); ++idx) {
-      if (0 == idx) {  // 头解析
-        for (auto &&cell : ranges[idx]) {
-          g_xlsx2data_generator->GetAnalyst().Analyze(title, cell.to_string());
+    // 0 格式 1 注释 >2 数据
+    for (size_t idx = 2; idx < ranges.length(); ++idx) {
+      rapidjson::Value row_data(rapidjson::kObjectType);
+      for (size_t i = 0; i < ranges[idx].length(); ++i) {  // 数据分析
+        if (!g_xlsx2data_generator->GetAnalyst().GenerateJsonData(
+                document_, row_data, title_raw, i,
+                ranges[idx][i].to_string())) {
+          LOG_ERROR(
+              "json generator json data error, title: {}, idx: {}, index: {}, "
+              "data: {}",
+              title_raw, idx, i, ranges[idx][i].to_string());
+          return false;
         }
-      } else if (1 == idx) {  // 注释跳过
-        ;
-      } else {
-        for (auto &&cell : ranges[idx]) {  // 数据解析
-          fmt::print("{}\t", cell.to_string());
-        }
-        fmt::print("\n");
       }
+      data_val.PushBack(row_data.Move(), document_.GetAllocator());
     }
 
     title_val.AddMember(data_key.Move(), data_val.Move(),

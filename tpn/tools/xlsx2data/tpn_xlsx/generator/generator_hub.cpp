@@ -27,6 +27,7 @@
 #include "log.h"
 #include "config.h"
 #include "debug_hub.h"
+#include "helper.h"
 //#include "proto_generator.h"
 
 namespace fs = std::filesystem;
@@ -94,16 +95,6 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
     }
 
     file_prefix_ = g_config->GetStringDefault("xlsx_file_prefix", "data_hub");
-
-    //if (!reload) {
-    //  // proto生成路径
-    //  std::string proto_file_path =
-    //      g_config->GetStringDefault("xlsx_proto_dir", "proto") +
-    //      "/data_hub.proto";
-    //  proto_file_.Open(proto_file_path, true);
-    //} else {
-    //  proto_file_.Reopen(true);
-    //}
   } catch (fs::filesystem_error &e) {
     error = std::string{e.what()} + " (" + path_ + ") ";
     return false;
@@ -124,19 +115,70 @@ bool GeneratorHub::Reload(std::string &error) { return Load({}, error, true); }
 bool GeneratorHub::Generate() {
   LOG_INFO("xlsx generator start generate");
 
-  // 原生数据
-  if (!GenerateJson()) {
-    LOG_ERROR("xlsx generator generate json error");
-    return false;
+  for (auto &&path : xlsx_file_paths_) {
+    LOG_INFO("xlsx generator start generate path: {}", path);
+
+    xlnt::workbook wb;
+    try {
+      wb.load(path);
+    } catch (xlnt::exception &e) {
+      LOG_ERROR("xlsx generator load workbook {} exception error : {}", path,
+                e.what());
+      return false;
+    } catch (...) {
+      LOG_ERROR("xlsx generator load workbook {} exception ...", path);
+      return false;
+    }
+
+    for (auto &&sheet : wb) {
+      if (!SheetTitleIsOutput(sheet.title())) {
+        continue;
+      }
+
+      LOG_INFO("xlsx generator start generate anlayst path: {}, sheet: {}",
+               path, sheet.title());
+      // 分析器
+      if (!GenerateAnlayst(sheet)) {
+        LOG_ERROR("xlsx generator generate anlayst error path: {}, sheet: {}",
+                  path, sheet.title());
+        return false;
+      }
+      LOG_INFO("xlsx generator finish generate anlayst path: {}, sheet: {}",
+               path, sheet.title());
+
+      LOG_INFO("xlsx generator start generate json path: {}, sheet: {}", path,
+               sheet.title());
+      // 原生数据
+      if (!GenerateJson(sheet)) {
+        LOG_ERROR("xlsx generator generate json error path: {}, sheet: {}",
+                  path, sheet.title());
+        return false;
+      }
+      LOG_INFO("xlsx generator finish generate json path: {}, sheet: {}", path,
+               sheet.title());
+
+      LOG_INFO("xlsx generator start generate proto path: {}, sheet: {}", path,
+               sheet.title());
+      // proto描述文件
+      if (!GenerateProto(sheet)) {
+        LOG_ERROR("xlsx generator generate proto error path: {}, sheet: {}",
+                  path, sheet.title());
+        return false;
+      }
+      LOG_INFO("xlsx generator finish generate proto path: {}, sheet: {}", path,
+               sheet.title());
+    }
+
+    LOG_INFO("xlsx generator finish generate path: {}", path);
   }
 
-  // proto描述文件
-  if (!GenerateProto()) {
-    LOG_ERROR("xlsx generator generate proto error");
+  LOG_INFO("xlsx generator start generate json file");
+  // json 文件生成
+  if (!GenerateJsonFile()) {
+    LOG_ERROR("xlsx generator generate json file error");
     return false;
   }
-
-  analyst_.PrintStorage();
+  LOG_INFO("xlsx generator finish generate json file");
 
   LOG_INFO("xlsx generator finish generate");
 
@@ -145,24 +187,17 @@ bool GeneratorHub::Generate() {
 
 std::string_view GeneratorHub::GetFilePrefix() const { return file_prefix_; }
 
-bool GeneratorHub::GenerateJson() {
-  LOG_INFO("start generate json");
+Analyst &GeneratorHub::GetAnalyst() { return analyst_; }
 
-  for (auto &&path : xlsx_file_paths_) {
-    if (!json_gen_.Analyze(path)) {
-      LOG_ERROR("generate json file fail, workbook path : {} ", path);
-      return false;
-    }
-  }
-
-  json_gen_.Generate();
-
-  LOG_INFO("finish generate json");
-
-  return true;
+bool GeneratorHub::GenerateAnlayst(xlnt::worksheet &worksheet) {
+  return analyst_.Analyze(worksheet);
 }
 
-bool GeneratorHub::GenerateProto() {
+bool GeneratorHub::GenerateJson(xlnt::worksheet &worksheet) {
+  return json_gen_.Analyze(worksheet);
+}
+
+bool GeneratorHub::GenerateProto(xlnt::worksheet &worksheet) {
   LOG_INFO("start generate proto");
 
   //GenerateProtoFileHead();
@@ -178,6 +213,8 @@ bool GeneratorHub::GenerateProto() {
 
   return true;
 }
+
+bool GeneratorHub::GenerateJsonFile() { return json_gen_.Generate(); }
 
 bool GeneratorHub::GenerateProtoFile(std::string_view workbook_path) {
   //LOG_INFO("xlsx generator start generate proto file, workbook path : {}",
