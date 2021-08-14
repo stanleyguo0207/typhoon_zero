@@ -65,18 +65,6 @@ class TPN_XLSX2DATA_API AnalystField {
   bool Analyze(std::string_view field);
 
   /// 生成json数据
-  ///  @param[in]   type          类型
-  ///  @param[in]   document      用来调用 GetAllocator()
-  ///  @param[in]   row_data      行数据
-  ///  @param[in]   filed_name    要解析的字段名
-  ///  @param[in]   data          要解析的数据
-  ///  @return 成功返回true
-  bool GenerateJsonDataByType(XlsxDataType type, rapidjson::Document &document,
-                              rapidjson::Value &row_data,
-                              std::string_view field_name,
-                              std::string_view data);
-
-  /// 生成json数据
   ///  @param[in]   document      用来调用 GetAllocator()
   ///  @param[in]   row_data      行数据
   ///  @param[in]   data          要解析的数据
@@ -118,6 +106,39 @@ class TPN_XLSX2DATA_API AnalystField {
   ///  @param[in]   strv    输入
   ///  @return 成功返回true
   bool AnalyzeCheck(std::string_view strv);
+
+  /// 生成json数据
+  ///  @param[in]   document        用来调用 GetAllocator()
+  ///  @param[in]   row_data        行数据
+  ///  @param[in]   type            类型
+  ///  @param[in]   name            要解析的字段名
+  ///  @param[in]   data            要解析的数据
+  ///  @return 成功返回true
+  bool GenerateJsonData(rapidjson::Document &document,
+                        rapidjson::Value &row_data, XlsxDataType type,
+                        std::string_view name, std::string_view data);
+
+  /// 生成json数据 复合对象
+  ///  @param[in]   document        用来调用 GetAllocator()
+  ///  @param[in]   val_obj         对象数据
+  ///  @param[in]   data            要解析的数据
+  ///  @param[in]   delimiter       分隔符
+  ///  @return 成功返回true
+  bool GenerateJsonDataComplexObj(rapidjson::Document &document,
+                                  rapidjson::Value &val_obj,
+                                  std::string_view data,
+                                  std::string_view delimiter);
+
+  /// 生成json数据 复合对象数组
+  ///  @param[in]   document          用来调用 GetAllocator()
+  ///  @param[in]   val_arr           数组数据
+  ///  @param[in]   data              要解析的数据
+  ///  @param[in]   delimiter_index   分隔符位置
+  ///  @return 成功返回true
+  bool GenerateJsonDataComplexArr(rapidjson::Document &document,
+                                  rapidjson::Value &val_arr,
+                                  std::string_view data,
+                                  size_t delimiter_index = 0);
 
  private:
   std::string name_;                                    ///< 字段名

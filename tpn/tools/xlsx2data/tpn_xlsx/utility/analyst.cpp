@@ -74,87 +74,23 @@ bool AnalystField::Analyze(std::string_view field) {
   return true;
 }
 
-bool AnalystField::GenerateJsonDataByType(XlsxDataType type,
-                                          rapidjson::Document &document,
-                                          rapidjson::Value &row_data,
-                                          std::string_view field_name,
-                                          std::string_view data) {
-  std::string data_str(data.data(), data.length());
-  rapidjson::Value key;
-  key.SetString(field_name.data(), field_name.length(),
-                document.GetAllocator());
-
-  rapidjson::Value val;
-  switch (type) {
-    case XlsxDataType::kXlsxDataTypeDouble: {
-      val.SetDouble(std::stod(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeFloat: {
-      val.SetFloat(std::stof(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeI32: {
-      val.SetInt(std::stol(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeI64: {
-      val.SetInt64(std::stoll(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeU32: {
-      val.SetUint(std::stoul(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeU64: {
-      val.SetUint64(std::stoull(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeBool: {
-      val.SetBool(StringToBool(data_str));
-    } break;
-    case XlsxDataType::kXlsxDataTypeStr: {
-      val.SetString(data_str.data(), data_str.length(),
-                    document.GetAllocator());
-    } break;
-    case XlsxDataType::kXlsxDataTypeDesc: {  // 注释跳过
-      return true;
-    } break;
-    case XlsxDataType::kXlsxDataTypeComplexObj: {
-      val.SetObject();
-      TPN_ASSERT(1 == complex_field_.first.length(),
-                 "{} obj delimiter only be one, {} is error", name_,
-                 complex_field_.first);
-      auto data_vec = Tokenize(data_str, complex_field_.first);
-      TPN_ASSERT(data_vec.size() == complex_field_.second.size(),
-                 "{} data length error, {}", name_, data_vec);
-      for (size_t i = 0; i < complex_field_.second.size(); ++i) {
-        GenerateJsonDataByType(complex_field_.second[i], document, val,
-                               "p{}"_format(i + 1), data_vec[i]);
-      }
-    } break;
-    case XlsxDataType::kXlsxDataTypeComplexArr: {
-      val.SetArray();
-      TPN_ASSERT(complex_field_.first.length() > 1,
-                 "obj delimiter only more than one, {} is error",
-                 complex_field_.first);
-    } break;
-    default:
-      return false;
-  }
-
-  row_data.AddMember(key.Move(), val.Move(), document.GetAllocator());
-
-  return true;
-}
-
 bool AnalystField::GenerateJsonData(rapidjson::Document &document,
                                     rapidjson::Value &row_data,
                                     std::string_view data) {
+  // 检查约束
   switch (constraint_type_) {
     case XlsxDataConstraintType::kXlsxDataConstraintTypePrimaryKey:
     case XlsxDataConstraintType::kXlsxDataConstraintTypeNotEmpty: {
       TPN_ASSERT(!data.empty(), "{} constraint could'nt be empty", name_);
     } break;
-    default:
-      break;
+    default: {
+      if (data.empty()) {  // 允许为空
+        return true;
+      }
+    } break;
   }
 
-  return GenerateJsonDataByType(type_, document, row_data, name_, data);
+  return GenerateJsonData(document, row_data, type_, name_, data);
 }
 
 void AnalystField::PrintStorage() const {
@@ -202,7 +138,7 @@ bool AnalystField::AnalyzeComplexType(std::string_view strv) {
               strv);
     return false;
   }
-  delimiters += delimiter;
+
   auto field_vec = Tokenize(type_str, delimiter);
   if (field_vec.empty()) {
     LOG_ERROR("complex type error, field_vec empty {}", strv);
@@ -217,6 +153,8 @@ bool AnalystField::AnalyzeComplexType(std::string_view strv) {
     }
     type_vec.emplace_back(std::move(tmp_type));
   }
+
+  delimiters += delimiter;
   complex_field_ = make_pair(std::move(delimiters), std::move(type_vec));
 
   return true;
@@ -248,6 +186,119 @@ bool AnalystField::AnalyzeExportType(std::string_view strv) {
 
 bool AnalystField::AnalyzeCheck(std::string_view strv) {
   // TODO 检查内容处理
+  return true;
+}
+
+bool AnalystField::GenerateJsonData(rapidjson::Document &document,
+                                    rapidjson::Value &row_data,
+                                    XlsxDataType type, std::string_view name,
+                                    std::string_view data) {
+  std::string data_str(data.data(), data.length());
+  rapidjson::Value val;
+  switch (type) {
+    case XlsxDataType::kXlsxDataTypeDouble: {
+      val.SetDouble(std::stod(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeFloat: {
+      val.SetFloat(std::stof(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeI32: {
+      val.SetInt(std::stol(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeI64: {
+      val.SetInt64(std::stoll(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeU32: {
+      val.SetUint(std::stoul(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeU64: {
+      val.SetUint64(std::stoull(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeBool: {
+      val.SetBool(StringToBool(data_str));
+    } break;
+    case XlsxDataType::kXlsxDataTypeStr: {
+      val.SetString(data_str.data(), data_str.length(),
+                    document.GetAllocator());
+    } break;
+    case XlsxDataType::kXlsxDataTypeDesc: {  // 注释跳过
+      return true;
+    } break;
+    case XlsxDataType::kXlsxDataTypeComplexObj: {
+      val.SetObject();
+      if (!GenerateJsonDataComplexObj(document, val, data_str,
+                                      complex_field_.first)) {
+        return false;
+      }
+    } break;
+    case XlsxDataType::kXlsxDataTypeComplexArr: {
+      val.SetArray();
+      if (!GenerateJsonDataComplexArr(document, val, data_str)) {
+        return false;
+      }
+    } break;
+    default:
+      return false;
+  }
+
+  rapidjson::Value key;
+  key.SetString(name.data(), name.length(), document.GetAllocator());
+  row_data.AddMember(key.Move(), val.Move(), document.GetAllocator());
+
+  return true;
+}
+
+bool AnalystField::GenerateJsonDataComplexObj(rapidjson::Document &document,
+                                              rapidjson::Value &val_obj,
+                                              std::string_view data,
+                                              std::string_view delimiter) {
+  TPN_ASSERT(1 == delimiter.length(),
+             "{} obj delimiter only be one, {} is error, {}", name_, delimiter,
+             data);
+  auto data_vec = Tokenize(data, delimiter);
+  TPN_ASSERT(data_vec.size() == complex_field_.second.size(),
+             "{} data length error, {}", name_, data_vec);
+  for (size_t i = 0; i < data_vec.size(); ++i) {
+    GenerateJsonData(document, val_obj, complex_field_.second[i],
+                     "p{}"_format(i + 1), data_vec[i]);
+  }
+  return true;
+}
+
+bool AnalystField::GenerateJsonDataComplexArr(rapidjson::Document &document,
+                                              rapidjson::Value &val_arr,
+                                              std::string_view data,
+                                              size_t delimiter_index /*= 0*/) {
+  // -2时需要转换为obj解析
+  TPN_ASSERT(delimiter_index < complex_field_.first.length() - 1,
+             "delimiter index error, {} < {}", delimiter_index,
+             complex_field_.first);
+
+  rapidjson::Value val;
+  if (delimiter_index == complex_field_.first.length() - 2) {  // obj
+    std::string delimiter_obj =
+        std::string(1, complex_field_.first[complex_field_.first.length() - 1]);
+
+    std::string delimiter =
+        std::string(1, complex_field_.first[delimiter_index]);
+    auto data_vec = Tokenize(data, delimiter);
+
+    for (auto &&data_str : data_vec) {
+      val.SetObject();
+      GenerateJsonDataComplexObj(document, val, data_str, delimiter_obj);
+      val_arr.PushBack(val.Move(), document.GetAllocator());
+    }
+  } else {
+    std::string delimiter =
+        std::string(1, complex_field_.first[delimiter_index]);
+    auto data_vec = Tokenize(data, delimiter);
+    for (auto &&data_str : data_vec) {
+      val.SetArray();
+      GenerateJsonDataComplexArr(document, val, data_str, delimiter_index + 1);
+      val_arr.PushBack(val.Move(), document.GetAllocator());
+    }
+  }
+
   return true;
 }
 

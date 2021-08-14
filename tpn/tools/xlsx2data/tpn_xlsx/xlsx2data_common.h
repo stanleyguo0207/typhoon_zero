@@ -64,7 +64,7 @@ enum class XlsxDataExportType : uint8_t {
 };
 
 /// 是否为复杂类型分隔符
-/// 支持 ! " & + - = ? ^ | ~
+/// 支持 ! " & + - : ; = ? ^ | ~
 ///  @param[in]   ch    分隔符
 ///  @reutrn 是复杂类型分隔符返回true
 TPN_XLSX2DATA_API bool IsTypeNameComplexDelimiter(char ch);
