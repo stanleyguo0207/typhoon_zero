@@ -28,50 +28,12 @@
 #include "config.h"
 #include "debug_hub.h"
 #include "helper.h"
-//#include "proto_generator.h"
 
 namespace fs = std::filesystem;
 
 namespace tpn {
 
 namespace xlsx {
-
-namespace {
-
-static constexpr std::string_view s_generator_licenses = R"License(//
-//           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
-//            │ └┬┘├─┘├─┤│ ││ ││││
-//            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
-//
-// This file is part of the typhoon Project.
-// Copyright (C) 2021 stanley0207@163.com
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-)License";
-
-static constexpr std::string_view s_proto3_head = R"Head(
-syntax = "proto3";
-
-package tpn.data;
-
-option optimize_for = SPEED;
-option cc_generic_services = false;
-
-)Head";
-
-}  // namespace
 
 bool GeneratorHub::Load(std::string_view path, std::string &error,
                         bool reload /* = false */) {
@@ -104,6 +66,10 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
   }
 
   if (!json_gen_.Load(error)) {
+    return false;
+  }
+
+  if (!proto_gen_.Load(error)) {
     return false;
   }
 
@@ -198,61 +164,10 @@ bool GeneratorHub::GenerateJson(xlnt::worksheet &worksheet) {
 }
 
 bool GeneratorHub::GenerateProto(xlnt::worksheet &worksheet) {
-  LOG_INFO("start generate proto");
-
-  //GenerateProtoFileHead();
-
-  //for (auto &&path : xlsx_file_paths_) {
-  //  if (!GenerateProtoFile(path)) {
-  //    LOG_ERROR("generate proto file fail, workbook path : {} ", path);
-  //    return false;
-  //  }
-  //}
-
-  LOG_INFO("start generate proto");
-
-  return true;
+  return proto_gen_.Analyze(worksheet);
 }
 
 bool GeneratorHub::GenerateJsonFile() { return json_gen_.Generate(); }
-
-bool GeneratorHub::GenerateProtoFile(std::string_view workbook_path) {
-  //LOG_INFO("xlsx generator start generate proto file, workbook path : {}",
-  //         workbook_path);
-
-  //xlnt::workbook wb;
-
-  //try {
-  //  wb.load(workbook_path.data());
-  //} catch (xlnt::exception &e) {
-  //  LOG_ERROR("xlsx generator load workbook exception error : {}", e.what());
-  //  return false;
-  //} catch (...) {
-  //  LOG_ERROR("xlsx generator load workbook exception ...");
-  //  return false;
-  //}
-
-  //ProtoGenerator proto_gr(wb, proto_file_);
-
-  //// proto文件生成
-  //if (!proto_gr.Generate()) {
-  //  LOG_INFO("xlsx generator generate proto file fail, workbook path : {}",
-  //           workbook_path);
-  //  return false;
-  //}
-
-  //LOG_INFO("xlsx generator finish generate proto file, workbook path : {}",
-  //         workbook_path);
-  return true;
-}
-
-void GeneratorHub::GenerateProtoFileHead() {
-  //FmtMemoryBuf buf;
-  //buf.append(s_generator_licenses.data(),
-  //           s_generator_licenses.data() + s_generator_licenses.size());
-  //buf.append(s_proto3_head.data(), s_proto3_head.data() + s_proto3_head.size());
-  //proto_file_.Write(buf);
-}
 
 TPN_SINGLETON_IMPL(GeneratorHub)
 

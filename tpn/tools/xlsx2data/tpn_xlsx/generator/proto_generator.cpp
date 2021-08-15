@@ -23,9 +23,12 @@
 #include "proto_generator.h"
 
 #include "log.h"
-#include "utils.h"
-#include "file_helper.h"
+#include "config.h"
 #include "debug_hub.h"
+#include "fmt_wrap.h"
+#include "utils.h"
+#include "helper.h"
+#include "generator_hub.h"
 
 namespace tpn {
 
@@ -173,6 +176,38 @@ namespace xlsx {
 //
 //  return true;
 //}
+
+ProtoGenerator::ProtoGenerator() {}
+
+ProtoGenerator::~ProtoGenerator() {}
+
+bool ProtoGenerator::Load(std::string &error) {
+  std::string proto_file_path = fmt::format(
+      "{}/{}.proto", g_config->GetStringDefault("xlsx_proto_dir", "proto"),
+      g_xlsx2data_generator->GetFilePrefix());
+  try {
+    proto_file_.Open(proto_file_path, true);
+  } catch (FileException &ex) {
+    error = std::string{ex.what()};
+    return false;
+  } catch (const std::exception &ex) {
+    error = std::string{ex.what()};
+    return false;
+  }
+
+  FmtMemoryBuf buf;
+  // license
+  auto license = GetLicense();
+  buf.append(license.data(), license.data() + license.length());
+  // proto3 head
+  auto proto3_head = GetProto3Head();
+  buf.append(proto3_head.data(), proto3_head.data() + proto3_head.length());
+  proto_file_.Write(buf);
+
+  return true;
+}
+
+bool ProtoGenerator::Analyze(xlnt::worksheet &worksheet) { return true; }
 
 }  // namespace xlsx
 

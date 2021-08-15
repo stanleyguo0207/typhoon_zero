@@ -64,6 +64,39 @@ static constexpr char s_export_server = 's';
 
 static constexpr std::string_view s_field_delimiters = "@";
 
+static constexpr std::string_view s_generator_licenses = R"License(//
+//           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
+//            │ └┬┘├─┘├─┤│ ││ ││││
+//            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
+//
+// This file is part of the typhoon Project.
+// Copyright (C) 2021 stanley0207@163.com
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+)License";
+
+static constexpr std::string_view s_proto3_head = R"Proto3Head(
+syntax = "proto3";
+
+package tpn.data;
+
+option optimize_for = SPEED;
+option cc_generic_services = false;
+
+)Proto3Head";
+
 }  // namespace
 
 bool IsTypeNameComplexDelimiter(char ch) { return 1 == s_complex_sign[ch]; }
@@ -146,6 +179,10 @@ std::string_view GetMapVarName() { return s_map_var_name; }
 std::string_view GetArrVarName() { return s_arr_var_name; }
 
 std::string_view GetFieldDelimiters() { return s_field_delimiters; }
+
+std::string_view GetLicense() { return s_generator_licenses; }
+
+std::string_view GetProto3Head() { return s_proto3_head; }
 
 }  // namespace xlsx
 

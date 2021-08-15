@@ -115,6 +115,14 @@ TPN_XLSX2DATA_API std::string_view GetArrVarName();
 ///  @return 字段分隔符
 TPN_XLSX2DATA_API std::string_view GetFieldDelimiters();
 
+/// 获取license
+///  @return License
+TPN_XLSX2DATA_API std::string_view GetLicense();
+
+/// 获取proto3 head
+///  @return protoe head
+TPN_XLSX2DATA_API std::string_view GetProto3Head();
+
 }  // namespace xlsx
 
 }  // namespace tpn

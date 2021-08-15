@@ -23,6 +23,7 @@
 #ifndef TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_GENERATOR_PROTO_GENERATOR_H_
 #define TYPHOON_ZERO_TPN_TOOLS_XLSX2DATA_TPN_XLSX_GENERATOR_PROTO_GENERATOR_H_
 
+#include "file_helper.h"
 #include "xlsx2data_common.h"
 #include "helper.h"
 
@@ -32,31 +33,26 @@ class FileHelper;
 
 namespace xlsx {
 
-///// proto文件生成器
-//class TPN_XLSX2DATA_API ProtoGenerator {
-// public:
-//  /// 构造函数
-//  ///  @param[in]   workbook    要转换的工作簿
-//  ///  @param[in]   out_file    输出文件句柄
-//  ProtoGenerator(xlnt::workbook &workbook, FileHelper &out_file);
-//
-//  ~ProtoGenerator();
-//
-//  /// 生成proto文件
-//  ///  @return 生成成功返回true
-//  bool Generate();
-//
-// private:
-//  /// 生成sheet表的proto结构
-//  ///  @param[in]   worksheet   工作表
-//  ///  @return 生成成功返回true
-//  bool GenerateSheetInfo(xlnt::worksheet &worksheet);
-//
-// private:
-//  xlnt::workbook &workbook_;  ///< 当前处理的工作簿
-//  FileHelper &out_file_;      ///< 输出文件句柄
-//  Printer printer_;           ///< 打印器
-//};
+/// proto文件生成器
+class TPN_XLSX2DATA_API ProtoGenerator {
+ public:
+  ProtoGenerator();
+  ~ProtoGenerator();
+
+  /// 加载配置
+  ///  @param[out]  error     读取数据错误信息
+  ///  @return 加载成功返回true
+  bool Load(std::string &error);
+
+  /// 分析数据
+  ///  @param[in]   worksheet         工作表
+  ///  @return 成功返回true
+  bool Analyze(xlnt::worksheet &worksheet);
+
+ private:
+  FileHelper proto_file_;  ///< proto数据
+  Printer printer_;        ///< 打印器
+};
 
 }  // namespace xlsx
 
