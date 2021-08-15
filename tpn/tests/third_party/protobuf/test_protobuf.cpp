@@ -33,6 +33,7 @@
 #include "fmt_wrap.h"
 #include "file_helper.h"
 #include "random_hub.h"
+#include "utils.h"
 
 #include "addressbook.pb.h"
 
@@ -289,58 +290,86 @@ TEST_CASE("data write", "[protobuf]") {
 
   data::DataHubEntryItem item;
 
-  auto item_data1 = item.add_datas();
-  item_data1->set_id(1);
-  item_data1->set_type(1);
-  item_data1->set_sub_type(1);
-  item_data1->set_name("道具1");
-  item_data1->set_quality(1);
-
-  auto item_data2 = item.add_datas();
-  item_data2->set_id(2);
-  item_data2->set_type(2);
-  item_data2->set_sub_type(1);
-  item_data2->set_name("道具2");
-  item_data2->set_quality(2);
+  // 道具
+  {
+    for (int i = 1; i < 5; ++i) {
+      auto item_data1 = item.add_datas();
+      item_data1->set_id(i);
+      item_data1->set_type(RandU32(1, 2));
+      item_data1->set_sub_type(RandU32(1, 2));
+      item_data1->set_name("道具" + ToString(RandU32(1, 4)));
+      item_data1->set_quality(RandU32(1, 4));
+    }
+  }
 
   data::DataHubEntryLevel level;
 
-  for (int i = 1; i <= 5; ++i) {
-    auto level_data = level.add_datas();
-    level_data->set_level(i);
-    level_data->set_exp(i * 1000);
-  }
-
-  data::DataHubEntryShop shop;
-
-  for (int i = 0; i < 3; ++i) {
-    auto shop_data = shop.add_datas();
-    shop_data->set_id(i + 1);
-    shop_data->set_type(RandU32(1, 5));
-    shop_data->mutable_item()->set_p1(RandU32(1, 20));
-    shop_data->mutable_item()->set_p2(RandU32(100, 1000));
-    shop_data->mutable_price()->set_p1(RandU32(9000, 9001));
-    shop_data->mutable_price()->set_p2(RandU32(100, 1000));
+  // 等级
+  {
+    for (int i = 1; i <= 5; ++i) {
+      auto level_data = level.add_datas();
+      level_data->set_level(i);
+      level_data->set_exp(i * 1000);
+    }
   }
 
   data::DataHubEntryPack pack;
 
-  for (int i = 0; i < 2; ++i) {
-    auto pack_data = pack.add_datas();
-    pack_data->set_id(i + 1);
-    for (int i = 0; i < RandU32(2, 4); ++i) {
-      auto pool_data = pack_data->add_pool();
-      pool_data->set_p1(RandU32(1, 1000));
-      pool_data->set_p2(RandU32(100, 1000));
-      pool_data->set_p3(RandU32(1, 10000));
+  // 掉落包
+  {
+    for (int i = 1; i <= 3; ++i) {
+      auto pack_data = pack.add_datas();
+      pack_data->set_id(i);
+      for (int j = 0; j < RandI32(1, 3); ++j) {
+        auto pool_data = pack_data->add_pool();
+        pool_data->set_p1(RandU32(1, 1000));
+        pool_data->set_p2(RandU32(100, 1000));
+        pool_data->set_p3(RandU32(1, 10000));
+      }
+      for (int j = 0; j < 2; ++j) {
+        auto pool2_data = pack_data->add_pool2();
+        for (int k = 0; k < RandI32(1, 2); ++k) {
+          auto nest1_data = pool2_data->add_nest1();
+          nest1_data->set_p1(RandU32(1, 1000));
+          nest1_data->set_p2(RandU32(100, 1000));
+          nest1_data->set_p3(RandU32(1, 10000));
+        }
+      }
+      for (int j = 0; j < 2; ++j) {
+        auto pool3_data = pack_data->add_pool3();
+        for (int k = 0; k < RandI32(1, 2); ++k) {
+          auto nest1_data = pool3_data->add_nest1();
+          for (int m = 0; m < RandI32(1,2); ++m) {
+            auto nest2_data = nest1_data->add_nest2();
+            nest2_data->set_p1(RandU32(1, 1000));
+            nest2_data->set_p2(RandU32(100, 1000));
+            nest2_data->set_p3(RandU32(1, 10000));
+          }
+        }
+      }
+    }
+  }
+
+  data::DataHubEntryShop shop;
+
+  // 商店
+  {
+    for (int i = 1; i <= 4; ++i) {
+      auto shop_data = shop.add_datas();
+      shop_data->set_id(1);
+      shop_data->set_type(RandU32(1, 5));
+      shop_data->mutable_item()->set_p1(RandU32(1, 20));
+      shop_data->mutable_item()->set_p2(RandU32(100, 1000));
+      shop_data->mutable_price()->set_p1(RandU32(9000, 9001));
+      shop_data->mutable_price()->set_p2(RandU32(100, 1000));
     }
   }
 
   data::DataHubMap data_map;
   (*data_map.mutable_datas())["item"].PackFrom(item);
   (*data_map.mutable_datas())["level"].PackFrom(level);
-  (*data_map.mutable_datas())["shop"].PackFrom(shop);
   (*data_map.mutable_datas())["pack"].PackFrom(pack);
+  (*data_map.mutable_datas())["shop"].PackFrom(shop);
 
   std::string json_string;
 

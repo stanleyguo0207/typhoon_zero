@@ -291,10 +291,17 @@ bool AnalystField::GenerateJsonDataComplexArr(rapidjson::Document &document,
   } else {
     std::string delimiter =
         std::string(1, complex_field_.first[delimiter_index]);
+    std::string key_name = fmt::format("nest{}", delimiter_index + 1);
     auto data_vec = Tokenize(data, delimiter);
     for (auto &&data_str : data_vec) {
-      val.SetArray();
-      GenerateJsonDataComplexArr(document, val, data_str, delimiter_index + 1);
+      val.SetObject();
+      rapidjson::Value tmp_arr(rapidjson::kArrayType);
+      GenerateJsonDataComplexArr(document, tmp_arr, data_str,
+                                 delimiter_index + 1);
+      rapidjson::Value tmp_key;
+      tmp_key.SetString(key_name.data(), key_name.length(),
+                        document.GetAllocator());
+      val.AddMember(tmp_key.Move(), tmp_arr.Move(), document.GetAllocator());
       val_arr.PushBack(val.Move(), document.GetAllocator());
     }
   }

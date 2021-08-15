@@ -48,6 +48,40 @@ message DataHubEntryLevel {
   repeated Level datas = 1;
 }
 
+message DataHubEntryPack {
+  message Pack {
+    uint32 id = 1;
+    message Pool {
+      uint32 p1 = 1;  // id
+      uint32 p2 = 2;  // num
+      uint32 p3 = 3;  // weight
+    }
+    repeated Pool pool = 2;
+    message Pool2 {
+      message Pool2Nest1 {
+        uint32 p1 = 1;  // id
+        uint32 p2 = 2;  // num
+        uint32 p3 = 3;  // weight
+      }
+      repeated Pool2Nest1 nest1 = 1;
+    }
+    repeated Pool2 pool2 = 3;
+    message Pool3 {
+      message Pool3Nest1 {
+        message Pool3Nest2 {
+          uint32 p1 = 1;  // id
+          uint32 p2 = 2;  // num
+          uint32 p3 = 3;  // weight
+        }
+        repeated Pool3Nest2 nest2 = 1;
+      }
+      repeated Pool3Nest1 nest1 = 1;
+    }
+    repeated Pool3 pool3 = 4;
+  }
+  repeated Pack datas = 1;
+}
+
 message DataHubEntryShop {
   message Shop {
     uint32 id = 1;
@@ -64,19 +98,6 @@ message DataHubEntryShop {
     Price price = 4;
   }
   repeated Shop datas = 1;
-}
-
-message DataHubEntryPack {
-  message Pack {
-    uint32 id = 1;
-    message Pool {
-      uint32 p1 = 1;  // id
-      uint32 p2 = 2;  // num
-      uint32 p3 = 3;  // weight
-    }
-    repeated Pool pool = 2;
-  }
-  repeated Pack datas = 1;
 }
 
 message DataHubMap {
