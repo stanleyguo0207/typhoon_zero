@@ -32,8 +32,6 @@
 
 namespace tpn {
 
-class FileHelper;
-
 namespace xlsx {
 
 /// json文件生成器

@@ -32,6 +32,7 @@
 #include "analyst.h"
 #include "json_generator.h"
 #include "proto_generator.h"
+#include "cpp_generator.h"
 
 namespace tpn {
 
@@ -80,9 +81,18 @@ class TPN_XLSX2DATA_API GeneratorHub {
   ///  @return 成功返回true
   bool GenerateProto(xlnt::worksheet &worksheet);
 
+  /// 生成cpp
+  ///  @param[in]   worksheet     工作表
+  ///  @return 成功返回true
+  bool GenerateCpp(xlnt::worksheet &worksheet);
+
   /// 生成json文件
   ///  @return 成功返回true
   bool GenerateJsonFile();
+
+  /// 生成cpp尾内容
+  ///  @return 成功返回true
+  bool GenerateCppTail();
 
  private:
   std::string path_;                          ///< 数据文件夹路径
@@ -91,6 +101,7 @@ class TPN_XLSX2DATA_API GeneratorHub {
   Analyst analyst_;                           ///< 分析器
   JsonGenerator json_gen_;                    ///< json生成器
   ProtoGenerator proto_gen_;                  ///< proto生成器
+  CppGenerator cpp_gen_;                      ///< cpp生成器
 
   TPN_SINGLETON_DECL(GeneratorHub)
 };

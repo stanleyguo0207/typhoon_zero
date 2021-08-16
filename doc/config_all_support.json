@@ -78,6 +78,9 @@
   /// proto文件输出目录路径
   // @type  string  默认值 "proto"
   "xlsx_proto_dir": "proto",
+  /// cpp文件目录路径
+  // @type  string  默认值 "cpp"
+  "xlsx_cpp_dir": "cpp",
   /// client文件目录路径
   // @type  string  默认值 "client"
   "xlsx_client_dir": "client",
@@ -86,7 +89,7 @@
   "xlsx_server_dir": "server",
   /// file prefix
   // @type  string  默认值 "data_hub"
-  "xlsx_file_prefix":  "data_hub",
+  "xlsx_file_prefix": "data_hub",
   ///---------------------------------------------------------------------------
   "config_all_support_end": 1
 }

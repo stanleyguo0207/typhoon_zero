@@ -76,6 +76,10 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
     return false;
   }
 
+  if (!cpp_gen_.Load(error)) {
+    return false;
+  }
+
   return true;
 }
 
@@ -136,6 +140,17 @@ bool GeneratorHub::Generate() {
       }
       LOG_INFO("xlsx generator finish generate proto path: {}, sheet: {}", path,
                sheet.title());
+
+      LOG_INFO("xlsx generator start generate cpp path: {}, sheet: {}", path,
+               sheet.title());
+      // cpp文件
+      if (!GenerateCpp(sheet)) {
+        LOG_ERROR("xlsx generator generate cpp error path: {}, sheet: {}",
+                  path, sheet.title());
+        return false;
+      }
+      LOG_INFO("xlsx generator finish generate cpp path: {}, sheet: {}", path,
+               sheet.title());
     }
 
     LOG_INFO("xlsx generator finish generate path: {}", path);
@@ -148,6 +163,14 @@ bool GeneratorHub::Generate() {
     return false;
   }
   LOG_INFO("xlsx generator finish generate json file");
+
+  LOG_INFO("xlsx generator start generate cpp tail");
+  // cpp 尾部内容生成
+  if (!GenerateCppTail()) {
+    LOG_ERROR("xlsx generator generate cpp tail error");
+    return false;
+  }
+  LOG_INFO("xlsx generator finish generate cpp tail");
 
   LOG_INFO("xlsx generator finish generate");
 
@@ -170,7 +193,13 @@ bool GeneratorHub::GenerateProto(xlnt::worksheet &worksheet) {
   return proto_gen_.Analyze(worksheet);
 }
 
+bool GeneratorHub::GenerateCpp(xlnt::worksheet &worksheet) {
+  return cpp_gen_.Analyze(worksheet);
+}
+
 bool GeneratorHub::GenerateJsonFile() { return json_gen_.Generate(); }
+
+bool GeneratorHub::GenerateCppTail() { return cpp_gen_.GenerateTail(); }
 
 TPN_SINGLETON_IMPL(GeneratorHub)
 
