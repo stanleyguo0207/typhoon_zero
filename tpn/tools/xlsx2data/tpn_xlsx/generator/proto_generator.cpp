@@ -34,68 +34,6 @@ namespace tpn {
 
 namespace xlsx {
 
-//ProtoGenerator::ProtoGenerator(xlnt::workbook &workbook, FileHelper &out_file)
-//    : workbook_(workbook), out_file_(out_file) {}
-//
-//ProtoGenerator::~ProtoGenerator() {}
-//
-//bool ProtoGenerator::Generate() {
-//  LOG_INFO("proto generator start generate");
-//
-//  printer_.Reset();
-//
-//  for (auto &&sheet : workbook_) {
-//    LOG_INFO("proto generator load sheet: {}", sheet.title());
-//    if (!tpn::xlsx::SheetTitleIsOutput(sheet.title())) {
-//      continue;
-//    }
-//
-//    GenerateSheetInfo(sheet);
-//  }
-//
-//  LOG_INFO("proto generator finish generate");
-//
-//  return true;
-//}
-//
-//bool ProtoGenerator::GenerateSheetInfo(xlnt::worksheet &worksheet) {
-//  auto &&ranges = worksheet.rows();
-//  if (ranges.length() > 1) {  // 第一行为此列字段的标签定义
-//    printer_.Reset();
-//
-//    std::string title_str = worksheet.title().substr(1);
-//
-//    printer_.Println(
-//        fmt::format("message {} {{", GetDataHubItemName(title_str)));
-//    printer_.Indent();
-//
-//    auto row = ranges[0];
-//
-//    for (auto &&cell : row) {
-//      printer_.Println(fmt::format("{}", cell.to_string()));
-//    }
-//
-//    printer_.Outdent();
-//    printer_.Println("}");
-//    printer_.Println("");
-//
-//    printer_.Println(
-//        fmt::format("message {} {{", GetDataHubMapName(title_str)));
-//    printer_.Indent();
-//
-//    printer_.Println(fmt::format("map<{}, {}> map_data = 1;", "fixed32",
-//                                 GetDataHubItemName(title_str)));
-//
-//    printer_.Outdent();
-//    printer_.Println("}");
-//    printer_.Println("");
-//
-//    out_file_.Write(printer_.GetBuf());
-//  }
-//
-//  return true;
-//}
-
 ProtoGenerator::ProtoGenerator() {}
 
 ProtoGenerator::~ProtoGenerator() {}
