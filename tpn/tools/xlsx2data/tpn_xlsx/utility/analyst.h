@@ -31,6 +31,7 @@
 #include <rapidjson/document.h>
 
 #include "xlsx2data_common.h"
+#include "helper.h"
 
 namespace tpn {
 
@@ -71,6 +72,12 @@ class TPN_XLSX2DATA_API AnalystField {
   ///  @return 成功返回true
   bool GenerateJsonData(rapidjson::Document &document,
                         rapidjson::Value &row_data, std::string_view data);
+
+  /// 生成proto描述数据
+  ///  @param[in]   printer       打印器
+  ///  @param[in]   name            要解析的字段顺序
+  ///  @return 成功返回true
+  bool GenerateProtoData(Printer &printer, size_t index);
 
   /// 打印数据
   /// @note 测试用
@@ -140,6 +147,15 @@ class TPN_XLSX2DATA_API AnalystField {
                                   std::string_view data,
                                   size_t delimiter_index = 0);
 
+  /// 生成proto描述数据
+  ///  @param[in]   printer       打印器
+  ///  @param[in]   type            类型
+  ///  @param[in]   name            要解析的字段名
+  ///  @param[in]   name            要解析的字段顺序
+  ///  @return 成功返回true
+  bool GenerateProtoData(Printer &printer, XlsxDataType type,
+                         std::string_view name, size_t index);
+
  private:
   std::string name_;                                    ///< 字段名
   XlsxDataType type_{XlsxDataType::kXlsxDataTypeNone};  ///< 字段类型
@@ -177,6 +193,12 @@ class TPN_XLSX2DATA_API AnalystSheet {
                         rapidjson::Value &row_data, size_t index,
                         std::string_view data);
 
+  /// 生成proto描述数据
+  ///  @param[in]   printer       打印器
+  ///  @param[in]   index         数据表中下标
+  ///  @return 成功返回true
+  bool GenerateProtoData(Printer &printer, size_t index);
+
   /// 获取表名
   ///  @return 表名
   std::string_view GetSheetTitle() const;
@@ -213,6 +235,14 @@ class TPN_XLSX2DATA_API Analyst {
                         rapidjson::Value &row_data,
                         std::string_view sheet_title, size_t index,
                         std::string_view data);
+
+  /// 生成proto描述数据
+  ///  @param[in]   printer       打印器
+  ///  @param[in]   sheet_title   要解析的工作表名
+  ///  @param[in]   index         数据表中下标
+  ///  @return 成功返回true
+  bool GenerateProtoData(Printer &printer, std::string_view sheet_title,
+                         size_t index);
 
  private:
   /// 分析字段

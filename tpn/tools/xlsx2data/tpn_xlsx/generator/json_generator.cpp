@@ -78,7 +78,7 @@ bool JsonGenerator::Analyze(xlnt::worksheet &worksheet) {
   LOG_INFO("json generator start analyze worksheet : {}", worksheet.title());
 
   auto &&ranges = worksheet.rows();
-  if (ranges.length() > 1) {  // 第一行为此列字段的标签定义
+  if (ranges.length() > 2) { // 第三行及以上为数据
     std::string title_raw = GetSheetTitle(worksheet.title());
     TPN_ASSERT(!title_raw.empty(), "sheet title error, title : {}",
                worksheet.title());

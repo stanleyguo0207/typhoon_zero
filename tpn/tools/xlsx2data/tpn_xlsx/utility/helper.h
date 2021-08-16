@@ -33,6 +33,11 @@ namespace tpn {
 
 namespace xlsx {
 
+/// workbook工作簿是否需要输出
+///  @param[in]   path      路径
+///  @return 需要输出返回true
+TPN_XLSX2DATA_API bool WorkBookIsOutput(std::string_view file_name);
+
 /// sheet表名是否需要输出
 ///  @param[in]   title     sheet表名称
 ///  @return 需要输出返回true

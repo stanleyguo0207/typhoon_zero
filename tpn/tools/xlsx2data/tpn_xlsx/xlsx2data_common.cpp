@@ -25,6 +25,9 @@
 #include <string>
 #include <unordered_map>
 
+#include "debug_hub.h"
+#include "helper.h"
+
 namespace tpn {
 
 namespace xlsx {
@@ -85,10 +88,13 @@ static constexpr std::string_view s_generator_licenses = R"License(//
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
+
 )License";
 
-static constexpr std::string_view s_proto3_head = R"Proto3Head(
-syntax = "proto3";
+static constexpr std::string_view s_proto3_head =
+    R"Proto3Head(syntax = "proto3";
+
+import "google/protobuf/any.proto";
 
 package tpn.data;
 
@@ -96,6 +102,15 @@ option optimize_for = SPEED;
 option cc_generic_services = false;
 
 )Proto3Head";
+
+static constexpr std::string_view s_proto3_data_hub_map =
+    R"Proto3DataHubMap(message DataHubMap {
+  map<string, google.protobuf.Any> datas = 1;
+}
+
+)Proto3DataHubMap";
+
+static constexpr size_t s_key_type_max_size = 8;  ///< key的最大长度为64位
 
 }  // namespace
 
@@ -183,6 +198,46 @@ std::string_view GetFieldDelimiters() { return s_field_delimiters; }
 std::string_view GetLicense() { return s_generator_licenses; }
 
 std::string_view GetProto3Head() { return s_proto3_head; }
+
+std::string_view GetProto3DataHubMap() { return s_proto3_data_hub_map; }
+
+std::string GetProto3TypeByType(XlsxDataType type) {
+  std::string ret;
+  switch (type) {
+    case XlsxDataType::kXlsxDataTypeDouble: {
+      ret.assign("double");
+    } break;
+    case XlsxDataType::kXlsxDataTypeFloat: {
+      ret.assign("float");
+    } break;
+    case XlsxDataType::kXlsxDataTypeI32: {
+      ret.assign("sint32");
+    } break;
+    case XlsxDataType::kXlsxDataTypeI64: {
+      ret.assign("sint64");
+    } break;
+    case XlsxDataType::kXlsxDataTypeU32: {
+      ret.assign("uint32");
+    } break;
+    case XlsxDataType::kXlsxDataTypeU64: {
+      ret.assign("uint64");
+    } break;
+    case XlsxDataType::kXlsxDataTypeBool: {
+      ret.assign("bool");
+    } break;
+    case XlsxDataType::kXlsxDataTypeStr: {
+      ret.assign("string");
+    } break;
+    default: {
+      TPN_ASSERT(false, "type {} couldn't transform to proto3 type", type);
+    } break;
+  }
+  return std::move(ret);
+}
+
+std::string GetProto3MessageName(std::string_view type_name) {
+  return fmt::format("DataHubEntry{}", CapitalizeFirstLetter(type_name));
+}
 
 }  // namespace xlsx
 

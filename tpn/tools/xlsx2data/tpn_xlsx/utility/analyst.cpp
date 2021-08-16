@@ -25,7 +25,6 @@
 #include "utils.h"
 #include "log.h"
 #include "debug_hub.h"
-#include "helper.h"
 
 namespace tpn {
 
@@ -91,6 +90,10 @@ bool AnalystField::GenerateJsonData(rapidjson::Document &document,
   }
 
   return GenerateJsonData(document, row_data, type_, name_, data);
+}
+
+bool AnalystField::GenerateProtoData(Printer &printer, size_t index) {
+  return GenerateProtoData(printer, type_, name_, index);
 }
 
 void AnalystField::PrintStorage() const {
@@ -292,7 +295,7 @@ bool AnalystField::GenerateJsonDataComplexArr(rapidjson::Document &document,
     std::string delimiter =
         std::string(1, complex_field_.first[delimiter_index]);
     std::string key_name = fmt::format("nest{}", delimiter_index + 1);
-    auto data_vec = Tokenize(data, delimiter);
+    auto data_vec        = Tokenize(data, delimiter);
     for (auto &&data_str : data_vec) {
       val.SetObject();
       rapidjson::Value tmp_arr(rapidjson::kArrayType);
@@ -304,6 +307,61 @@ bool AnalystField::GenerateJsonDataComplexArr(rapidjson::Document &document,
       val.AddMember(tmp_key.Move(), tmp_arr.Move(), document.GetAllocator());
       val_arr.PushBack(val.Move(), document.GetAllocator());
     }
+  }
+
+  return true;
+}
+
+bool AnalystField::GenerateProtoData(Printer &printer, XlsxDataType type,
+                                     std::string_view name, size_t index) {
+  if (XlsxDataType::kXlsxDataTypeDesc == type) {
+    return true;
+  } else if (XlsxDataType::kXlsxDataTypeComplexObj == type) {
+    printer.Println(fmt::format("message {} {{", CapitalizeFirstLetter(name)));
+    printer.Indent();
+
+    for (size_t i = 0; i < complex_field_.second.size(); ++i) {
+      printer.Println(fmt::format("{0} p{1} = {1};",
+                                  GetProto3TypeByType(complex_field_.second[i]),
+                                  i + 1));
+    }
+
+    printer.Outdent();
+    printer.Println("}");
+    printer.Println(fmt::format("{} {} = {};", CapitalizeFirstLetter(name),
+                                LowercaseString(name), index));
+  } else if (XlsxDataType::kXlsxDataTypeComplexArr == type) {
+    printer.Println(fmt::format("message {} {{", CapitalizeFirstLetter(name)));
+    printer.Indent();
+
+    for (size_t i = 0; i < complex_field_.first.size() - 2; ++i) {
+      printer.Println(fmt::format("message {}Nest{} {{",
+                                  CapitalizeFirstLetter(name), i + 1));
+      printer.Indent();
+    }
+
+    for (size_t i = 0; i < complex_field_.second.size(); ++i) {
+      printer.Println(fmt::format("{0} p{1} = {1};",
+                                  GetProto3TypeByType(complex_field_.second[i]),
+                                  i + 1));
+    }
+
+    for (size_t i = 0; i < complex_field_.first.size() - 2; ++i) {
+      printer.Outdent();
+      printer.Println("}");
+      printer.Println(fmt::format("repeated {0}Nest{1} nest{1} = 1;",
+                                  CapitalizeFirstLetter(name),
+                                  complex_field_.first.size() - 2 - i));
+    }
+
+    printer.Outdent();
+    printer.Println("}");
+    printer.Println(fmt::format("repeated {} {} = {};",
+                                CapitalizeFirstLetter(name),
+                                LowercaseString(name), index));
+  } else {
+    printer.Println(
+        fmt::format("{} {} = {};", GetProto3TypeByType(type), name, index));
   }
 
   return true;
@@ -339,6 +397,13 @@ bool AnalystSheet::GenerateJsonData(rapidjson::Document &document,
              index, fields_.size());
 
   return fields_[index].GenerateJsonData(document, row_data, data);
+}
+
+bool AnalystSheet::GenerateProtoData(Printer &printer, size_t index) {
+  TPN_ASSERT(index < fields_.size(), "index error, index: {}, fields size: {}",
+             index, fields_.size());
+
+  return fields_[index].GenerateProtoData(printer, index + 1);
 }
 
 std::string_view AnalystSheet::GetSheetTitle() const { return sheet_title_; }
@@ -407,6 +472,16 @@ bool Analyst::GenerateJsonData(rapidjson::Document &document,
              "data not in analyst, title: {}, data: {}", sheet_title, data);
 
   return iter->second.GenerateJsonData(document, row_data, index, data);
+}
+
+bool Analyst::GenerateProtoData(Printer &printer, std::string_view sheet_title,
+                                size_t index) {
+  std::string title_key(sheet_title.data(), sheet_title.length());
+  auto iter = sheet_umap_.find(title_key);
+  TPN_ASSERT(sheet_umap_.end() != iter, "data not in analyst, title: {}",
+             sheet_title);
+
+  return iter->second.GenerateProtoData(printer, index);
 }
 
 }  // namespace xlsx

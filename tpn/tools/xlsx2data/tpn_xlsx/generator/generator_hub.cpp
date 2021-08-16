@@ -48,7 +48,10 @@ bool GeneratorHub::Load(std::string_view path, std::string &error,
 
   try {
     for (auto &&iter : fs::directory_iterator(xlsx_path)) {
-      xlsx_file_paths_.emplace_back(iter.path().generic_string());
+      auto file_path = iter.path();
+      if (WorkBookIsOutput(file_path.filename().generic_string())) {
+        xlsx_file_paths_.emplace_back(file_path.generic_string());
+      }
     }
 
     if (xlsx_file_paths_.empty()) {

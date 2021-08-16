@@ -34,6 +34,14 @@ static constexpr std::string_view s_formatter_char = " ";  // 缩进方式
 
 }  // namespace
 
+bool WorkBookIsOutput(std::string_view file_name) {
+  if (file_name.empty()) {
+    return false;
+  }
+
+  return std::isalpha(file_name[0]);
+}
+
 bool SheetTitleIsOutput(std::string_view title) {
   if (title.empty()) {
     return false;

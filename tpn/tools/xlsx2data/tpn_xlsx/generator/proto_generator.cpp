@@ -34,87 +34,6 @@ namespace tpn {
 
 namespace xlsx {
 
-//namespace {
-//
-///// 内部类型转换为proto3类型
-//static std::string GetProto3Type(std::string_view type_name) {
-//  std::string ret;
-//  auto type = GetTypeByTypeName(type_name);
-//  switch (type) {
-//    case XlsxDataType::kXlsxDataTypeDouble:
-//    case XlsxDataType::kXlsxDataTypeFloat: {
-//      ret.assign(type_name.data(), type_name.size());
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeI8:
-//    case XlsxDataType::kXlsxDataTypeI16: {
-//      ret.assign("sint32");
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeI32: {
-//      ret.assign("sfixed32");
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeI64: {
-//      ret.assign("sint64");
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeU8:
-//    case XlsxDataType::kXlsxDataTypeU16: {
-//      ret.assign("uint32");
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeU32: {
-//      ret.assign("fixed32");
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeU64: {
-//      ret.assign("uint64");
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeStr: {
-//      ret.assign("string");
-//    } break;
-//    default: {
-//      TPN_ASSERT(false, "cound't transform to proto3 type, type_name : {}",
-//                 type_name);
-//    } break;
-//  }
-//
-//  return std::move(ret);
-//}
-//
-//static constexpr size_t s_key_type_max_size = 8;  ///< key的最大长度为64位
-//
-///// 获取指定类型的长度，已c++类型为标准
-//static const size_t GetTypeSizeOf(std::string_view type_name) {
-//  size_t ret = 0;
-//  auto type  = GetTypeByTypeName(type_name);
-//
-//  switch (type) {
-//    case XlsxDataType::kXlsxDataTypeI8:
-//    case XlsxDataType::kXlsxDataTypeU8: {
-//      ret = 1;
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeI16:
-//    case XlsxDataType::kXlsxDataTypeU16: {
-//      ret = 2;
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeI32:
-//    case XlsxDataType::kXlsxDataTypeU32: {
-//      ret = 4;
-//    } break;
-//    case XlsxDataType::kXlsxDataTypeI64:
-//    case XlsxDataType::kXlsxDataTypeU64: {
-//      ret = 8;
-//    } break;
-//
-//    default: {
-//      TPN_ASSERT(
-//          false,
-//          "cound't get size of type only support integer, type_name : {}",
-//          type_name);
-//    } break;
-//  }
-//
-//  return ret;
-//}
-//
-//}  // namespace
-//
 //ProtoGenerator::ProtoGenerator(xlnt::workbook &workbook, FileHelper &out_file)
 //    : workbook_(workbook), out_file_(out_file) {}
 //
@@ -195,19 +114,70 @@ bool ProtoGenerator::Load(std::string &error) {
     return false;
   }
 
-  FmtMemoryBuf buf;
+  printer_.Reset();
+
   // license
   auto license = GetLicense();
-  buf.append(license.data(), license.data() + license.length());
+  printer_.Print(license);
+
   // proto3 head
   auto proto3_head = GetProto3Head();
-  buf.append(proto3_head.data(), proto3_head.data() + proto3_head.length());
-  proto_file_.Write(buf);
+  printer_.Print(proto3_head);
+
+  // map
+  auto data_hub_map = GetProto3DataHubMap();
+  printer_.Print(data_hub_map);
+
+  proto_file_.Write(printer_.GetBuf());
 
   return true;
 }
 
-bool ProtoGenerator::Analyze(xlnt::worksheet &worksheet) { return true; }
+bool ProtoGenerator::Analyze(xlnt::worksheet &worksheet) {
+  LOG_INFO("proto generator start analyze worksheet : {}", worksheet.title());
+
+  auto &&ranges = worksheet.rows();
+  if (ranges.length() > 0) {
+    printer_.Reset();  // 重置一下缓冲流
+
+    std::string title_raw = GetSheetTitle(worksheet.title());
+    TPN_ASSERT(!title_raw.empty(), "sheet title error, title : {}",
+               worksheet.title());
+
+    std::string title = CapitalizeFirstLetter(title_raw);
+
+    printer_.Println(fmt::format("message {} {{", GetProto3MessageName(title)));
+    printer_.Indent();
+
+    printer_.Println(fmt::format("message {} {{", title));
+    printer_.Indent();
+
+    // 字段解析
+    auto &&row = ranges[0];
+    for (size_t i = 0; i < row.length(); ++i) {
+      if (!g_xlsx2data_generator->GetAnalyst().GenerateProtoData(
+              printer_, title_raw, i)) {
+        LOG_ERROR(
+            "proto generator proto data error, title: {}, index: {}, data: {}",
+            title_raw, i, row[i].to_string());
+        return false;
+      }
+    }
+
+    printer_.Outdent();
+    printer_.Println("}");
+    printer_.Println(fmt::format("repeated {} datas = 1;", title));
+
+    printer_.Outdent();
+    printer_.Println("}");
+    printer_.Println("");
+
+    proto_file_.Write(printer_.GetBuf());
+  }
+
+  LOG_INFO("proto generator finish analyze worksheet : {}", worksheet.title());
+  return true;
+}
 
 }  // namespace xlsx
 

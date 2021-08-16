@@ -123,6 +123,20 @@ TPN_XLSX2DATA_API std::string_view GetLicense();
 ///  @return protoe head
 TPN_XLSX2DATA_API std::string_view GetProto3Head();
 
+/// 获取proto3 data_hub map结构
+///  @return proto3 data_hub map结构
+TPN_XLSX2DATA_API std::string_view GetProto3DataHubMap();
+
+/// 根据类型获取proto3类型
+///  @param[in]   type            类型
+///  @return 返回proto3对应的内部自定义类型
+TPN_XLSX2DATA_API std::string GetProto3TypeByType(XlsxDataType type);
+
+/// 返回proto3的message名称
+///  @param[in]   type_name       类型名称
+///  @return proto3的message名称
+TPN_XLSX2DATA_API std::string GetProto3MessageName(std::string_view type_name);
+
 }  // namespace xlsx
 
 }  // namespace tpn
