@@ -108,17 +108,31 @@ set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "Set debug library postfix")
 include(GNUInstallDirs)
 
 # Compile shared library
-add_library(xlnt
-  SHARED
-    ${XLNT_HEADERS}
-    ${XLNT_SOURCES}
-    $<TARGET_OBJECTS:libstudxml>
-  )
+if(NOT BUILD_SHARED_LIBS)
+  add_library(xlnt
+    STATIC
+      ${XLNT_HEADERS}
+      ${XLNT_SOURCES}
+      $<TARGET_OBJECTS:libstudxml>
+    )
 
-target_compile_definitions(xlnt
-  PRIVATE
-    XLNT_SHARED=1
-  )
+  target_compile_definitions(xlnt
+    PUBLIC
+      XLNT_STATIC=1
+    )
+else()
+  add_library(xlnt
+    SHARED
+      ${XLNT_HEADERS}
+      ${XLNT_SOURCES}
+      $<TARGET_OBJECTS:libstudxml>
+    )
+
+  target_compile_definitions(xlnt
+    PRIVATE
+      XLNT_SHARED=1
+    )
+endif()
   
 # Includes
 target_include_directories(xlnt
@@ -146,10 +160,12 @@ if(MSVC)
       _CRT_SECURE_NO_WARNINGS=1
     )
 
-  target_compile_definitions(xlnt
-    PRIVATE
-      XLNT_EXPORT=1
-    )
+  if (BUILD_SHARED_LIBS)
+    target_compile_definitions(xlnt
+      PRIVATE
+        XLNT_EXPORT=1
+      )
+  endif()
 
   set_target_properties(xlnt
     PROPERTIES

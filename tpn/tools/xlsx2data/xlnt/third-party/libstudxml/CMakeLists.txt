@@ -81,14 +81,34 @@ target_include_directories(libstudxml
     ${EXPAT_INCLUDE_DIRS}
   )
 
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(libstudxml
+    PUBLIC
+      XML_STATIC=1
+    )
+endif()
+
 if(MSVC)
   target_compile_definitions(libstudxml
     PRIVATE
       _CRT_SECURE_NO_WARNINGS=1
     )
+  set_target_properties(libstudxml
+    PROPERTIES
+      COMPILE_FLAGS
+        "/wd\"4005\" /wd\"5105\""
+    )
 endif()
 
-set_target_properties(libstudxml
-  PROPERTIES
-    POSITION_INDEPENDENT_CODE 1
-  )
+if (NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(libstudxml
+    PUBLIC
+      XML_STATIC=1
+    )
+else()
+  set_target_properties(libstudxml
+    PROPERTIES
+      POSITION_INDEPENDENT_CODE 1
+    )
+endif()
+

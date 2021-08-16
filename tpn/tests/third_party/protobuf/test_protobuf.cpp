@@ -339,7 +339,7 @@ TEST_CASE("data write", "[protobuf]") {
         auto pool3_data = pack_data->add_pool3();
         for (int k = 0; k < RandI32(1, 2); ++k) {
           auto nest1_data = pool3_data->add_nest1();
-          for (int m = 0; m < RandI32(1,2); ++m) {
+          for (int m = 0; m < RandI32(1, 2); ++m) {
             auto nest2_data = nest1_data->add_nest2();
             nest2_data->set_p1(RandU32(1, 1000));
             nest2_data->set_p2(RandU32(100, 1000));
