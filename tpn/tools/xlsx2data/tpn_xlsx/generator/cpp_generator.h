@@ -1,4 +1,4 @@
-///
+//
 //           ┌┬┐┬ ┬┌─┐┬ ┬┌─┐┌─┐┌┐┌
 //            │ └┬┘├─┘├─┤│ ││ ││││
 //            ┴  ┴ ┴  ┴ ┴└─┘└─┘┘└┘
@@ -55,67 +55,68 @@ class TPN_XLSX2DATA_API CppGenerator {
   /// 头文件包含
   void GenerateHeadInclude();
 
-  // 头文件守护开始
+  /// 头文件守护开始
   void GenerateHeadGuardBegin();
 
-  // 头文件守护结束
+  /// 头文件守护结束
   void GenerateHeadGuardEnd();
 
-  // 头文件命名空间开始
+  /// 头文件命名空间开始
   void GenerateHeadNamespaceBegin();
 
-  // 头文件命名空间结束
+  /// 头文件命名空间结束
   void GenerateHeadNamespaceEnd();
 
-  // 头文件类开始
+  /// 头文件类开始
   void GenerateHeadClassBegin();
 
-  // 头文件类结束
+  /// 头文件类结束
   void GenerateHeadClassEnd();
 
-  // 头文件方法开始
+  /// 头文件方法开始
   void GenerateHeadMethodBegin();
 
-  // 头文方法 加载
+  /// 头文方法 加载
   void GenerateHeadMethodLoad();
 
-  // 头文方法 重新加载
+  /// 头文方法 重新加载
   void GenerateHeadMethodReLoad();
 
-  // 头文方法 获取路径
+  /// 头文方法 获取路径
   void GenerateHeadMethodGetPath();
 
-  // 头文件方法结束
+  /// 头文件方法结束
   void GenerateHeadMethodEnd();
 
-  // 头文件类单例
+  /// 头文件类单例
   void GenerateHeadSingleton();
 
-  // 头文件类实例声明
+  /// 头文件类实例声明
   void GenerateHeadInstance();
 
-  // 源文件包含
+ private:
+  /// 源文件包含
   void GenerateSourceInclude();
 
-  // 源文件命名空间开始
+  /// 源文件命名空间开始
   void GenerateSourceNamespaceBegin();
 
-  // 源文件命名空间结束
+  /// 源文件命名空间结束
   void GenerateSourceNamespaceEnd();
 
-  // 源文方法
+  /// 源文方法
   void GenerateSourceMethod();
 
-  // 源文方法 加载
+  /// 源文方法 加载
   void GenerateSourceMethodLoad();
 
-  // 源文方法 重新加载
+  /// 源文方法 重新加载
   void GenerateSourceMethodReLoad();
 
-  // 源文方法 获取路径
+  /// 源文方法 获取路径
   void GenerateSourceMethodGetPath();
 
-  // 源文件类单例
+  /// 源文件类单例
   void GenerateSourceSingleton();
 
  private:
