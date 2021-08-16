@@ -112,6 +112,9 @@ static constexpr std::string_view s_proto3_data_hub_map =
 
 static constexpr size_t s_key_type_max_size = 8;  ///< key的最大长度为64位
 
+static constexpr std::string_view s_cpp_data_hub_mgr      = "DataHubMgr";
+static constexpr std::string_view s_cpp_data_hub_mgr_area = "DataHubMgr::";
+
 }  // namespace
 
 bool IsTypeNameComplexDelimiter(char ch) { return 1 == s_complex_sign[ch]; }
@@ -237,6 +240,54 @@ std::string GetProto3TypeByType(XlsxDataType type) {
 
 std::string GetProto3MessageName(std::string_view type_name) {
   return fmt::format("DataHubEntry{}", CapitalizeFirstLetter(type_name));
+}
+
+bool IsCppKeyType(XlsxDataType type) {
+  return XlsxDataType::kXlsxDataTypeI32 == type ||
+         XlsxDataType::kXlsxDataTypeI64 == type ||
+         XlsxDataType::kXlsxDataTypeU32 == type ||
+         XlsxDataType::kXlsxDataTypeU64 == type ||
+         XlsxDataType::kXlsxDataTypeStr == type;
+}
+
+std::string GetCppTypeByType(XlsxDataType type) {
+  std::string ret;
+  switch (type) {
+    case XlsxDataType::kXlsxDataTypeDouble: {
+      ret.assign("double");
+    } break;
+    case XlsxDataType::kXlsxDataTypeFloat: {
+      ret.assign("float");
+    } break;
+    case XlsxDataType::kXlsxDataTypeI32: {
+      ret.assign("int32_t");
+    } break;
+    case XlsxDataType::kXlsxDataTypeI64: {
+      ret.assign("int64_t");
+    } break;
+    case XlsxDataType::kXlsxDataTypeU32: {
+      ret.assign("uint32_t");
+    } break;
+    case XlsxDataType::kXlsxDataTypeU64: {
+      ret.assign("uint64_t");
+    } break;
+    case XlsxDataType::kXlsxDataTypeBool: {
+      ret.assign("bool");
+    } break;
+    case XlsxDataType::kXlsxDataTypeStr: {
+      ret.assign("std::string");
+    } break;
+    default: {
+      TPN_ASSERT(false, "type {} couldn't transform to cpp type", type);
+    } break;
+  }
+  return std::move(ret);
+}
+
+std::string_view GetCppDataHubMgrName() { return s_cpp_data_hub_mgr; }
+
+std::string_view GetCppDataHubMgrNameWithArea() {
+  return s_cpp_data_hub_mgr_area;
 }
 
 }  // namespace xlsx

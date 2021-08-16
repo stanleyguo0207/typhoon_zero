@@ -137,6 +137,25 @@ TPN_XLSX2DATA_API std::string GetProto3TypeByType(XlsxDataType type);
 ///  @return proto3的message名称
 TPN_XLSX2DATA_API std::string GetProto3MessageName(std::string_view type_name);
 
+/// 是否为cpp允许的key的类型
+/// 可以支持 double float 但是大多数场景不需要支持这两种类型，所以这里没有支持这两种类型
+///  @param[in]   type            类型
+///  @return 是返回true
+TPN_XLSX2DATA_API bool IsCppKeyType(XlsxDataType type);
+
+/// 根据类型获取cpp类型
+///  @param[in]   type            类型
+///  @return 返回cpp对应的内部自定义类型
+TPN_XLSX2DATA_API std::string GetCppTypeByType(XlsxDataType type);
+
+/// 获取cpp文件的管理器名称
+//   @return cpp文件的管理器名称
+TPN_XLSX2DATA_API std::string_view GetCppDataHubMgrName();
+
+/// 获取cpp文件的管理器域名称
+//   @return cpp文件的管理器域名称
+TPN_XLSX2DATA_API std::string_view GetCppDataHubMgrNameWithArea();
+
 }  // namespace xlsx
 
 }  // namespace tpn

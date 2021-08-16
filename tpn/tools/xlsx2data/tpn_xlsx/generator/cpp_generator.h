@@ -76,6 +76,15 @@ class TPN_XLSX2DATA_API CppGenerator {
   // 头文件方法开始
   void GenerateHeadMethodBegin();
 
+  // 头文方法 加载
+  void GenerateHeadMethodLoad();
+
+  // 头文方法 重新加载
+  void GenerateHeadMethodReLoad();
+
+  // 头文方法 获取路径
+  void GenerateHeadMethodGetPath();
+
   // 头文件方法结束
   void GenerateHeadMethodEnd();
 
@@ -93,6 +102,18 @@ class TPN_XLSX2DATA_API CppGenerator {
 
   // 源文件命名空间结束
   void GenerateSourceNamespaceEnd();
+
+  // 源文方法
+  void GenerateSourceMethod();
+
+  // 源文方法 加载
+  void GenerateSourceMethodLoad();
+
+  // 源文方法 重新加载
+  void GenerateSourceMethodReLoad();
+
+  // 源文方法 获取路径
+  void GenerateSourceMethodGetPath();
 
   // 源文件类单例
   void GenerateSourceSingleton();

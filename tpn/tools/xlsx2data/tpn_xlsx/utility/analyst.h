@@ -79,6 +79,17 @@ class TPN_XLSX2DATA_API AnalystField {
   ///  @return 成功返回true
   bool GenerateProtoData(Printer &printer, size_t index);
 
+  /// 生成cpp头文件方法声明
+  ///  @param[in]   field_keys      字段key集合
+  ///  @param[in]   field_comments  字段key注释
+  ///  @return 成功返回true
+  void GenerateCppFieldKeys(std::string &field_keys,
+                            std::string &field_comments);
+
+  /// 是否为cpp字段主键
+  ///  @return 是返回true
+  bool IsCppFieldKeys();
+
   /// 打印数据
   /// @note 测试用
   void PrintStorage() const;
@@ -199,6 +210,16 @@ class TPN_XLSX2DATA_API AnalystSheet {
   ///  @return 成功返回true
   bool GenerateProtoData(Printer &printer, size_t index);
 
+  /// 生成cpp头文件方法声明
+  ///  @param[in]   printer       打印器
+  ///  @return 成功返回true
+  bool GenerateCppHeadData(Printer &printer);
+
+  /// 生成cpp源文件方法实现
+  ///  @param[in]   printer       打印器
+  ///  @return 成功返回true
+  bool GenerateCppSourceData(Printer &printer);
+
   /// 获取表名
   ///  @return 表名
   std::string_view GetSheetTitle() const;
@@ -243,6 +264,18 @@ class TPN_XLSX2DATA_API Analyst {
   ///  @return 成功返回true
   bool GenerateProtoData(Printer &printer, std::string_view sheet_title,
                          size_t index);
+
+  /// 生成cpp头文件方法声明
+  ///  @param[in]   printer       打印器
+  ///  @param[in]   sheet_title   要解析的工作表名
+  ///  @return 成功返回true
+  bool GenerateCppHeadData(Printer &printer, std::string_view sheet_title);
+
+  /// 生成cpp源文件方法实现
+  ///  @param[in]   printer       打印器
+  ///  @param[in]   sheet_title   要解析的工作表名
+  ///  @return 成功返回true
+  bool GenerateCppSourceData(Printer &printer, std::string_view sheet_title);
 
  private:
   /// 分析字段

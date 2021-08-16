@@ -101,6 +101,10 @@ elseif(WIN32)
       ${CMAKE_COMMAND} -E copy
 		  ${CMAKE_CURRENT_SOURCE_DIR}/xlsx2data_config.json
 		  ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+      COMMAND
+      ${CMAKE_COMMAND} -E copy_directory 
+		  ${CMAKE_CURRENT_SOURCE_DIR}/../data
+		  ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/data
     )
 
   install(FILES

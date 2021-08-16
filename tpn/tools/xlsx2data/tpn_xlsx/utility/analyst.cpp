@@ -96,6 +96,29 @@ bool AnalystField::GenerateProtoData(Printer &printer, size_t index) {
   return GenerateProtoData(printer, type_, name_, index);
 }
 
+void AnalystField::GenerateCppFieldKeys(std::string &field_keys,
+                                        std::string &field_comments) {
+  if (!IsCppFieldKeys()) {
+    return;
+  }
+
+  field_keys += fmt::format("{}, ", GetCppTypeByType(type_));
+  field_comments += fmt::format(" {}-{}", GetCppTypeByType(type_), name_);
+}
+
+bool AnalystField::IsCppFieldKeys() {
+  if (XlsxDataConstraintType::kXlsxDataConstraintTypePrimaryKey !=
+      constraint_type_) {
+    return false;
+  }
+  if (!IsCppKeyType(type_)) {
+    TPN_ASSERT(false, "type:{} couldn't be primary key", type_);
+    return false;
+  }
+
+  return true;
+}
+
 void AnalystField::PrintStorage() const {
   fmt::print("name: {}, type: {}, constraint: {}, export: {}\n", name_, type_,
              constraint_type_, export_type_);
@@ -406,6 +429,74 @@ bool AnalystSheet::GenerateProtoData(Printer &printer, size_t index) {
   return fields_[index].GenerateProtoData(printer, index + 1);
 }
 
+bool AnalystSheet::GenerateCppHeadData(Printer &printer) {
+  std::string field_comments = "///";
+  std::string field_keys     = "";
+  for (auto &&field : fields_) {
+    field.GenerateCppFieldKeys(field_keys, field_comments);
+  }
+
+  Trim(field_keys);
+  if (field_keys.empty()) {
+    LOG_ERROR("{} not have primary key", sheet_title_);
+    return false;
+  }
+
+  printer.Println(field_comments);
+  std::string_view field_keys_strv(field_keys.data(), field_keys.length() - 1);
+  printer.Println(fmt::format("const {0} *Get{0}(std::tuple<{1}> key) const;",
+                              GetProto3MessageName(sheet_title_),
+                              field_keys_strv));
+  return true;
+}
+
+bool AnalystSheet::GenerateCppSourceData(Printer &printer) {
+  std::string field_comments = "///";
+  std::string field_keys     = "";
+  size_t key_count           = 0;
+  for (auto &&field : fields_) {
+    if (field.IsCppFieldKeys()) {
+      ++key_count;
+      field.GenerateCppFieldKeys(field_keys, field_comments);
+    }
+  }
+
+  if (field_keys.empty() && key_count > 0) {
+    LOG_ERROR("{} not have primary key", sheet_title_);
+    return false;
+  }
+
+  Trim(field_keys);
+
+  printer.Println(field_comments);
+  std::string_view field_keys_strv(field_keys.data(), field_keys.length() - 1);
+  printer.Println(
+      fmt::format("const {0} *{2}Get{0}(std::tuple<{1}> key) const {{",
+                  GetProto3MessageName(sheet_title_), field_keys_strv,
+                  GetCppDataHubMgrNameWithArea()));
+  printer.Indent();
+
+  printer.Print("std::string map_key = \"\"");
+  for (size_t i = 0; i < key_count; ++i) {
+    printer.Outdent();
+    printer.Print(fmt::format("+ ToString(std::get<{}>(key)", i));
+    printer.Indent();
+  }
+  printer.Outdent();
+  printer.Println(";");
+  printer.Indent();
+
+  printer.Println(fmt::format("auto iter = {}_map_.find(map_key);",
+                              LowercaseString(sheet_title_)));
+  printer.Println(
+      fmt::format("return {}_map_.end() == iter ? nullptr : &(iter->second);",
+                  LowercaseString(sheet_title_)));
+
+  printer.Outdent();
+  printer.Println("}");
+  return true;
+}
+
 std::string_view AnalystSheet::GetSheetTitle() const { return sheet_title_; }
 
 void AnalystSheet::PrintStorage() const {
@@ -482,6 +573,26 @@ bool Analyst::GenerateProtoData(Printer &printer, std::string_view sheet_title,
              sheet_title);
 
   return iter->second.GenerateProtoData(printer, index);
+}
+
+bool Analyst::GenerateCppHeadData(Printer &printer,
+                                  std::string_view sheet_title) {
+  std::string title_key(sheet_title.data(), sheet_title.length());
+  auto iter = sheet_umap_.find(title_key);
+  TPN_ASSERT(sheet_umap_.end() != iter, "data not in analyst, title: {}",
+             sheet_title);
+
+  return iter->second.GenerateCppHeadData(printer);
+}
+
+bool Analyst::GenerateCppSourceData(Printer &printer,
+                                    std::string_view sheet_title) {
+  std::string title_key(sheet_title.data(), sheet_title.length());
+  auto iter = sheet_umap_.find(title_key);
+  TPN_ASSERT(sheet_umap_.end() != iter, "data not in analyst, title: {}",
+             sheet_title);
+
+  return iter->second.GenerateCppSourceData(printer);
 }
 
 }  // namespace xlsx

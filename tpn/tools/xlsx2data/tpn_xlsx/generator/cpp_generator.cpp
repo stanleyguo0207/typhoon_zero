@@ -76,7 +76,52 @@ bool CppGenerator::Load(std::string &error) {
   return true;
 }
 
-bool CppGenerator::Analyze(xlnt::worksheet &worksheet) { return true; }
+bool CppGenerator::Analyze(xlnt::worksheet &worksheet) {
+  LOG_INFO("cpp generator start analyze worksheet : {}", worksheet.title());
+
+  auto &&ranges = worksheet.rows();
+  if (ranges.length() > 0) {
+    std::string title_raw = GetSheetTitle(worksheet.title());
+    TPN_ASSERT(!title_raw.empty(), "sheet title error, title : {}",
+               worksheet.title());
+
+    std::string title = CapitalizeFirstLetter(title_raw);
+
+    // 头文件
+    printer_.Reset();
+    printer_.Println("");
+    printer_.Println(" public:");
+    printer_.Indent();
+    if (!g_xlsx2data_generator->GetAnalyst().GenerateCppHeadData(printer_,
+                                                                 title_raw)) {
+      LOG_ERROR("cpp generator cpp head data error, title: {}", title_raw);
+      return false;
+    }
+    printer_.Outdent();
+
+    printer_.Println(" private:");
+    printer_.Indent();
+    printer_.Println(fmt::format("std::map<std::string, {}> {}_map_;",
+                                 GetProto3MessageName(title),
+                                 LowercaseString(title)));
+    printer_.Outdent();
+    cpp_file_head_.Write(printer_.GetBuf());
+
+    // 源文件
+    printer_.Reset();
+    if (!g_xlsx2data_generator->GetAnalyst().GenerateCppSourceData(printer_,
+                                                                   title_raw)) {
+      LOG_ERROR("cpp generator cpp srouce data error, title: {}", title_raw);
+      return false;
+    }
+    printer_.Println("");
+    cpp_file_src_.Write(printer_.GetBuf());
+  }
+
+  LOG_INFO("cpp generator start analyze worksheet : {}", worksheet.title());
+
+  return true;
+}
 
 bool CppGenerator::GenerateTail() {
   GenerateHeadClassEnd();
@@ -91,6 +136,7 @@ bool CppGenerator::GenerateTail() {
 void CppGenerator::GenerateHeadInclude() {
   printer_.Reset();
   printer_.Println("#include <map>");
+  printer_.Println("#include <tuple>");
   printer_.Println("#include <string>");
   printer_.Println("#include <string_view>");
   printer_.Println("");
@@ -135,7 +181,8 @@ void CppGenerator::GenerateHeadNamespaceEnd() {
 void CppGenerator::GenerateHeadClassBegin() {
   printer_.Reset();
   printer_.Println("");
-  printer_.Println("class TPN_DATA_API DataHubMgr {");
+  printer_.Println(
+      fmt::format("class TPN_DATA_API {} {{", GetCppDataHubMgrName()));
   cpp_file_head_.Write(printer_.GetBuf());
   GenerateHeadMethodBegin();
 }
@@ -152,12 +199,25 @@ void CppGenerator::GenerateHeadMethodBegin() {
   printer_.Reset();
   printer_.Println(" public:");
   printer_.Indent();
+  GenerateHeadMethodLoad();
+  GenerateHeadMethodReLoad();
+  GenerateHeadMethodGetPath();
+
+  cpp_file_head_.Write(printer_.GetBuf());
+}
+
+void CppGenerator::GenerateHeadMethodLoad() {
   printer_.Println(
       "bool Load(std::string_view path, std::string &error, bool reload = "
       "false);");
+}
+
+void CppGenerator::GenerateHeadMethodReLoad() {
   printer_.Println("bool Reload(std::string &error);");
+}
+
+void CppGenerator::GenerateHeadMethodGetPath() {
   printer_.Println("std::string_view GetPath();");
-  cpp_file_head_.Write(printer_.GetBuf());
 }
 
 void CppGenerator::GenerateHeadMethodEnd() {
@@ -166,7 +226,6 @@ void CppGenerator::GenerateHeadMethodEnd() {
   printer_.Println(" private:");
   printer_.Indent();
   printer_.Println("std::string path_;");
-  printer_.Println("std::map<std::string, ::google::protobuf::Any> data_map_;");
   cpp_file_head_.Write(printer_.GetBuf());
 }
 
@@ -174,7 +233,8 @@ void CppGenerator::GenerateHeadSingleton() {
   printer_.Reset();
   printer_.Println("");
   printer_.Indent();
-  printer_.Println("TPN_SINGLETON_DECL(DataHubMgr)");
+  printer_.Println(
+      fmt::format("TPN_SINGLETON_DECL({})", GetCppDataHubMgrName()));
   printer_.Outdent();
   cpp_file_head_.Write(printer_.GetBuf());
 }
@@ -183,7 +243,8 @@ void CppGenerator::GenerateHeadInstance() {
   printer_.Reset();
   printer_.Println("");
   printer_.Println("/// global data manager instance");
-  printer_.Println("#define g_data_hub tpn::data::DataHubMgr::Instance()");
+  printer_.Println(fmt::format("#define g_data_hub tpn::data::{}::Instance()",
+                               GetCppDataHubMgrName()));
   printer_.Println("");
   cpp_file_head_.Write(printer_.GetBuf());
 }
@@ -191,6 +252,11 @@ void CppGenerator::GenerateHeadInstance() {
 void CppGenerator::GenerateSourceInclude() {
   printer_.Reset();
   printer_.Println("#include \"data_hub.h\"");
+  printer_.Println("");
+  printer_.Println("#include <filesystem>");
+  printer_.Println("");
+  printer_.Println("#include \"utils.h\"");
+  printer_.Println("#include \"debug_hub.h\"");
   printer_.Println("");
   cpp_file_src_.Write(printer_.GetBuf());
 }
@@ -202,6 +268,7 @@ void CppGenerator::GenerateSourceNamespaceBegin() {
   printer_.Println("namespace data {");
   printer_.Println("");
   cpp_file_src_.Write(printer_.GetBuf());
+  GenerateSourceMethod();
 }
 
 void CppGenerator::GenerateSourceNamespaceEnd() {
@@ -213,9 +280,48 @@ void CppGenerator::GenerateSourceNamespaceEnd() {
   cpp_file_src_.Write(printer_.GetBuf());
 }
 
+void CppGenerator::GenerateSourceMethod() {
+  printer_.Reset();
+  GenerateSourceMethodLoad();
+  GenerateSourceMethodReLoad();
+  GenerateSourceMethodGetPath();
+  cpp_file_src_.Write(printer_.GetBuf());
+}
+
+void CppGenerator::GenerateSourceMethodLoad() {
+  printer_.Println(
+      "bool Load(std::string_view path, std::string &error, bool reload /*  = "
+      "false */) {");
+  printer_.Println("}");
+  printer_.Println("");
+}
+
+void CppGenerator::GenerateSourceMethodReLoad() {
+  printer_.Println("bool Reload(std::string &error) {");
+  printer_.Indent();
+
+  printer_.Println("return Load({}, error, true);");
+
+  printer_.Outdent();
+  printer_.Println("}");
+  printer_.Println("");
+}
+
+void CppGenerator::GenerateSourceMethodGetPath() {
+  printer_.Println("std::string_view GetPath() {");
+  printer_.Indent();
+
+  printer_.Println("return path_;");
+
+  printer_.Outdent();
+  printer_.Println("}");
+  printer_.Println("");
+}
+
 void CppGenerator::GenerateSourceSingleton() {
   printer_.Reset();
-  printer_.Println("TPN_SINGLETON_IMPL(DataHubMgr)");
+  printer_.Println(
+      fmt::format("TPN_SINGLETON_IMPL({})", GetCppDataHubMgrName()));
   cpp_file_src_.Write(printer_.GetBuf());
 }
 
