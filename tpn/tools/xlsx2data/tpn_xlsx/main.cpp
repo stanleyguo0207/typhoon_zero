@@ -49,7 +49,8 @@ int main(int argc, char *argv[]) {
   std::shared_ptr<void> log_handle(nullptr,
                                    [](void *) { tpn::log::Shutdown(); });
 
-  std::string data_dir = g_config->GetStringDefault("xlsx_data_dir", "data");
+  std::string data_dir =
+      g_config->GetStringDefault("xlsx_data_dir", "xlsx2data/data");
 
   std::string load_error;
   if (!g_xlsx2data_generator->Load(data_dir, load_error)) {

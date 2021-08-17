@@ -48,7 +48,7 @@ JsonGenerator::~JsonGenerator() {}
 
 bool JsonGenerator::Load(std::string &error) {
   std::string json_file_path = fmt::format(
-      "{}/{}.json", g_config->GetStringDefault("xlsx_json_dir", "json"),
+      "{}/{}.json", g_config->GetStringDefault("xlsx_json_dir", "xlsx2data/json"),
       g_xlsx2data_generator->GetFilePrefix());
   try {
     json_file_.Open(json_file_path, true);

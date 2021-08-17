@@ -39,7 +39,8 @@ CppGenerator::CppGenerator() {}
 CppGenerator::~CppGenerator() {}
 
 bool CppGenerator::Load(std::string &error) {
-  auto cpp_file_path = g_config->GetStringDefault("xlsx_cpp_dir", "cpp");
+  auto cpp_file_path =
+      g_config->GetStringDefault("xlsx_cpp_dir", "xlsx2data/cpp");
 
   std::string cpp_file_head_path = fmt::format(
       "{}/{}.h", cpp_file_path, g_xlsx2data_generator->GetFilePrefix());
@@ -48,7 +49,7 @@ bool CppGenerator::Load(std::string &error) {
 
   std::string bin_file_src_path = fmt::format(
       "{}/bin_generator.cpp",
-      g_config->GetStringDefault("xlsx_generator_dir", "generator"));
+      g_config->GetStringDefault("xlsx_generator_dir", "xlsx2data/generator"));
   try {
     cpp_file_head_.Open(cpp_file_head_path, true);
     cpp_file_src_.Open(cpp_file_src_path, true);
@@ -436,7 +437,7 @@ void CppGenerator::GenerateBinGenerator() {
       "\n"
       "  std::string json_file_path = fmt::format(\n"
       "    \"{{}}/{{}}.json\", "
-      "g_config->GetStringDefault(\"xlsx_json_dir\", \"json\"),\n"
+      "g_config->GetStringDefault(\"xlsx_json_dir\", \"xlsx2data/json\"),\n"
       "    g_xlsx2data_generator->GetFilePrefix());\n"
       "\n"
       "  auto json_path = fs::path(json_file_path);\n"
@@ -452,24 +453,26 @@ void CppGenerator::GenerateBinGenerator() {
       "    auto len  = fs::file_size(json_path);\n"
       "    char *buf = new char[len + 1];\n"
       "    rapidjson::FileReadStream is(fp, buf, len + 1);\n"
-      "    Document d;\n"
-      "    d.ParseStream<kParseCommentsFlag>(is);\n"
+      "    rapidjson::Document d;\n"
+      "    d.ParseStream<rapidjson::kParseCommentsFlag>(is);\n"
       "    if (d.HasParseError()) {{\n"
       "      LOG_ERROR(\"parse json error, {{}}\", d.GetParseError());\n"
       "      return false;\n"
       "    }}\n"
       "\n"
-      "    StringBuffer buffer;\n"
-      "    Writer<StringBuffer> writer(buffer);\n"
+      "    rapidjson::StringBuffer buffer;\n"
+      "    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);\n"
       "    d.Accept(writer);\n"
       "\n"
-      "    DataHubMap data_map;\n"
-      "    JsonStringToMessage(buffer.GetString(), &data_map);\n"
+      "    data::DataHubMap data_map;\n"
+      "    "
+      "::google::protobuf::io::util::JsonStringToMessage(buffer.GetString(), "
+      "&data_map);\n"
       "    std::string bin_file_path = fmt::format(\n"
       "      \"{{}}/{{}}.bin\", g_config->GetStringDefault(\"xlsx_bin_dir\", "
-      "\"bin\"),\n"
+      "\"xlsx2data/bin\"),\n"
       "      g_xlsx2data_generator->GetFilePrefix());\n"
-      "    fstream output(bin_file_path, std::fstream::out | "
+      "    std::fstream output(bin_file_path, std::fstream::out | "
       "std::fstream::trunc | std::fstream::binary);\n"
       "    if (!data_map.SerializeToOstream(&output)) {{\n"
       "      LOG_ERROR(\"Failed to write data_hub protobuf bin.\");\n"

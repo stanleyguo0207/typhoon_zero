@@ -40,7 +40,8 @@ ProtoGenerator::~ProtoGenerator() {}
 
 bool ProtoGenerator::Load(std::string &error) {
   std::string proto_file_path = fmt::format(
-      "{}/{}.proto", g_config->GetStringDefault("xlsx_proto_dir", "proto"),
+      "{}/{}.proto",
+      g_config->GetStringDefault("xlsx_proto_dir", "xlsx2data/proto"),
       g_xlsx2data_generator->GetFilePrefix());
   try {
     proto_file_.Open(proto_file_path, true);
