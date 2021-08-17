@@ -154,6 +154,8 @@ bool JsonGenerator::Generate() {
   FmtMemoryBuf buf;
   buf.append(str_buf.GetString(), str_buf.GetString() + str_buf.GetSize());
   json_file_.Write(buf);
+  json_file_.Flush();
+  json_file_.Close();
 
   LOG_INFO("json generator finish generate json file");
   return true;

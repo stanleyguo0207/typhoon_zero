@@ -20,33 +20,18 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TPN_TOOLS_XLSX2DATA_TPN_XLSX_PCH_PCH_TPN_XLSX_H_
-#define TPN_TOOLS_XLSX2DATA_TPN_XLSX_PCH_PCH_TPN_XLSX_H_
+#include "bin_generator.h"
 
-#include <limits>
-#include <vector>
-#include <fstream>
-#include <string>
-#include <string_view>
-#include <filesystem>
-#include <unordered_map>
+namespace tpn {
 
-#include <xlnt/xlnt.hpp>
+namespace xlsx {
 
-#include <google/protobuf/stubs/common.h>
-#include <google/protobuf/util/json_util.h>
+BinGenerator::BinGenerator() {}
 
-#include <rapidjson/writer.h>
-#include <rapidjson/document.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/prettywriter.h>
-#include <rapidjson/filereadstream.h>
+BinGenerator::~BinGenerator() {}
 
-#include "log.h"
-#include "utils.h"
-#include "config.h"
-#include "banner.h"
-#include "debug_hub.h"
-#include "fmt_wrap.h"
+bool BinGenerator::Generate() { return true; }
 
-#endif // TPN_TOOLS_XLSX2DATA_TPN_XLSX_PCH_PCH_TPN_XLSX_H_
+}  // namespace xlsx
+
+}  // namespace tpn

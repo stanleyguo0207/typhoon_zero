@@ -26,6 +26,7 @@ CollectSourceFiles(
 	PRIVATE_SOURCES
 	# Exclude
 	${CMAKE_CURRENT_SOURCE_DIR}/pch
+  ${CMAKE_CURRENT_SOURCE_DIR}/raw
 	)
 
 # collect include
@@ -34,6 +35,7 @@ CollectIncludeDirectories(
 	PUBLIC_INCLUDES
 	# Exclude
 	${CMAKE_CURRENT_SOURCE_DIR}/pch
+  ${CMAKE_CURRENT_SOURCE_DIR}/raw
 	)
 
 # source tree
@@ -59,6 +61,7 @@ target_link_libraries(tpn_xlsx
 	PUBLIC
     common
     xlnt
+    protobuf
 	)
   
 # ide folder

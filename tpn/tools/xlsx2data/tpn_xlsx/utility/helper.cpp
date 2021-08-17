@@ -64,8 +64,7 @@ std::string GetDataHubEntryName(std::string_view name) {
 }
 
 std::string GetJsonTypeName(std::string_view name) {
-  return fmt::format("type.googleapis.com/{}.{}",
-                     g_xlsx2data_generator->GetFilePrefix(), name);
+  return fmt::format("type.googleapis.com/tpn.data.{}", name);
 }
 
 std::string CapitalizeFirstLetter(std::string_view strv) {

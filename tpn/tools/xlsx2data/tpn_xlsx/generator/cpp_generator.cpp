@@ -143,6 +143,15 @@ bool CppGenerator::GenerateTail() {
   GenerateSourceNamespaceEnd();
 
   GenerateBinGenerator();
+
+  cpp_file_head_.Flush();
+  cpp_file_head_.Close();
+
+  cpp_file_src_.Flush();
+  cpp_file_src_.Close();
+
+  bin_file_src_.Flush();
+  bin_file_src_.Close();
   return true;
 }
 
@@ -415,6 +424,7 @@ void CppGenerator::GenerateBinGenerator() {
       "#include <rapidjson/writer.h>\n"
       "#include <rapidjson/filereadstream.h>\n"
       "\n"
+      "#include \"log.h\"\n"
       "#include \"config.h\"\n"
       "#include \"data_hub.pb.h\"\n"
       "#include \"generator_hub.h\"\n"
@@ -440,9 +450,21 @@ void CppGenerator::GenerateBinGenerator() {
       "g_config->GetStringDefault(\"xlsx_json_dir\", \"xlsx2data/json\"),\n"
       "    g_xlsx2data_generator->GetFilePrefix());\n"
       "\n"
+      "  std::string bin_file_path = fmt::format(\n"
+      "    \"{{}}/{{}}.bin\", g_config->GetStringDefault(\"xlsx_bin_dir\", "
+      "\"xlsx2data/bin\"),\n"
+      "    g_xlsx2data_generator->GetFilePrefix());\n"
+      "\n"
       "  auto json_path = fs::path(json_file_path);\n"
       "  json_path.make_preferred();\n"
       "  auto json_file = fs::absolute(json_path);\n"
+      "\n"
+      "  auto bin_path = fs::path(bin_file_path);\n"
+      "  bin_path.make_preferred();\n"
+      "  auto bin_file = fs::absolute(bin_path);\n"
+      "  if (!fs::exists(bin_file.parent_path())) {{\n"
+      "    fs::create_directories(bin_file.parent_path());\n"
+      "  }}\n"
       "  try {{\n"
       "#if (TPN_COMPILER == TPN_COMPILER_MSVC)\n"
       "    const char *mask = \"rb\";\n"
@@ -465,13 +487,15 @@ void CppGenerator::GenerateBinGenerator() {
       "    d.Accept(writer);\n"
       "\n"
       "    data::DataHubMap data_map;\n"
-      "    "
-      "::google::protobuf::io::util::JsonStringToMessage(buffer.GetString(), "
+      "    auto status = "
+      "::google::protobuf::util::JsonStringToMessage(buffer.GetString(), "
       "&data_map);\n"
-      "    std::string bin_file_path = fmt::format(\n"
-      "      \"{{}}/{{}}.bin\", g_config->GetStringDefault(\"xlsx_bin_dir\", "
-      "\"xlsx2data/bin\"),\n"
-      "      g_xlsx2data_generator->GetFilePrefix());\n"
+      "    if (!status.ok()) {{\n"
+      "      LOG_ERROR(\"Failed to write data_hub protobuf bin.error: {{}}\", "
+      "status.message());\n"
+      "      return false;\n"
+      "    }}\n"
+      "\n"
       "    std::fstream output(bin_file_path, std::fstream::out | "
       "std::fstream::trunc | std::fstream::binary);\n"
       "    if (!data_map.SerializeToOstream(&output)) {{\n"
