@@ -126,11 +126,17 @@ class TPN_XLSX2DATA_API CppGenerator {
   void GenerateSourceSingleton();
 
  private:
+  /// 生成protobuf bin生成器
+  void GenerateBinGenerator();
+
+ private:
   FileHelper cpp_file_head_;  ///< data_hub .h 文件
   FileHelper cpp_file_src_;   ///< data_hub .cpp 文件
+  FileHelper bin_file_src_;   ///< bin_generator .cpp 文件
   Printer printer_;           ///< 打印器
   bool init_flag_{true};      ///< init函数标记
   Printer init_printer_;      ///< init函数打印器
+  Printer bin_printer_;       ///< bin_generator文件打印器
 };
 
 }  // namespace xlsx

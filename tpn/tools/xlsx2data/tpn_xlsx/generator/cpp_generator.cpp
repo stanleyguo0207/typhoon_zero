@@ -45,9 +45,14 @@ bool CppGenerator::Load(std::string &error) {
       "{}/{}.h", cpp_file_path, g_xlsx2data_generator->GetFilePrefix());
   std::string cpp_file_src_path = fmt::format(
       "{}/{}.cpp", cpp_file_path, g_xlsx2data_generator->GetFilePrefix());
+
+  std::string bin_file_src_path = fmt::format(
+      "{}/bin_generator.cpp",
+      g_config->GetStringDefault("xlsx_generator_dir", "generator"));
   try {
     cpp_file_head_.Open(cpp_file_head_path, true);
     cpp_file_src_.Open(cpp_file_src_path, true);
+    bin_file_src_.Open(bin_file_src_path, true);
   } catch (FileException &ex) {
     error = std::string{ex.what()};
     return false;
@@ -59,6 +64,7 @@ bool CppGenerator::Load(std::string &error) {
   printer_.Reset();
   init_flag_ = true;
   init_printer_.Reset();
+  bin_printer_.Reset();
 
   // license
   auto license = GetLicense();
@@ -134,6 +140,8 @@ bool CppGenerator::GenerateTail() {
 
   GenerateSourceMethodInit();
   GenerateSourceNamespaceEnd();
+
+  GenerateBinGenerator();
   return true;
 }
 
@@ -388,6 +396,100 @@ void CppGenerator::GenerateSourceSingleton() {
   printer_.Println(
       fmt::format("TPN_SINGLETON_IMPL({})", GetCppDataHubMgrName()));
   cpp_file_src_.Write(printer_.GetBuf());
+}
+
+void CppGenerator::GenerateBinGenerator() {
+  bin_printer_.Reset();
+  bin_printer_.Println(fmt::format(
+      "{license}"
+      "\n"
+      "#include \"bin_generator.h\"\n"
+      "\n"
+      "#include <fstream>\n"
+      "#include <filesystem>\n"
+      "\n"
+      "#include <google/protobuf/stubs/common.h>\n"
+      "#include <google/protobuf/util/json_util.h>\n"
+      "#include <rapidjson/document.h>\n"
+      "#include <rapidjson/writer.h>\n"
+      "#include <rapidjson/filereadstream.h>\n"
+      "\n"
+      "#include \"config.h\"\n"
+      "#include \"data_hub.pb.h\"\n"
+      "#include \"generator_hub.h\"\n"
+      "\n"
+      "namespace fs = std::filesystem;\n"
+      "\n"
+      "namespace tpn {{\n"
+      "\n"
+      "namespace xlsx {{\n"
+      "\n"
+      "BinGenerator::BinGenerator() {{}}\n"
+      "\n"
+      "BinGenerator::~BinGenerator() {{}}\n"
+      "\n"
+      "bool BinGenerator::Generate() {{\n"
+      "  GOOGLE_PROTOBUF_VERIFY_VERSION;\n"
+      "  std::shared_ptr<void> protobuf_handle(\n"
+      "    nullptr, [](void *) {{ "
+      "google::protobuf::ShutdownProtobufLibrary(); }});\n"
+      "\n"
+      "  std::string json_file_path = fmt::format(\n"
+      "    \"{{}}/{{}}.json\", "
+      "g_config->GetStringDefault(\"xlsx_json_dir\", \"json\"),\n"
+      "    g_xlsx2data_generator->GetFilePrefix());\n"
+      "\n"
+      "  auto json_path = fs::path(json_file_path);\n"
+      "  json_path.make_preferred();\n"
+      "  auto json_file = fs::absolute(json_path);\n"
+      "  try {{\n"
+      "#if (TPN_COMPILER == TPN_COMPILER_MSVC)\n"
+      "    const char *mask = \"rb\";\n"
+      "#else\n"
+      "    const char *mask = \"r\";\n"
+      "#endif\n"
+      "    auto *fp  = std::fopen(json_file.generic_string().c_str(), mask);\n"
+      "    auto len  = fs::file_size(json_path);\n"
+      "    char *buf = new char[len + 1];\n"
+      "    rapidjson::FileReadStream is(fp, buf, len + 1);\n"
+      "    Document d;\n"
+      "    d.ParseStream<kParseCommentsFlag>(is);\n"
+      "    if (d.HasParseError()) {{\n"
+      "      LOG_ERROR(\"parse json error, {{}}\", d.GetParseError());\n"
+      "      return false;\n"
+      "    }}\n"
+      "\n"
+      "    StringBuffer buffer;\n"
+      "    Writer<StringBuffer> writer(buffer);\n"
+      "    d.Accept(writer);\n"
+      "\n"
+      "    DataHubMap data_map;\n"
+      "    JsonStringToMessage(buffer.GetString(), &data_map);\n"
+      "    std::string bin_file_path = fmt::format(\n"
+      "      \"{{}}/{{}}.bin\", g_config->GetStringDefault(\"xlsx_bin_dir\", "
+      "\"bin\"),\n"
+      "      g_xlsx2data_generator->GetFilePrefix());\n"
+      "    fstream output(bin_file_path, std::fstream::out | "
+      "std::fstream::trunc | std::fstream::binary);\n"
+      "    if (!data_map.SerializeToOstream(&output)) {{\n"
+      "      LOG_ERROR(\"Failed to write data_hub protobuf bin.\");\n"
+      "      return false;\n"
+      "    }}\n"
+      "  }} catch (fs::filesystem_error &e) {{\n"
+      "    LOG_ERROR(\"{{}},error: {{}}\", json_file_path, e.what());\n"
+      "    return false;\n"
+      "  }} catch (const std::exception &ex) {{\n"
+      "    LOG_ERROR(\"{{}},error: {{}}\", json_file_path, ex.what());\n"
+      "    return false;\n"
+      "  }}\n"
+      "  return true;\n"
+      "}}\n"
+      "\n"
+      "}}  // namespace xlsx\n"
+      "\n"
+      "}}  // namespace tpn\n",
+      "license"_a = GetLicense()));
+  bin_file_src_.Write(bin_printer_.GetBuf());
 }
 
 }  // namespace xlsx

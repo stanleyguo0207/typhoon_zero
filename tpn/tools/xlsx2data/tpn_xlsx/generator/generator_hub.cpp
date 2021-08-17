@@ -145,8 +145,8 @@ bool GeneratorHub::Generate() {
                sheet.title());
       // cpp文件
       if (!GenerateCpp(sheet)) {
-        LOG_ERROR("xlsx generator generate cpp error path: {}, sheet: {}",
-                  path, sheet.title());
+        LOG_ERROR("xlsx generator generate cpp error path: {}, sheet: {}", path,
+                  sheet.title());
         return false;
       }
       LOG_INFO("xlsx generator finish generate cpp path: {}, sheet: {}", path,
@@ -171,6 +171,14 @@ bool GeneratorHub::Generate() {
     return false;
   }
   LOG_INFO("xlsx generator finish generate cpp tail");
+
+  LOG_INFO("xlsx generator start generate protobuf bin");
+  // protobuf bin 内容生成
+  if (!GeneraBin()) {
+    LOG_ERROR("xlsx generator generate protobuf bin error");
+    return false;
+  }
+  LOG_INFO("xlsx generator finish generate protobuf bin");
 
   LOG_INFO("xlsx generator finish generate");
 
@@ -200,6 +208,8 @@ bool GeneratorHub::GenerateCpp(xlnt::worksheet &worksheet) {
 bool GeneratorHub::GenerateJsonFile() { return json_gen_.Generate(); }
 
 bool GeneratorHub::GenerateCppTail() { return cpp_gen_.GenerateTail(); }
+
+bool GeneratorHub::GeneraBin() { return bin_gen_.Generate(); }
 
 TPN_SINGLETON_IMPL(GeneratorHub)
 

@@ -33,6 +33,7 @@
 #include "json_generator.h"
 #include "proto_generator.h"
 #include "cpp_generator.h"
+#include "bin_generator.h"
 
 namespace tpn {
 
@@ -94,6 +95,10 @@ class TPN_XLSX2DATA_API GeneratorHub {
   ///  @return 成功返回true
   bool GenerateCppTail();
 
+  /// 生成protobuf bin文件
+  ///  @return 成功返回true
+  bool GeneraBin();
+
  private:
   std::string path_;                          ///< 数据文件夹路径
   std::vector<std::string> xlsx_file_paths_;  ///< 所有需要解析的数据路径
@@ -102,6 +107,7 @@ class TPN_XLSX2DATA_API GeneratorHub {
   JsonGenerator json_gen_;                    ///< json生成器
   ProtoGenerator proto_gen_;                  ///< proto生成器
   CppGenerator cpp_gen_;                      ///< cpp生成器
+  BinGenerator bin_gen_;                      ///< bin生成器
 
   TPN_SINGLETON_DECL(GeneratorHub)
 };
