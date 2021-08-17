@@ -20,20 +20,21 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_DATA_PCH_PCH_DATA_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_DATA_PCH_PCH_DATA_H_
+#ifndef TYPHOON_ZERO_TPN_SRC_LIB_DATA_DATA_ENTRY_H_
+#define TYPHOON_ZERO_TPN_SRC_LIB_DATA_DATA_ENTRY_H_
 
-#include <cstdio>
+#include "data_hub.h"
 
-#include <map>
-#include <string>
-#include <string_view>
-#include <fstream>
-#include <filesystem>
+namespace tpn {
 
-#include "define.h"
-#include "utils.h"
-#include "config.h"
-#include "debug_hub.h"
+namespace data {
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_DATA_PCH_PCH_DATA_H_
+/// 数据模块初始化
+///  @return 成功返回true
+bool Init();
+
+}  // namespace data
+
+}  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_LIB_DATA_DATA_ENTRY_H_

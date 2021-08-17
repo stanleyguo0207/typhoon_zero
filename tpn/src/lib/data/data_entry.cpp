@@ -20,20 +20,30 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_SRC_LIB_DATA_PCH_PCH_DATA_H_
-#define TYPHOON_ZERO_TPN_SRC_LIB_DATA_PCH_PCH_DATA_H_
+#include "data_entry.h"
 
 #include <cstdio>
 
-#include <map>
 #include <string>
-#include <string_view>
-#include <fstream>
-#include <filesystem>
 
-#include "define.h"
-#include "utils.h"
-#include "config.h"
-#include "debug_hub.h"
+namespace tpn {
 
-#endif  // TYPHOON_ZERO_TPN_SRC_LIB_DATA_PCH_PCH_DATA_H_
+namespace data {
+
+#ifndef _TPN_DATA_FILE_PATH
+#  define _TPN_DATA_FILE_PATH "data/data_hub.bin"
+#endif
+
+bool Init() {
+  std::string data_error;
+  if (!g_data_hub->Load(_TPN_DATA_FILE_PATH, data_error)) {
+    printf("Error in data file: %s\n", data_error.c_str());
+    return false;
+  }
+
+  return true;
+}
+
+}  // namespace data
+
+}  // namespace tpn

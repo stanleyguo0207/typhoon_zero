@@ -25,7 +25,6 @@
 #include <fstream>
 #include <filesystem>
 
-#include "log.h"
 #include "utils.h"
 #include "config.h"
 #include "debug_hub.h"
@@ -48,10 +47,10 @@ bool DataHubMgr::Load(std::string_view path, std::string &error,
   try {
     std::fstream input(data_file, std::fstream::in | std::fstream::binary);
     if (!input) {
-      LOG_ERROR("file: {} not found.", data_file);
+      error = "file not found (" + path_ + ") ";
       return false;
-    } else if (data_map.ParseFromIstream(&input)) {
-      LOG_ERROR("file: {} parse failed.", data_file);
+    } else if (!data_map.ParseFromIstream(&input)) {
+      error = "file parse failed (" + path_ + ") ";
       return false;
     }
   } catch (fs::filesystem_error &e) {
@@ -166,6 +165,7 @@ bool DataHubMgr::Init(DataHubMap &data_map) {
   return true;
 }
 
+TPN_SINGLETON_IMPL(DataHubMgr)
 }  // namespace data
 
 }  // namespace tpn

@@ -74,6 +74,33 @@ set_target_properties(data
 			"libs"
 	)
 
+# data
+set_property(TARGET
+  data	
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+		_TPN_DATA_FILE_PATH="${CMAKE_CURRENT_SOURCE_DIR}/data/data_hub.bin"
+	)
+
+# data win32
+if(WIN32)
+  add_custom_command(TARGET
+		data
+    POST_BUILD
+      COMMAND
+      ${CMAKE_COMMAND} -E copy_directory 
+		  ${CMAKE_CURRENT_SOURCE_DIR}/data
+		  ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/data
+  )
+endif()
+
+install(FILES
+  data/data_hub.bin
+    DESTINATION
+    ${CONF_DIR}
+  )
+
 # shared library
 if(BUILD_SHARED_LIBS)
   install(TARGETS

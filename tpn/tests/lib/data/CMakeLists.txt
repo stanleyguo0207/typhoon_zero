@@ -20,8 +20,42 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(common)
-add_subdirectory(logger)
-# add_subdirectory(proto)
-add_subdirectory(net)
-add_subdirectory(data)
+cmake_minimum_required(VERSION 3.20.0)
+
+project(test_data CXX)
+
+add_executable(test_data
+	"../../test_include.h"
+	"../../test_main.cpp"
+	"test_data.cpp"
+	)
+
+set_property(TARGET
+	test_data
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+		_TPN_DATA_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_data_test.json"
+	)
+
+target_link_libraries(test_data
+	Catch2::Catch2
+	common
+  data
+	)
+
+install(TARGETS test_data DESTINATION ${BIN_DIR}/tests)
+include(CTest)
+include(Catch)
+catch_discover_tests(test_data)
+
+if(WIN32)
+  add_custom_command(TARGET
+		test_data
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/config_data_test.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

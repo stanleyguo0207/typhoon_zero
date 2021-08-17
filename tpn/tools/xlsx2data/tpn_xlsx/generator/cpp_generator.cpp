@@ -140,6 +140,7 @@ bool CppGenerator::GenerateTail() {
   GenerateHeadGuardEnd();
 
   GenerateSourceMethodInit();
+  GenerateSourceSingleton();
   GenerateSourceNamespaceEnd();
 
   GenerateBinGenerator();
@@ -282,7 +283,6 @@ void CppGenerator::GenerateSourceInclude() {
   printer_.Println("#include <fstream>");
   printer_.Println("#include <filesystem>");
   printer_.Println("");
-  printer_.Println("#include \"log.h\"");
   printer_.Println("#include \"utils.h\"");
   printer_.Println("#include \"config.h\"");
   printer_.Println("#include \"debug_hub.h\"");
@@ -336,10 +336,10 @@ void CppGenerator::GenerateSourceMethodLoad() {
       "    std::fstream input(data_file, std::fstream::in | "
       "std::fstream::binary);\n"
       "    if (!input) {\n"
-      "      LOG_ERROR(\"file: {} not found.\", data_file);\n"
+      "      error = \"file not found (\" + path_ + \") \";\n"
       "      return false;\n"
-      "    } else if (data_map.ParseFromIstream(&input)) {\n"
-      "      LOG_ERROR(\"file: {} parse failed.\", data_file);\n"
+      "    } else if (!data_map.ParseFromIstream(&input)) {\n"
+      "      error = \"file parse failed (\" + path_ + \") \";\n"
       "      return false;\n"
       "    }\n"
       "  } catch (fs::filesystem_error &e) {\n"

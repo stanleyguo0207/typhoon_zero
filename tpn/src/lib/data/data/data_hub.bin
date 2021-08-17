@@ -1,11 +1,4 @@
 
-
-shop„
--type.googleapis.com/tpn.data.DataHubEntryShopS
-d"‘Nè
-È"‘Nè
-¬"‘Nè
-ô"‘Nè
 …
 item}
 -type.googleapis.com/tpn.data.DataHubEntryItemL
@@ -21,6 +14,22 @@
 ¸
  
 ˆ'
+
+shop„
+-type.googleapis.com/tpn.data.DataHubEntryShopS
+d"‘Nè
+È"‘Nè
+¬"‘Nè
+ô"‘Nè
+®
+skill¤
+.type.googleapis.com/tpn.data.DataHubEntrySkillr
+	æŠ€èƒ½1-1 
+	æŠ€èƒ½1-2 
+	æŠ€èƒ½2-1 
+	æŠ€èƒ½2-2 
+	æŠ€èƒ½3-1 
+	æŠ€èƒ½3-2 
 ²
 pack©
 -type.googleapis.com/tpn.data.DataHubEntryPack÷
@@ -83,12 +92,3 @@ u
 Ğ
 	
 Ğ
-®
-skill¤
-.type.googleapis.com/tpn.data.DataHubEntrySkillr
-	æŠ€èƒ½1-1 
-	æŠ€èƒ½1-2 
-	æŠ€èƒ½2-1 
-	æŠ€èƒ½2-2 
-	æŠ€èƒ½3-1 
-	æŠ€èƒ½3-2 
