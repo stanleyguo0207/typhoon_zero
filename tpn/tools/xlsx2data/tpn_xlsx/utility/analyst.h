@@ -90,6 +90,10 @@ class TPN_XLSX2DATA_API AnalystField {
   ///  @return 是返回true
   bool IsCppFieldKeys();
 
+  /// 获取字段名
+  ///  @return 字段名
+  std::string_view GetName();
+
   /// 打印数据
   /// @note 测试用
   void PrintStorage() const;
@@ -217,8 +221,11 @@ class TPN_XLSX2DATA_API AnalystSheet {
 
   /// 生成cpp源文件方法实现
   ///  @param[in]   printer       打印器
+  ///  @param[in]   init_printer  Init函数打印器
+  ///  @param[in]   init_flag     Init函数标记
   ///  @return 成功返回true
-  bool GenerateCppSourceData(Printer &printer);
+  bool GenerateCppSourceData(Printer &printer, Printer &init_printer,
+                             bool init_flag);
 
   /// 获取表名
   ///  @return 表名
@@ -273,9 +280,12 @@ class TPN_XLSX2DATA_API Analyst {
 
   /// 生成cpp源文件方法实现
   ///  @param[in]   printer       打印器
+  ///  @param[in]   init_printer  Init函数打印器
+  ///  @param[in]   init_flag     Init函数标记
   ///  @param[in]   sheet_title   要解析的工作表名
   ///  @return 成功返回true
-  bool GenerateCppSourceData(Printer &printer, std::string_view sheet_title);
+  bool GenerateCppSourceData(Printer &printer, Printer &init_printer,
+                             bool init_flag, std::string_view sheet_title);
 
  private:
   /// 分析字段

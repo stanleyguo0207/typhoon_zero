@@ -82,6 +82,9 @@ class TPN_XLSX2DATA_API CppGenerator {
   /// 头文方法 重新加载
   void GenerateHeadMethodReLoad();
 
+  /// 头文方法 初始化
+  void GenerateHeadMethodInit();
+
   /// 头文方法 获取路径
   void GenerateHeadMethodGetPath();
 
@@ -113,6 +116,9 @@ class TPN_XLSX2DATA_API CppGenerator {
   /// 源文方法 重新加载
   void GenerateSourceMethodReLoad();
 
+  /// 源文方法 初始化
+  void GenerateSourceMethodInit();
+
   /// 源文方法 获取路径
   void GenerateSourceMethodGetPath();
 
@@ -123,6 +129,8 @@ class TPN_XLSX2DATA_API CppGenerator {
   FileHelper cpp_file_head_;  ///< data_hub .h 文件
   FileHelper cpp_file_src_;   ///< data_hub .cpp 文件
   Printer printer_;           ///< 打印器
+  bool init_flag_{true};      ///< init函数标记
+  Printer init_printer_;      ///< init函数打印器
 };
 
 }  // namespace xlsx

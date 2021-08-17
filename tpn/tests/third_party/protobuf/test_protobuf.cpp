@@ -442,4 +442,37 @@ TEST_CASE("data read", "[protobuf]") {
   MessageToJsonString(data_map, &json_string, options);
 
   fmt::print("Json : \n{}\n", json_string);
+
+  fmt::print("data_map size: {}\n", data_map.datas().size());
+  for (auto &&[key, val] : data_map.datas()) {
+    if (val.Is<data::DataHubEntryLevel>()) {
+      data::DataHubEntryLevel level;
+      val.UnpackTo(&level);
+      for (auto &&data : level.datas()) {
+        fmt::print("{}-{}\n", data.level(), data.exp());
+      }
+    }
+  }
+
+  std::map<uint32_t, data::DataHubEntryLevel::Level> level_map;
+
+  while (data_map.datas().size() > 0) {
+    auto iter = data_map.mutable_datas()->begin();
+
+    if (iter->second.Is<data::DataHubEntryLevel>()) {
+      data::DataHubEntryLevel level;
+      iter->second.UnpackTo(&level);
+      for (auto &&data : level.datas()) {
+        level_map.emplace(data.level(), data);
+      }
+    }
+
+    data_map.mutable_datas()->erase(iter);
+  }
+
+  fmt::print("data_map size: {}\n", data_map.datas().size());
+
+  for (auto &&[key, val] : level_map) {
+    fmt::print("{} - {},{}\n", key, val.level(), val.exp());
+  }
 }

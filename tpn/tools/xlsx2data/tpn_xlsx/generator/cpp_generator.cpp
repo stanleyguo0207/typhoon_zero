@@ -57,6 +57,8 @@ bool CppGenerator::Load(std::string &error) {
   }
 
   printer_.Reset();
+  init_flag_ = true;
+  init_printer_.Reset();
 
   // license
   auto license = GetLicense();
@@ -101,19 +103,20 @@ bool CppGenerator::Analyze(xlnt::worksheet &worksheet) {
 
     printer_.Println(" private:");
     printer_.Indent();
-    printer_.Println(fmt::format("std::map<std::string, {}> {}_map_;",
-                                 GetProto3MessageName(title),
-                                 LowercaseString(title)));
+    printer_.Println(fmt::format(
+        "std::map<std::string, {}::{}> {}_map_;", GetProto3MessageName(title),
+        CapitalizeFirstLetter(title), LowercaseString(title)));
     printer_.Outdent();
     cpp_file_head_.Write(printer_.GetBuf());
 
     // 源文件
     printer_.Reset();
-    if (!g_xlsx2data_generator->GetAnalyst().GenerateCppSourceData(printer_,
-                                                                   title_raw)) {
+    if (!g_xlsx2data_generator->GetAnalyst().GenerateCppSourceData(
+            printer_, init_printer_, init_flag_, title_raw)) {
       LOG_ERROR("cpp generator cpp srouce data error, title: {}", title_raw);
       return false;
     }
+    init_flag_ = false;
     printer_.Println("");
     cpp_file_src_.Write(printer_.GetBuf());
   }
@@ -129,6 +132,7 @@ bool CppGenerator::GenerateTail() {
   GenerateHeadInstance();
   GenerateHeadGuardEnd();
 
+  GenerateSourceMethodInit();
   GenerateSourceNamespaceEnd();
   return true;
 }
@@ -136,7 +140,6 @@ bool CppGenerator::GenerateTail() {
 void CppGenerator::GenerateHeadInclude() {
   printer_.Reset();
   printer_.Println("#include <map>");
-  printer_.Println("#include <tuple>");
   printer_.Println("#include <string>");
   printer_.Println("#include <string_view>");
   printer_.Println("");
@@ -201,6 +204,7 @@ void CppGenerator::GenerateHeadMethodBegin() {
   printer_.Indent();
   GenerateHeadMethodLoad();
   GenerateHeadMethodReLoad();
+  GenerateHeadMethodInit();
   GenerateHeadMethodGetPath();
 
   cpp_file_head_.Write(printer_.GetBuf());
@@ -214,6 +218,10 @@ void CppGenerator::GenerateHeadMethodLoad() {
 
 void CppGenerator::GenerateHeadMethodReLoad() {
   printer_.Println("bool Reload(std::string &error);");
+}
+
+void CppGenerator::GenerateHeadMethodInit() {
+  printer_.Println("bool Init(DataHubMap &data_map);");
 }
 
 void CppGenerator::GenerateHeadMethodGetPath() {
@@ -253,10 +261,15 @@ void CppGenerator::GenerateSourceInclude() {
   printer_.Reset();
   printer_.Println("#include \"data_hub.h\"");
   printer_.Println("");
+  printer_.Println("#include <fstream>");
   printer_.Println("#include <filesystem>");
   printer_.Println("");
+  printer_.Println("#include \"log.h\"");
   printer_.Println("#include \"utils.h\"");
+  printer_.Println("#include \"config.h\"");
   printer_.Println("#include \"debug_hub.h\"");
+  printer_.Println("");
+  printer_.Println("namespace fs = std::filesystem;");
   printer_.Println("");
   cpp_file_src_.Write(printer_.GetBuf());
 }
@@ -290,14 +303,47 @@ void CppGenerator::GenerateSourceMethod() {
 
 void CppGenerator::GenerateSourceMethodLoad() {
   printer_.Println(
-      "bool Load(std::string_view path, std::string &error, bool reload /*  = "
-      "false */) {");
-  printer_.Println("}");
-  printer_.Println("");
+      fmt::format("bool {}Load(std::string_view path, std::string &error, bool "
+                  "reload /*  = false */) {{",
+                  GetCppDataHubMgrNameWithArea()));
+  printer_.Println(
+      "  if (!reload) {\n"
+      "    path_ = {path.data(), path.size()};\n"
+      "  }"
+      "  auto data_path = fs::path(path_);\n"
+      "  data_path.make_preferred();\n"
+      "  auto data_file = fs::absolute(data_path);\n"
+      "  DataHubMap data_map;\n"
+      "  try {\n"
+      "    std::fstream input(data_file, std::fstream::in | "
+      "std::fstream::binary);\n"
+      "    if (!input) {\n"
+      "      LOG_ERROR(\"file: {} not found.\", data_file);\n"
+      "      return false;\n"
+      "    } else if (data_map.ParseFromIstream(&input) {\n"
+      "      LOG_ERROR(\"file: {} parse failed.\", data_file);\n"
+      "      return false;\n"
+      "    }\n"
+      "  } catch (fs::filesystem_error &e) {\n"
+      "    error = std::string{e.what()} + \" (\" + path_ + \") \";\n"
+      "    return false;\n"
+      "  } catch (const std::exception &ex) {\n"
+      "    error = std::string{ex.what()} + \" (\" + path_ + \") \";\n"
+      "    return false;\n"
+      "  }\n"
+      "\n"
+      "  if (!Init(data_map)) {\n"
+      "    error = \"Init error.\";\n"
+      "    return false;\n"
+      "  }\n"
+      "\n"
+      "  return true;\n"
+      "}\n");
 }
 
 void CppGenerator::GenerateSourceMethodReLoad() {
-  printer_.Println("bool Reload(std::string &error) {");
+  printer_.Println(fmt::format("bool {}Reload(std::string &error) {{",
+                               GetCppDataHubMgrNameWithArea()));
   printer_.Indent();
 
   printer_.Println("return Load({}, error, true);");
@@ -307,8 +353,27 @@ void CppGenerator::GenerateSourceMethodReLoad() {
   printer_.Println("");
 }
 
+void CppGenerator::GenerateSourceMethodInit() {
+  printer_.Reset();
+  printer_.Println(fmt::format("bool {}Init(DataHubMap &data_map) {{",
+                               GetCppDataHubMgrNameWithArea()));
+  printer_.Println("  for (auto &&[key, val] : data_map.datas()) {");
+  cpp_file_src_.Write(printer_.GetBuf());
+
+  cpp_file_src_.Write(init_printer_.GetBuf());
+  init_printer_.Reset();
+
+  printer_.Reset();
+  printer_.Println("  }");
+  printer_.Println("  return true;");
+  printer_.Println("}");
+  printer_.Println("");
+  cpp_file_src_.Write(printer_.GetBuf());
+}
+
 void CppGenerator::GenerateSourceMethodGetPath() {
-  printer_.Println("std::string_view GetPath() {");
+  printer_.Println(fmt::format("std::string_view {}GetPath() {{",
+                               GetCppDataHubMgrNameWithArea()));
   printer_.Indent();
 
   printer_.Println("return path_;");

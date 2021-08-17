@@ -102,7 +102,7 @@ void AnalystField::GenerateCppFieldKeys(std::string &field_keys,
     return;
   }
 
-  field_keys += fmt::format("{}, ", GetCppTypeByType(type_));
+  field_keys += fmt::format("{} {}, ", GetCppTypeByType(type_), name_);
   field_comments += fmt::format(" {}-{}", GetCppTypeByType(type_), name_);
 }
 
@@ -118,6 +118,8 @@ bool AnalystField::IsCppFieldKeys() {
 
   return true;
 }
+
+std::string_view AnalystField::GetName() { return name_; }
 
 void AnalystField::PrintStorage() const {
   fmt::print("name: {}, type: {}, constraint: {}, export: {}\n", name_, type_,
@@ -444,24 +446,27 @@ bool AnalystSheet::GenerateCppHeadData(Printer &printer) {
 
   printer.Println(field_comments);
   std::string_view field_keys_strv(field_keys.data(), field_keys.length() - 1);
-  printer.Println(fmt::format("const {0} *Get{0}(std::tuple<{1}> key) const;",
-                              GetProto3MessageName(sheet_title_),
-                              field_keys_strv));
+  printer.Println(fmt::format(
+      "const {0}::{1} *Get{0}({2}) const;", GetProto3MessageName(sheet_title_),
+      CapitalizeFirstLetter(sheet_title_), field_keys_strv));
   return true;
 }
 
-bool AnalystSheet::GenerateCppSourceData(Printer &printer) {
+bool AnalystSheet::GenerateCppSourceData(Printer &printer,
+                                         Printer &init_printer,
+                                         bool init_flag) {
   std::string field_comments = "///";
   std::string field_keys     = "";
-  size_t key_count           = 0;
-  for (auto &&field : fields_) {
-    if (field.IsCppFieldKeys()) {
-      ++key_count;
-      field.GenerateCppFieldKeys(field_keys, field_comments);
+
+  std::vector<size_t> key_index_vec;
+  for (size_t i = 0; i < fields_.size(); ++i) {
+    if (fields_[i].IsCppFieldKeys()) {
+      key_index_vec.emplace_back(i);
+      fields_[i].GenerateCppFieldKeys(field_keys, field_comments);
     }
   }
 
-  if (field_keys.empty() && key_count > 0) {
+  if (field_keys.empty() || key_index_vec.empty()) {
     LOG_ERROR("{} not have primary key", sheet_title_);
     return false;
   }
@@ -470,16 +475,17 @@ bool AnalystSheet::GenerateCppSourceData(Printer &printer) {
 
   printer.Println(field_comments);
   std::string_view field_keys_strv(field_keys.data(), field_keys.length() - 1);
-  printer.Println(
-      fmt::format("const {0} *{2}Get{0}(std::tuple<{1}> key) const {{",
-                  GetProto3MessageName(sheet_title_), field_keys_strv,
-                  GetCppDataHubMgrNameWithArea()));
+  printer.Println(fmt::format("const {0}::{1} *{2}Get{0}({3}) const {{",
+                              GetProto3MessageName(sheet_title_),
+                              CapitalizeFirstLetter(sheet_title_),
+                              GetCppDataHubMgrNameWithArea(), field_keys_strv));
   printer.Indent();
 
-  printer.Print("std::string map_key = \"\"");
-  for (size_t i = 0; i < key_count; ++i) {
+  printer.Print("std::string map_key = \"\" ");
+  for (size_t i = 0; i < key_index_vec.size(); ++i) {
     printer.Outdent();
-    printer.Print(fmt::format("+ ToString(std::get<{}>(key)", i));
+    printer.Print(
+        fmt::format("+ ToString({})", fields_[key_index_vec[i]].GetName()));
     printer.Indent();
   }
   printer.Outdent();
@@ -494,6 +500,37 @@ bool AnalystSheet::GenerateCppSourceData(Printer &printer) {
 
   printer.Outdent();
   printer.Println("}");
+
+  if (init_flag) {
+    init_printer.Println(fmt::format("    if (val.Is<{}>()) {{",
+                                     GetProto3MessageName(sheet_title_)));
+  } else {
+    init_printer.Println(fmt::format("    else if (val.Is<{}>()) {{",
+                                     GetProto3MessageName(sheet_title_)));
+  }
+
+  init_printer.Println(fmt::format("      {} {};",
+                                   GetProto3MessageName(sheet_title_),
+                                   LowercaseString(sheet_title_)));
+  init_printer.Println(
+      fmt::format("      val.UnpackTo(${});", LowercaseString(sheet_title_)));
+  init_printer.Println(fmt::format("      for (auto &&data : {}.datas()) {{",
+                                   LowercaseString(sheet_title_)));
+  init_printer.Print("        std::string map_key = \"\" ");
+  for (size_t i = 0; i < key_index_vec.size(); ++i) {
+    init_printer.Print(fmt::format("+ ToString(data.{}())",
+                                   fields_[key_index_vec[i]].GetName()));
+  }
+  init_printer.Println(";");
+  init_printer.Println(
+      fmt::format("        TPN_ASSERT(0 == {}_map_.count(map_key), \"map key "
+                  "repeated. {{}}\", map_key);",
+                  LowercaseString(sheet_title_)));
+  init_printer.Println(fmt::format("        {}_map_.emplace(map_key, data);",
+                                   LowercaseString(sheet_title_)));
+  init_printer.Println(fmt::format("      }}"));
+  init_printer.Println(fmt::format("    }}"));
+
   return true;
 }
 
@@ -585,14 +622,15 @@ bool Analyst::GenerateCppHeadData(Printer &printer,
   return iter->second.GenerateCppHeadData(printer);
 }
 
-bool Analyst::GenerateCppSourceData(Printer &printer,
+bool Analyst::GenerateCppSourceData(Printer &printer, Printer &init_printer,
+                                    bool init_flag,
                                     std::string_view sheet_title) {
   std::string title_key(sheet_title.data(), sheet_title.length());
   auto iter = sheet_umap_.find(title_key);
   TPN_ASSERT(sheet_umap_.end() != iter, "data not in analyst, title: {}",
              sheet_title);
 
-  return iter->second.GenerateCppSourceData(printer);
+  return iter->second.GenerateCppSourceData(printer, init_printer, init_flag);
 }
 
 }  // namespace xlsx
