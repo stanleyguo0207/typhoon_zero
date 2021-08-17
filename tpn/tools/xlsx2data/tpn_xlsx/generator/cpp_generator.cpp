@@ -338,7 +338,7 @@ void CppGenerator::GenerateSourceMethodLoad() {
       "    if (!input) {\n"
       "      LOG_ERROR(\"file: {} not found.\", data_file);\n"
       "      return false;\n"
-      "    } else if (data_map.ParseFromIstream(&input) {\n"
+      "    } else if (data_map.ParseFromIstream(&input)) {\n"
       "      LOG_ERROR(\"file: {} parse failed.\", data_file);\n"
       "      return false;\n"
       "    }\n"

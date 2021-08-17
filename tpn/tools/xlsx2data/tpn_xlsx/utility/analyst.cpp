@@ -513,7 +513,7 @@ bool AnalystSheet::GenerateCppSourceData(Printer &printer,
                                    GetProto3MessageName(sheet_title_),
                                    LowercaseString(sheet_title_)));
   init_printer.Println(
-      fmt::format("      val.UnpackTo(${});", LowercaseString(sheet_title_)));
+      fmt::format("      val.UnpackTo(&{});", LowercaseString(sheet_title_)));
   init_printer.Println(fmt::format("      for (auto &&data : {}.datas()) {{",
                                    LowercaseString(sheet_title_)));
   init_printer.Print("        std::string map_key = \"\" ");
