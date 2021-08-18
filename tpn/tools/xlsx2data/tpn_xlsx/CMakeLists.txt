@@ -81,6 +81,14 @@ install(TARGETS
       ${BIN_DIR}/tools
   )
 
+install(DIRECTORY
+  ${CMAKE_CURRENT_SOURCE_DIR}/../data
+    DESTINATION
+      ${BIN_DIR}/tools/xlsx2data/
+    FILES_MATCHING
+    PATTERN "*.xlsx"
+  )
+
 # config
 if(NOT WIN32)
   set_property(TARGET
