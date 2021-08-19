@@ -84,12 +84,6 @@
   /// bin文件目录路径
   // @type  string  默认值 "xlsx2data/bin"
   "xlsx_bin_dir": "xlsx2data/bin",
-  /// client文件目录路径
-  // @type  string  默认值 "xlsx2data/client"
-  "xlsx_client_dir": "xlsx2data/client",
-  /// server文件目录路径
-  // @type  string  默认值 "xlsx2data/server"
-  "xlsx_server_dir": "xlsx2data/server",
   /// generator目录路径
   // @type  string  默认值 "xlsx2data/generator"
   "xlsx_generator_dir": "xlsx2data/generator",
