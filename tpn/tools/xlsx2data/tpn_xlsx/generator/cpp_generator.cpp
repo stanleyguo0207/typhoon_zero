@@ -98,22 +98,11 @@ bool CppGenerator::Analyze(xlnt::worksheet &worksheet) {
 
     // 头文件
     printer_.Reset();
-    printer_.Println("");
-    printer_.Println(" public:");
-    printer_.Indent();
     if (!g_xlsx2data_generator->GetAnalyst().GenerateCppHeadData(printer_,
                                                                  title_raw)) {
       LOG_ERROR("cpp generator cpp head data error, title: {}", title_raw);
       return false;
     }
-    printer_.Outdent();
-
-    printer_.Println(" private:");
-    printer_.Indent();
-    printer_.Println(fmt::format(
-        "std::map<std::string, {}::{}> {}_map_;", GetProto3MessageName(title),
-        CapitalizeFirstLetter(title), LowercaseString(title)));
-    printer_.Outdent();
     cpp_file_head_.Write(printer_.GetBuf());
 
     // 源文件

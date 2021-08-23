@@ -94,6 +94,10 @@ class TPN_XLSX2DATA_API AnalystField {
   ///  @return 字段名
   std::string_view GetName();
 
+  /// 获取类型
+  ///  @return 字段类型
+  XlsxDataType GetType();
+
   /// 打印数据
   /// @note 测试用
   void PrintStorage() const;

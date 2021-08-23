@@ -76,40 +76,40 @@ std::string_view DataHubMgr::GetPath() { return path_; }
 /// uint32_t-id
 const DataHubEntryItem::Item *DataHubMgr::GetDataHubEntryItem(
     uint32_t id) const {
-  std::string map_key = "" + ToString(id);
-  auto iter           = item_map_.find(map_key);
+  auto map_key = id;
+  auto iter    = item_map_.find(map_key);
   return item_map_.end() == iter ? nullptr : &(iter->second);
 }
 
 /// uint32_t-level
 const DataHubEntryLevel::Level *DataHubMgr::GetDataHubEntryLevel(
     uint32_t level) const {
-  std::string map_key = "" + ToString(level);
-  auto iter           = level_map_.find(map_key);
+  auto map_key = level;
+  auto iter    = level_map_.find(map_key);
   return level_map_.end() == iter ? nullptr : &(iter->second);
 }
 
 /// uint32_t-id
 const DataHubEntryPack::Pack *DataHubMgr::GetDataHubEntryPack(
     uint32_t id) const {
-  std::string map_key = "" + ToString(id);
-  auto iter           = pack_map_.find(map_key);
+  auto map_key = id;
+  auto iter    = pack_map_.find(map_key);
   return pack_map_.end() == iter ? nullptr : &(iter->second);
 }
 
 /// uint32_t-id
 const DataHubEntryShop::Shop *DataHubMgr::GetDataHubEntryShop(
     uint32_t id) const {
-  std::string map_key = "" + ToString(id);
-  auto iter           = shop_map_.find(map_key);
+  auto map_key = id;
+  auto iter    = shop_map_.find(map_key);
   return shop_map_.end() == iter ? nullptr : &(iter->second);
 }
 
 /// uint32_t-id uint32_t-level
 const DataHubEntrySkill::Skill *DataHubMgr::GetDataHubEntrySkill(
     uint32_t id, uint32_t level) const {
-  std::string map_key = "" + ToString(id) + ToString(level);
-  auto iter           = skill_map_.find(map_key);
+  auto map_key = "" + ToString(id) + ToString(level);
+  auto iter    = skill_map_.find(map_key);
   return skill_map_.end() == iter ? nullptr : &(iter->second);
 }
 

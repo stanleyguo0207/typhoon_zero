@@ -46,28 +46,28 @@ class TPN_DATA_API DataHubMgr {
   const DataHubEntryItem::Item *GetDataHubEntryItem(uint32_t id) const;
 
  private:
-  std::map<std::string, DataHubEntryItem::Item> item_map_;
+  std::map<uint32_t, DataHubEntryItem::Item> item_map_;
 
  public:
   /// uint32_t-level
   const DataHubEntryLevel::Level *GetDataHubEntryLevel(uint32_t level) const;
 
  private:
-  std::map<std::string, DataHubEntryLevel::Level> level_map_;
+  std::map<uint32_t, DataHubEntryLevel::Level> level_map_;
 
  public:
   /// uint32_t-id
   const DataHubEntryPack::Pack *GetDataHubEntryPack(uint32_t id) const;
 
  private:
-  std::map<std::string, DataHubEntryPack::Pack> pack_map_;
+  std::map<uint32_t, DataHubEntryPack::Pack> pack_map_;
 
  public:
   /// uint32_t-id
   const DataHubEntryShop::Shop *GetDataHubEntryShop(uint32_t id) const;
 
  private:
-  std::map<std::string, DataHubEntryShop::Shop> shop_map_;
+  std::map<uint32_t, DataHubEntryShop::Shop> shop_map_;
 
  public:
   /// uint32_t-id uint32_t-level

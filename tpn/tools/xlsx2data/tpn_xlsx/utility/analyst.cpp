@@ -121,6 +121,8 @@ bool AnalystField::IsCppFieldKeys() {
 
 std::string_view AnalystField::GetName() { return name_; }
 
+tpn::xlsx::XlsxDataType AnalystField::GetType() { return type_; }
+
 void AnalystField::PrintStorage() const {
   fmt::print("name: {}, type: {}, constraint: {}, export: {}\n", name_, type_,
              constraint_type_, export_type_);
@@ -434,21 +436,48 @@ bool AnalystSheet::GenerateProtoData(Printer &printer, size_t index) {
 bool AnalystSheet::GenerateCppHeadData(Printer &printer) {
   std::string field_comments = "///";
   std::string field_keys     = "";
-  for (auto &&field : fields_) {
-    field.GenerateCppFieldKeys(field_keys, field_comments);
+
+  std::vector<size_t> key_index_vec;
+  for (size_t i = 0; i < fields_.size(); ++i) {
+    if (fields_[i].IsCppFieldKeys()) {
+      key_index_vec.emplace_back(i);
+      fields_[i].GenerateCppFieldKeys(field_keys, field_comments);
+    }
   }
 
   Trim(field_keys);
-  if (field_keys.empty()) {
+  if (field_keys.empty() || key_index_vec.empty()) {
     LOG_ERROR("{} not have primary key", sheet_title_);
     return false;
   }
 
+  printer.Println("");
+  printer.Println(" public:");
+  printer.Indent();
   printer.Println(field_comments);
   std::string_view field_keys_strv(field_keys.data(), field_keys.length() - 1);
   printer.Println(fmt::format(
       "const {0}::{1} *Get{0}({2}) const;", GetProto3MessageName(sheet_title_),
       CapitalizeFirstLetter(sheet_title_), field_keys_strv));
+  printer.Outdent();
+
+  printer.Println(" private:");
+  printer.Indent();
+  if (1 == key_index_vec.size()) {
+    printer.Println(fmt::format(
+        "std::map<{}, {}::{}> {}_map_;",
+        GetCppTypeByType(fields_[key_index_vec[0]].GetType()),
+        GetProto3MessageName(sheet_title_), CapitalizeFirstLetter(sheet_title_),
+        LowercaseString(sheet_title_)));
+  } else {
+    printer.Println(fmt::format("std::map<std::string, {}::{}> {}_map_;",
+                                GetProto3MessageName(sheet_title_),
+                                CapitalizeFirstLetter(sheet_title_),
+                                LowercaseString(sheet_title_)));
+  }
+
+  printer.Outdent();
+
   return true;
 }
 
@@ -480,16 +509,21 @@ bool AnalystSheet::GenerateCppSourceData(Printer &printer,
                               CapitalizeFirstLetter(sheet_title_),
                               GetCppDataHubMgrNameWithArea(), field_keys_strv));
   printer.Indent();
-
-  printer.Print("std::string map_key = \"\" ");
-  for (size_t i = 0; i < key_index_vec.size(); ++i) {
-    printer.Outdent();
-    printer.Print(
-        fmt::format("+ ToString({})", fields_[key_index_vec[i]].GetName()));
-    printer.Indent();
+  if (1 == key_index_vec.size()) {
+    printer.Println(
+        fmt::format("auto map_key = {};", fields_[key_index_vec[0]].GetName()));
+  } else {
+    printer.Print("auto map_key = \"\" ");
+    for (size_t i = 0; i < key_index_vec.size(); ++i) {
+      printer.Outdent();
+      printer.Print(
+          fmt::format("+ ToString({})", fields_[key_index_vec[i]].GetName()));
+      printer.Indent();
+    }
+    printer.Println(";");
   }
   printer.Outdent();
-  printer.Println(";");
+
   printer.Indent();
 
   printer.Println(fmt::format("auto iter = {}_map_.find(map_key);",
