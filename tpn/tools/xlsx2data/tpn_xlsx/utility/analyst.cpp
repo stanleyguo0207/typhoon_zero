@@ -550,12 +550,23 @@ bool AnalystSheet::GenerateCppSourceData(Printer &printer,
       fmt::format("      val.UnpackTo(&{});", LowercaseString(sheet_title_)));
   init_printer.Println(fmt::format("      for (auto &&data : {}.datas()) {{",
                                    LowercaseString(sheet_title_)));
-  init_printer.Print("        std::string map_key = \"\" ");
-  for (size_t i = 0; i < key_index_vec.size(); ++i) {
-    init_printer.Print(fmt::format("+ ToString(data.{}())",
-                                   fields_[key_index_vec[i]].GetName()));
+  //init_printer.Print("        std::string map_key = \"\" ");
+  //for (size_t i = 0; i < key_index_vec.size(); ++i) {
+  //  init_printer.Print(fmt::format("+ ToString(data.{}())",
+  //                                 fields_[key_index_vec[i]].GetName()));
+  //}
+  //init_printer.Println(";");
+  if (1 == key_index_vec.size()) {
+    init_printer.Println(fmt::format("        auto map_key = {};",
+                                fields_[key_index_vec[0]].GetName()));
+  } else {
+    init_printer.Print("        auto map_key = \"\" ");
+    for (size_t i = 0; i < key_index_vec.size(); ++i) {
+      init_printer.Print(
+          fmt::format("+ ToString({})", fields_[key_index_vec[i]].GetName()));
+    }
+    init_printer.Println(";");
   }
-  init_printer.Println(";");
   init_printer.Println(
       fmt::format("        TPN_ASSERT(0 == {}_map_.count(map_key), \"map key "
                   "repeated. {{}}\", map_key);",
