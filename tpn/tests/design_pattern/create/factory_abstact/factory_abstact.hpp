@@ -20,24 +20,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TESTS_TEST_INCLUDE_H_
-#define TYPHOON_ZERO_TPN_TESTS_TEST_INCLUDE_H_
+#ifndef TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_H_
+#define TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_H_
 
-#include <catch2/catch.hpp>
-
-#include <cstdio>
-
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <set>
-#include <list>
-#include <algorithm>
-#include <mutex>
-#include <string_view>
-#include <memory>
-#include <unordered_map>
-#include <unordered_set>
-
-#endif  // TYPHOON_ZERO_TPN_TESTS_TEST_INCLUDE_H_
+#endif  // TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_H_

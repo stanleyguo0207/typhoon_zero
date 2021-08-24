@@ -20,15 +20,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if(NOT Catch2)
-	set(Catch2_DIR "${CMAKE_SOURCE_DIR}/tpn/third_party/catch2/lib/cmake/Catch2")
-	find_package(Catch2 REQUIRED)
-	if(Catch2_FOUND)
-		message(STATUS "TEST: found Catch2: ${Catch2_VERSION}")
-		list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tpn/third_party/catch2/lib/cmake")
-	endif()
-endif()
+cmake_minimum_required(VERSION 3.20.0)
 
-add_subdirectory(third_party)
-add_subdirectory(lib)
-add_subdirectory(design_pattern)
+project(test_dp CXX)
+
+add_executable(test_dp
+	"../test_include.h"
+	"../test_main.cpp"
+	"test_dp.cpp"
+	 "create/factory_method/factory_method.hpp")
+
+target_link_libraries(test_dp
+	Catch2::Catch2
+	)
+
+install(TARGETS test_dp DESTINATION ${BIN_DIR}/tests)
+include(CTest)
+include(Catch)
+catch_discover_tests(test_dp)
