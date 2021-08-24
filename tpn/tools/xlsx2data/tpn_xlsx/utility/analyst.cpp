@@ -557,13 +557,13 @@ bool AnalystSheet::GenerateCppSourceData(Printer &printer,
   //}
   //init_printer.Println(";");
   if (1 == key_index_vec.size()) {
-    init_printer.Println(fmt::format("        auto map_key = {};",
-                                fields_[key_index_vec[0]].GetName()));
+    init_printer.Println(fmt::format("        auto map_key = data.{}();",
+                                     fields_[key_index_vec[0]].GetName()));
   } else {
     init_printer.Print("        auto map_key = \"\" ");
     for (size_t i = 0; i < key_index_vec.size(); ++i) {
-      init_printer.Print(
-          fmt::format("+ ToString({})", fields_[key_index_vec[i]].GetName()));
+      init_printer.Print(fmt::format("+ ToString(data.{}())",
+                                     fields_[key_index_vec[i]].GetName()));
     }
     init_printer.Println(";");
   }

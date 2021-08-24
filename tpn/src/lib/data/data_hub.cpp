@@ -119,7 +119,7 @@ bool DataHubMgr::Init(DataHubMap &data_map) {
       DataHubEntryItem item;
       val.UnpackTo(&item);
       for (auto &&data : item.datas()) {
-        auto map_key = id;
+        auto map_key = data.id();
         TPN_ASSERT(0 == item_map_.count(map_key), "map key repeated. {}",
                    map_key);
         item_map_.emplace(map_key, data);
@@ -128,7 +128,7 @@ bool DataHubMgr::Init(DataHubMap &data_map) {
       DataHubEntryLevel level;
       val.UnpackTo(&level);
       for (auto &&data : level.datas()) {
-        auto map_key = level;
+        auto map_key = data.level();
         TPN_ASSERT(0 == level_map_.count(map_key), "map key repeated. {}",
                    map_key);
         level_map_.emplace(map_key, data);
@@ -137,7 +137,7 @@ bool DataHubMgr::Init(DataHubMap &data_map) {
       DataHubEntryPack pack;
       val.UnpackTo(&pack);
       for (auto &&data : pack.datas()) {
-        auto map_key = id;
+        auto map_key = data.id();
         TPN_ASSERT(0 == pack_map_.count(map_key), "map key repeated. {}",
                    map_key);
         pack_map_.emplace(map_key, data);
@@ -146,7 +146,7 @@ bool DataHubMgr::Init(DataHubMap &data_map) {
       DataHubEntryShop shop;
       val.UnpackTo(&shop);
       for (auto &&data : shop.datas()) {
-        auto map_key = id;
+        auto map_key = data.id();
         TPN_ASSERT(0 == shop_map_.count(map_key), "map key repeated. {}",
                    map_key);
         shop_map_.emplace(map_key, data);
@@ -155,7 +155,7 @@ bool DataHubMgr::Init(DataHubMap &data_map) {
       DataHubEntrySkill skill;
       val.UnpackTo(&skill);
       for (auto &&data : skill.datas()) {
-        auto map_key = "" + ToString(id) + ToString(level);
+        auto map_key = "" + ToString(data.id()) + ToString(data.level());
         TPN_ASSERT(0 == skill_map_.count(map_key), "map key repeated. {}",
                    map_key);
         skill_map_.emplace(map_key, data);
