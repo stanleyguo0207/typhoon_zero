@@ -89,6 +89,10 @@ class ConcreteFactory2 : public Factory {
 
 void Test() {
   std::cout << std::endl;
+  std::cout << "factory_method/////////////////////////////////////////////////"
+               "/////////////////////////"
+            << std::endl;
+  std::cout << std::endl;
 
   auto factory1 = std::make_shared<ConcreteFactory1>();
   auto product1 = factory1->CreateProduct();

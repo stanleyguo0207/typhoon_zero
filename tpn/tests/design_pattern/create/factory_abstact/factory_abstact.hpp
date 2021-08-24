@@ -20,8 +20,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_H_
-#define TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_H_
+#ifndef TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_FACTORY_ABSTACT_H_
+#define TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_FACTORY_ABSTACT_H_
 
 #include "../../../test_include.h"
 
@@ -142,6 +142,10 @@ class ConcreteFactory2 : public AbstactFactory {
 
 void Test() {
   std::cout << std::endl;
+  std::cout << "factory_abstact////////////////////////////////////////////////"
+               "//////////////////////////"
+            << std::endl;
+  std::cout << std::endl;
 
   auto factory1  = std::make_shared<ConcreteFactory1>();
   auto productA1 = factory1->CreateProductA();
@@ -158,4 +162,4 @@ void Test() {
 
 }  // namespace factory_abstact
 
-#endif  // TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_H_
+#endif  // TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_ABSTACT_FACTORY_ABSTACT_H_

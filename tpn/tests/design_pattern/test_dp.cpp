@@ -24,16 +24,20 @@
 
 #include "create/factory_method/factory_method.hpp"
 #include "create/factory_abstact/factory_abstact.hpp"
+#include "create/builder/builder.hpp"
+#include "create/prototype/prototype.hpp"
 
 TEST_CASE("factory method", "[desgin_pattern]") { factory_method::Test(); }
 TEST_CASE("factory abstact", "[desgin_pattern]") { factory_abstact::Test(); }
 TEST_CASE("singleton", "[desgin_pattern]") {}
-TEST_CASE("builder", "[desgin_pattern]") {}
-TEST_CASE("prototype", "[desgin_pattern]") {}
+TEST_CASE("builder", "[desgin_pattern]") { builder::Test(); }
+TEST_CASE("prototype", "[desgin_pattern]") { prototype::Test(); }
 
 //////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("bridge", "[desgin_pattern]") {}
+#include "structural/bridge/bridge.hpp"
+
+TEST_CASE("bridge", "[desgin_pattern]") { bridge::Test(); }
 TEST_CASE("adapter", "[desgin_pattern]") {}
 TEST_CASE("decorator", "[desgin_pattern]") {}
 TEST_CASE("composite", "[desgin_pattern]") {}

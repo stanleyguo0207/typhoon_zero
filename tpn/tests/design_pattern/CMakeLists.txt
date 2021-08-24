@@ -28,7 +28,7 @@ add_executable(test_dp
 	"../test_include.h"
 	"../test_main.cpp"
 	"test_dp.cpp"
-	 "create/factory_method/factory_method.hpp")
+	)
 
 target_link_libraries(test_dp
 	Catch2::Catch2
