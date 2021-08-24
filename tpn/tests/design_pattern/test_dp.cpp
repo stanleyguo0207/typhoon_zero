@@ -22,52 +22,35 @@
 
 #include "../test_include.h"
 
-TEST_CASE("factory method", "[desgin_pattern]") {}
+#include "create/factory_method/factory_method.hpp"
+#include "create/factory_abstact/factory_abstact.hpp"
 
-TEST_CASE("factory abstact", "[desgin_pattern]") {}
-
+TEST_CASE("factory method", "[desgin_pattern]") { factory_method::Test(); }
+TEST_CASE("factory abstact", "[desgin_pattern]") { factory_abstact::Test(); }
 TEST_CASE("singleton", "[desgin_pattern]") {}
-
 TEST_CASE("builder", "[desgin_pattern]") {}
-
 TEST_CASE("prototype", "[desgin_pattern]") {}
 
 //////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("bridge", "[desgin_pattern]") {}
-
 TEST_CASE("adapter", "[desgin_pattern]") {}
-
 TEST_CASE("decorator", "[desgin_pattern]") {}
-
 TEST_CASE("composite", "[desgin_pattern]") {}
-
 TEST_CASE("flyweight", "[desgin_pattern]") {}
-
 TEST_CASE("facade", "[desgin_pattern]") {}
-
 TEST_CASE("proxy", "[desgin_pattern]") {}
 
 //////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("template", "[desgin_pattern]") {}
-
 TEST_CASE("strategy", "[desgin_pattern]") {}
-
 TEST_CASE("state", "[desgin_pattern]") {}
-
 TEST_CASE("observer", "[desgin_pattern]") {}
-
 TEST_CASE("memento", "[desgin_pattern]") {}
-
 TEST_CASE("mediator", "[desgin_pattern]") {}
-
 TEST_CASE("command", "[desgin_pattern]") {}
-
 TEST_CASE("visitor", "[desgin_pattern]") {}
-
 TEST_CASE("chain of responsibility", "[desgin_pattern]") {}
-
 TEST_CASE("iterator", "[desgin_pattern]") {}
-
 TEST_CASE("interpreter", "[desgin_pattern]") {}

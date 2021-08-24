@@ -20,19 +20,17 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_METHOD_H_
-#define TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_METHOD_H_
+#ifndef TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_METHOD_FACTORY_METHOD_H_
+#define TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_METHOD_FACTORY_METHOD_H_
 
-#include "../../test_include.h"
+#include "../../../test_include.h"
 
 namespace factory_method {
 
 class Product {
  public:
-  virtual ~Product() = 0;
-
- protected:
-  Product() {}
+  virtual ~Product()         = default;
+  virtual void Description() = 0;
 };
 
 using ProductSptr = std::shared_ptr<Product>;
@@ -40,41 +38,67 @@ using ProductSptr = std::shared_ptr<Product>;
 class ConcreteProduct1 : public Product {
  public:
   ConcreteProduct1() { std::cout << "ConcreteProduct1 ctor..." << std::endl; }
-
   ~ConcreteProduct1() { std::cout << "ConcreteProduct1 dtor..." << std::endl; }
+
+  void Description() override {
+    std::cout << "This is ConcreteProduct1..." << std::endl;
+  }
 };
 
 class ConcreteProduct2 : public Product {
  public:
   ConcreteProduct2() { std::cout << "ConcreteProduct2 ctor..." << std::endl; }
-
   ~ConcreteProduct2() { std::cout << "ConcreteProduct2 dtor..." << std::endl; }
+
+  void Description() override {
+    std::cout << "This is ConcreteProduct2..." << std::endl;
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////
 
 class Factory {
  public:
-  virtual ~Factory()                  = 0;
+  virtual ~Factory()                  = default;
   virtual ProductSptr CreateProduct() = 0;
-
- protected:
-  Factory() {}
 };
 
-class ConcreteFactory : public Factory {
+class ConcreteFactory1 : public Factory {
  public:
-  ConcreteFactory() { std::cout << "ConcreteFactory ctor..." << std::endl; }
+  ConcreteFactory1() { std::cout << "ConcreteFactory1 ctor..." << std::endl; }
 
-  ~ConcreteFactory() { std::cout << "ConcreteFactory ctor..." << std::endl; }
+  ~ConcreteFactory1() { std::cout << "ConcreteFactory1 dtor..." << std::endl; }
 
-  ProductSptr CreateProduct() override {}
+  ProductSptr CreateProduct() override {
+    return std::make_shared<ConcreteProduct1>();
+  }
+};
+
+class ConcreteFactory2 : public Factory {
+ public:
+  ConcreteFactory2() { std::cout << "ConcreteFactory2 ctor..." << std::endl; }
+
+  ~ConcreteFactory2() { std::cout << "ConcreteFactory2 dtor..." << std::endl; }
+
+  ProductSptr CreateProduct() override {
+    return std::make_shared<ConcreteProduct2>();
+  }
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-void Test() {}
+void Test() {
+  std::cout << std::endl;
+
+  auto factory1 = std::make_shared<ConcreteFactory1>();
+  auto product1 = factory1->CreateProduct();
+  product1->Description();
+
+  auto factory2 = std::make_shared<ConcreteFactory2>();
+  auto product2 = factory2->CreateProduct();
+  product2->Description();
+}
 
 }  // namespace factory_method
 
-#endif  // TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_METHOD_H_
+#endif  // TYPHOON_ZERO_TPN_TESTS_DESIGN_PATTERN_CREATE_FACTORY_METHOD_FACTORY_METHOD_H_
