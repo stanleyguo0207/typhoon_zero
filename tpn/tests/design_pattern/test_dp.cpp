@@ -37,10 +37,11 @@ TEST_CASE("prototype", "[desgin_pattern]") { prototype::Test(); }
 
 #include "structural/bridge/bridge.hpp"
 #include "structural/adapter/adapter.hpp"
+#include "structural/decorator/decorator.hpp"
 
 TEST_CASE("bridge", "[desgin_pattern]") { bridge::Test(); }
 TEST_CASE("adapter", "[desgin_pattern]") { adapter::Test(); }
-TEST_CASE("decorator", "[desgin_pattern]") {}
+TEST_CASE("decorator", "[desgin_pattern]") { decorator::Test(); }
 TEST_CASE("composite", "[desgin_pattern]") {}
 TEST_CASE("flyweight", "[desgin_pattern]") {}
 TEST_CASE("facade", "[desgin_pattern]") {}
