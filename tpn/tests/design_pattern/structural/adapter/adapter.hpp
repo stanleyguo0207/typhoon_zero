@@ -30,17 +30,19 @@ namespace adapter {
 class Target {
  public:
   virtual ~Target() = default;
-  virtual void Request();
+  virtual void Request() { std::cout << "Target Request..." << std::endl; }
 };
 
 //////////////////////////////////////////////////////////////////////////
 
 class Adaptee {
  public:
-  Adaptee() {}
-  ~Adaptee() {}
+  Adaptee() { std::cout << "Adaptee ctor..." << std::endl; }
+  ~Adaptee() { std::cout << "Adaptee dtor..." << std::endl; }
 
-  void SpecificRequest();
+  void SpecificRequest() {
+    std::cout << "Adaptee SpecificRequest..." << std::endl;
+  }
 };
 
 using AdapteeSptr = std::shared_ptr<Adaptee>;
@@ -49,15 +51,33 @@ using AdapteeSptr = std::shared_ptr<Adaptee>;
 
 class Adapter1 : public Target, private Adaptee {
  public:
-  Adapter1() {}
-  ~Adapter1() {}
+  Adapter1() { std::cout << "Adapter1 ctor..." << std::endl; }
+  ~Adapter1() { std::cout << "Adapter1 dtor..." << std::endl; }
 
-  void Request() override {}
+  void Request() override {
+    std::cout << "Adapter1 Request..." << std::endl;
+    this->SpecificRequest();
+  }
 };
 
 class Adapter2 : public Target {
  public:
-   Adapter2(Adaptee) {}
+  Adapter2() {
+    std::cout << "Adapter2 ctor..." << std::endl;
+    this->adaptee_sptr_ = std::make_shared<Adaptee>();
+  }
+  Adapter2(AdapteeSptr adaptee_sptr) : adaptee_sptr_(std::move(adaptee_sptr)) {
+    std::cout << "Adapter2 ctor with AdapteeSptr..." << std::endl;
+  }
+  ~Adapter2() { std::cout << "Adapter2 dtor..." << std::endl; }
+
+  void Request() override {
+    std::cout << "Adapter2 Request..." << std::endl;
+    this->adaptee_sptr_->SpecificRequest();
+  }
+
+ private:
+  AdapteeSptr adaptee_sptr_{nullptr};
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,6 +88,21 @@ void Test() {
                "//////////////////"
             << std::endl;
   std::cout << std::endl;
+
+  {
+    auto target = std::make_shared<Adapter1>();
+    target->Request();
+  }
+
+  {
+    auto target = std::make_shared<Adapter2>(std::make_shared<Adaptee>());
+    target->Request();
+  }
+
+  {
+    auto target = std::make_shared<Adapter2>();
+    target->Request();
+  }
 }
 
 }  // namespace adapter
