@@ -28,12 +28,11 @@
 namespace observer {
 
 class Subject;
-using SubjectSptr = std::shared_ptr<Subject>;
 
 class Observer {
  public:
-  virtual ~Observer()                           = default;
-  virtual void Update(SubjectSptr subject_sptr) = 0;
+  virtual ~Observer()                       = default;
+  virtual void Update(Subject *subject_ptr) = 0;
 };
 
 using ObserverSptr = std::shared_ptr<Observer>;
@@ -45,7 +44,7 @@ class ConcreteObserver1 : public Observer {
     std::cout << "ConcreteObserver1 dtor..." << std::endl;
   }
 
-  void Update(SubjectSptr subject_sptr) override;
+  void Update(Subject *subject_ptr) override;
 
  private:
   std::string state_;
@@ -58,7 +57,7 @@ class ConcreteObserver2 : public Observer {
     std::cout << "ConcreteObserver2 dtor..." << std::endl;
   }
 
-  void Update(SubjectSptr subject_sptr) override;
+  void Update(Subject *subject_ptr) override;
 
  private:
   std::string state_;
@@ -66,14 +65,14 @@ class ConcreteObserver2 : public Observer {
 
 //////////////////////////////////////////////////////////////////////////
 
-class Subject : std::enable_shared_from_this<Subject> {
+class Subject {
  public:
   virtual ~Subject() = default;
 
   virtual void Notify() {
     std::cout << "Subject Notify..." << std::endl;
     for (auto &&observer : observer_list_) {
-      observer->Update(shared_from_this());
+      observer->Update(this);
     }
   }
 
@@ -131,18 +130,18 @@ class ConcreteSubject2 : public Subject {
 
 //////////////////////////////////////////////////////////////////////////
 
-void ConcreteObserver1::Update(SubjectSptr subject_sptr) {
+void ConcreteObserver1::Update(Subject *subject_ptr) {
   std::cout << "ConcreteObserver1 Update before" << this->state_ << "..."
             << std::endl;
-  this->state_ = subject_sptr->GetState();
+  this->state_ = subject_ptr->GetState();
   std::cout << "ConcreteObserver1 Update after " << this->state_ << "..."
             << std::endl;
 }
 
-void ConcreteObserver2::Update(SubjectSptr subject_sptr) {
+void ConcreteObserver2::Update(Subject *subject_ptr) {
   std::cout << "ConcreteObserver2 Update before" << this->state_ << "..."
             << std::endl;
-  this->state_ = subject_sptr->GetState();
+  this->state_ = subject_ptr->GetState();
   std::cout << "ConcreteObserver2 Update after " << this->state_ << "..."
             << std::endl;
 }
@@ -160,7 +159,7 @@ void Test() {
   ObserverSptr ob2 = std::make_shared<ConcreteObserver2>();
   ObserverSptr ob3 = std::make_shared<ConcreteObserver1>();
 
-  SubjectSptr subject_sptr = std::make_shared<ConcreteSubject1>();
+  std::shared_ptr<Subject> subject_sptr = std::make_shared<ConcreteSubject1>();
   subject_sptr->Attach(ob1);
   subject_sptr->Attach(ob2);
   subject_sptr->Attach(ob3);

@@ -57,12 +57,13 @@ TEST_CASE("proxy", "[desgin_pattern]") { proxy::Test(); }
 #include "behavior/strategy/strategy.hpp"
 #include "behavior/state/state.hpp"
 #include "behavior/observer/observer.hpp"
+#include "behavior/memento/memento.hpp"
 
 TEST_CASE("template method", "[desgin_pattern]") { template_method::Test(); }
 TEST_CASE("strategy", "[desgin_pattern]") { strategy::Test(); }
 TEST_CASE("state", "[desgin_pattern]") { state::Test(); }
 TEST_CASE("observer", "[desgin_pattern]") { observer::Test(); }
-TEST_CASE("memento", "[desgin_pattern]") {}
+TEST_CASE("memento", "[desgin_pattern]") { memento::Test(); }
 TEST_CASE("mediator", "[desgin_pattern]") {}
 TEST_CASE("command", "[desgin_pattern]") {}
 TEST_CASE("visitor", "[desgin_pattern]") {}
