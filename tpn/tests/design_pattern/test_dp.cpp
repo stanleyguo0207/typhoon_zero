@@ -38,21 +38,30 @@ TEST_CASE("prototype", "[desgin_pattern]") { prototype::Test(); }
 #include "structural/bridge/bridge.hpp"
 #include "structural/adapter/adapter.hpp"
 #include "structural/decorator/decorator.hpp"
+#include "structural/composite/composite.hpp"
+#include "structural/flyweight/flyweight.hpp"
+#include "structural/facade/facade.hpp"
+#include "structural/proxy/proxy.hpp"
 
 TEST_CASE("bridge", "[desgin_pattern]") { bridge::Test(); }
 TEST_CASE("adapter", "[desgin_pattern]") { adapter::Test(); }
 TEST_CASE("decorator", "[desgin_pattern]") { decorator::Test(); }
-TEST_CASE("composite", "[desgin_pattern]") {}
-TEST_CASE("flyweight", "[desgin_pattern]") {}
-TEST_CASE("facade", "[desgin_pattern]") {}
-TEST_CASE("proxy", "[desgin_pattern]") {}
+TEST_CASE("composite", "[desgin_pattern]") { composite::Test(); }
+TEST_CASE("flyweight", "[desgin_pattern]") { flyweight::Test(); }
+TEST_CASE("facade", "[desgin_pattern]") { facade::Test(); }
+TEST_CASE("proxy", "[desgin_pattern]") { proxy::Test(); }
 
 //////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("template", "[desgin_pattern]") {}
-TEST_CASE("strategy", "[desgin_pattern]") {}
-TEST_CASE("state", "[desgin_pattern]") {}
-TEST_CASE("observer", "[desgin_pattern]") {}
+#include "behavior/template_method/template_method.hpp"
+#include "behavior/strategy/strategy.hpp"
+#include "behavior/state/state.hpp"
+#include "behavior/observer/observer.hpp"
+
+TEST_CASE("template method", "[desgin_pattern]") { template_method::Test(); }
+TEST_CASE("strategy", "[desgin_pattern]") { strategy::Test(); }
+TEST_CASE("state", "[desgin_pattern]") { state::Test(); }
+TEST_CASE("observer", "[desgin_pattern]") { observer::Test(); }
 TEST_CASE("memento", "[desgin_pattern]") {}
 TEST_CASE("mediator", "[desgin_pattern]") {}
 TEST_CASE("command", "[desgin_pattern]") {}
