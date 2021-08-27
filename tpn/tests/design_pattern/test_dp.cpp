@@ -58,15 +58,19 @@ TEST_CASE("proxy", "[desgin_pattern]") { proxy::Test(); }
 #include "behavior/state/state.hpp"
 #include "behavior/observer/observer.hpp"
 #include "behavior/memento/memento.hpp"
+#include "behavior/mediator/mediator.hpp"
+#include "behavior/command/command.hpp"
+#include "behavior/visitor/visitor.hpp"
+#include "behavior/chainofresp/chainofresp.hpp"
 
 TEST_CASE("template method", "[desgin_pattern]") { template_method::Test(); }
 TEST_CASE("strategy", "[desgin_pattern]") { strategy::Test(); }
 TEST_CASE("state", "[desgin_pattern]") { state::Test(); }
 TEST_CASE("observer", "[desgin_pattern]") { observer::Test(); }
 TEST_CASE("memento", "[desgin_pattern]") { memento::Test(); }
-TEST_CASE("mediator", "[desgin_pattern]") {}
-TEST_CASE("command", "[desgin_pattern]") {}
-TEST_CASE("visitor", "[desgin_pattern]") {}
-TEST_CASE("chain of responsibility", "[desgin_pattern]") {}
+TEST_CASE("mediator", "[desgin_pattern]") { mediator::Test(); }
+TEST_CASE("command", "[desgin_pattern]") { command::Test(); }
+TEST_CASE("visitor", "[desgin_pattern]") { visitor::Test(); }
+TEST_CASE("chainofresp", "[desgin_pattern]") { chainofresp::Test(); }
 TEST_CASE("iterator", "[desgin_pattern]") {}
 TEST_CASE("interpreter", "[desgin_pattern]") {}
