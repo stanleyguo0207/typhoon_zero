@@ -33,11 +33,6 @@
 #  define _TPN_XLSX2DATA_CONFIG "xlsx2data_config.json"
 #endif
 
-///
-/// 生成完之后 ./protoc --cpp_out="./xlsx2data/proto" --proto_path="./xlsx2data/proto" data_hub.proto
-/// 需要将 data_hub.pb.h data_hub.pb.cc 更新到 pb目录下
-/// bin_generator.cpp 需要更新到 generator文件下
-///
 int main(int argc, char *argv[]) {
   do {
     std::string config_error;
