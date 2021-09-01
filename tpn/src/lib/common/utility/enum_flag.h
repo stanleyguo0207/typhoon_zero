@@ -110,6 +110,11 @@ class EnumFlag {
     return static_cast<T>(~static_cast<std::underlying_type_t<T>>(value_));
   }
 
+  /// 设置标志
+  /// 这个借口会直接影响标志，除非你知道怎么为什么设置
+  ///  @param[in]   flag      要设置的标志
+  constexpr void SetFlag(T flag) { value_ = flag; }
+
   /// 添加标志
   ///  @param[in]   flag      要添加的标志
   constexpr void AddFlag(EnumFlag flag) { value_ |= flag.value_; }
