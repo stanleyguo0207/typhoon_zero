@@ -43,7 +43,3 @@ libreadline (The GNU Readline library provides a set of functions for use by app
 xlnt (Cross-platform user-friendly xlsx library for C++11+)
   https://github.com/tfussell/xlnt
   Version: v1.5.0 568ac85346bc37757b0cd16464e7e1ea7656df91
-
-G3D (G3D is a commercial-grade C++ 3D engine.)
-  https://sourceforge.net/projects/g3d/
-  Version: 10.0.0 ab33cc1f92594a120ad3941a7b7edc997e63ebcd
