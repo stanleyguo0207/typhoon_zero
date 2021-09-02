@@ -25,7 +25,15 @@
 
 #include "define.h"
 
+namespace tpn {
+
+namespace aoi {
+
 class AOINode;
 class AOIMgr;
+
+}  // namespace aoi
+
+}  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_AOI_AOI_FWD_H_

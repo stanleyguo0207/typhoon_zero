@@ -23,6 +23,10 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_LIB_AOI_AOI_NODE_H_
 #define TYPHOON_ZERO_TPN_SRC_LIB_AOI_AOI_NODE_H_
 
+#include <limits>
+#include <string>
+#include <string_view>
+
 #include "aoi_fwd.h"
 #include "enum_flag.h"
 
@@ -48,6 +52,7 @@ enum class AOINodeFlag : uint32_t {
 };
 
 /// 视野节点
+/// 底层使用xyz方向的双向链表组成
 class AOINode {
  public:
   /// 构造函数
@@ -68,13 +73,13 @@ class AOINode {
 
   /// 设置节点本身坐标系x坐标
   ///  @param[in]   v     坐标值
-  virtual void SetX(float v) const;
+  virtual void SetX(float v);
   /// 设置节点本身坐标系y坐标
   ///  @param[in]   v     坐标值
-  virtual void SetY(float v) const;
+  virtual void SetY(float v);
   /// 设置节点本身坐标系z坐标
   ///  @param[in]   v     坐标值
-  virtual void SetZ(float v) const;
+  virtual void SetZ(float v);
 
   /// 获取节点扩展坐标系当前x坐标
   ///  @return 节点扩展坐标系当前x坐标
@@ -98,13 +103,13 @@ class AOINode {
 
   /// 设置节点扩展坐标系缓存x坐标
   ///  @param[in]   v     节点扩展坐标系缓存x坐标
-  virtual void SetOldExtX(float v) const;
+  virtual void SetOldExtX(float v);
   /// 设置节点扩展坐标系缓存y坐标
   ///  @param[in]   v     节点扩展坐标系缓存y坐标
-  virtual void SetOldExtY(float v) const;
+  virtual void SetOldExtY(float v);
   /// 设置节点扩展坐标系缓存z坐标
   ///  @param[in]   v     节点扩展坐标系缓存z坐标
-  virtual void SetOldExtZ(float v) const;
+  virtual void SetOldExtZ(float v);
 
   /// 重置缓存的扩展坐标系坐标
   virtual void ResetOldExtXYZ();
@@ -115,29 +120,20 @@ class AOINode {
   /// 设置单个标志
   ///  @param[in]   flag      单个标志
   TPN_INLINE void SetFlag(AOINodeFlag flag);
-  /// 设置多个标志
-  ///  @param[in]   flags     多个标志
-  TPN_INLINE void SetFlags(uint32_t flags);
   /// 添加单个标志
   ///  @param[in]   flag      单个标志
   TPN_INLINE void AddFlag(AOINodeFlag flag);
-  /// 添加多个标志
-  ///  @param[in]   flags     多个标志
-  TPN_INLINE void AddFlags(uint32_t flags);
   /// 移除单个标志
   ///  @param[in]   flag      单个标志
   TPN_INLINE void RemoveFlag(AOINodeFlag flag);
-  /// 移除多个标志
-  ///  @param[in]   flags     多个标志
-  TPN_INLINE void RemoveFlags(uint32_t flags);
   /// 是否含有指定的单个标志
   ///  @param[in]   flag      要检查的单个标志
   ///  @return 含有传入的标志返回true
   TPN_INLINE bool HasFlag(AOINodeFlag flag) const;
   /// 是否含有指定的多个标志
-  ///  @param[in]   flags     要检查的多个标志
+  ///  @param[in]   flag      要检查的多个标志
   ///  @return 含有所有传入的标志返回true
-  TPN_INLINE bool HasFlags(uint32_t flags) const;
+  TPN_INLINE bool HasAllFlag(AOINodeFlag flag) const;
 
   /// 获取坐标系x轴方向前置节点
   ///  @return 坐标系x轴方向前置节点
@@ -206,14 +202,25 @@ class AOINode {
   /// 当前节点有变化，需要更新它的list中的相关位置等信息
   virtual void Update();
 
- private:
-  float x_{0.0f};  ///< 节点本身坐标系x轴坐标
-  float y_{0.0f};  ///< 节点本身坐标系y轴坐标
-  float z_{0.0f};  ///< 节点本身坐标系z轴坐标
+  std::string DebugStr();
+  void DebugX();
+  void DebugY();
+  void DebugZ();
 
-  float old_ext_x_{0.0f};  ///< 旧的扩展坐标系x轴坐标
-  float old_ext_y_{0.0f};  ///< 旧的扩展坐标系y轴坐标
-  float old_ext_z_{0.0f};  ///< 旧的扩展坐标系z轴坐标
+  void SetDescStr(std::string_view strv);
+  virtual const char *GetDescCStr();
+
+ private:
+  float x_{std::numeric_limits<double>::lowest()};  ///< 节点本身坐标系x轴坐标
+  float y_{std::numeric_limits<double>::lowest()};  ///< 节点本身坐标系y轴坐标
+  float z_{std::numeric_limits<double>::lowest()};  ///< 节点本身坐标系z轴坐标
+
+  float old_ext_x_{
+      std::numeric_limits<double>::lowest()};  ///< 旧的扩展坐标系x轴坐标
+  float old_ext_y_{
+      std::numeric_limits<double>::lowest()};  ///< 旧的扩展坐标系y轴坐标
+  float old_ext_z_{
+      std::numeric_limits<double>::lowest()};  ///< 旧的扩展坐标系z轴坐标
 
   EnumFlag<AOINodeFlag> flags_{AOINodeFlag::kAOINodeFlagNone};  ///< 标志
 
@@ -226,13 +233,7 @@ class AOINode {
 
   AOIMgr *aoi_mgr_{nullptr};  ///< 节点所在的视野管理器
 
-/// 以下为测试接口和数据
-#if defined(TPN_DEBUG)
- public:
-  void DebugX();
-  void DebugY();
-  void DebugZ();
-
+#if defined(TPN_AOIDEBUG)
  private:
   std::string desc_;  ///< 调试描述符
 #endif

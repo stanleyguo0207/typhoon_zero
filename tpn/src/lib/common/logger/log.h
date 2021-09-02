@@ -176,11 +176,26 @@ void SetAutomaticRegistration(bool automatic_registration);
 #else
 #  define NET_TRACE(...)
 #  define NET_DEBUG(...)
-#  define NET_INFO(...) LOG_INFO(__VA_ARGS__);
+#  define NET_INFO(...) LOG_INFO(__VA_ARGS__)
 #  define NET_WARN(...)
-#  define NET_ERROR(...) LOG_ERROR(__VA_ARGS__);
-#  define NET_FATAL(...) LOG_FATAL(__VA_ARGS__);
+#  define NET_ERROR(...) LOG_ERROR(__VA_ARGS__)
+#  define NET_FATAL(...) LOG_FATAL(__VA_ARGS__)
+#endif
 
+#if defined(TPN_AOIDEBUG)
+#  define AOI_TRACE(...) LOG_TRACE(__VA_ARGS__)
+#  define AOI_DEBUG(...) LOG_DEBUG(__VA_ARGS__)
+#  define AOI_INFO(...) LOG_INFO(__VA_ARGS__)
+#  define AOI_WARN(...) LOG_WARN(__VA_ARGS__)
+#  define AOI_ERROR(...) LOG_ERROR(__VA_ARGS__)
+#  define AOI_FATAL(...) LOG_FATAL(__VA_ARGS__)
+#else
+#  define AOI_TRACE(...)
+#  define AOI_DEBUG(...)
+#  define AOI_INFO(...)
+#  define AOI_WARN(...)
+#  define AOI_ERROR(...)
+#  define AOI_FATAL(...)
 #endif
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_LOGGER_LOG_H_
