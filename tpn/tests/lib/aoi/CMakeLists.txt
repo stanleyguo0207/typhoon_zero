@@ -20,9 +20,41 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(common)
-add_subdirectory(logger)
-# add_subdirectory(proto)
-add_subdirectory(net)
-add_subdirectory(data)
-add_subdirectory(aoi)
+cmake_minimum_required(VERSION 3.20.0)
+
+project(test_aoi CXX)
+
+add_executable(test_aoi
+	"../../test_include.h"
+	"../../test_main.cpp"
+	"test_aoi.cpp"
+	)
+
+set_property(TARGET
+	test_aoi
+	APPEND
+	PROPERTY
+		COMPILE_DEFINITIONS
+    _TPN_AOI_CONFIG_TEST_FILE="${CMAKE_CURRENT_SOURCE_DIR}/config_aoi_test.json"
+	)
+
+target_link_libraries(test_aoi
+	Catch2::Catch2
+  aoi
+	)
+
+install(TARGETS test_aoi DESTINATION ${BIN_DIR}/tests)
+include(CTest)
+include(Catch)
+catch_discover_tests(test_aoi)
+
+if(WIN32)
+  add_custom_command(TARGET
+		test_aoi
+    POST_BUILD
+      COMMAND
+			${CMAKE_COMMAND} -E copy
+			${CMAKE_CURRENT_SOURCE_DIR}/config_aoi_test.json
+			${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
+  )
+endif()

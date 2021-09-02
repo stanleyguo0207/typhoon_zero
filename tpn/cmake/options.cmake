@@ -95,6 +95,12 @@ if(WITH_NETDEBUG)
   add_definitions(-DTPN_NETDEBUG)
 endif()
 
+# net debug
+option(WITH_AOIDEBUG "Include additional debug-code in aoi" ON)
+if(WITH_AOIDEBUG)
+  add_definitions(-DTPN_AOIDEBUG)
+endif()
+
 # openssl
 option(WITH_SSL "Enable openssl" OFF)
 if(WITH_SSL)

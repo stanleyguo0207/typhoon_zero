@@ -151,6 +151,12 @@ else()
   message(STATUS "Include additional debug-code in net               : OFF (default)")
 endif()
 
+# aoi debug
+if(WITH_AOIDEBUG)
+  message(STATUS "Include additional debug-code in aoi               : ON")
+else()
+  message(STATUS "Include additional debug-code in aoi               : OFF (default)")
+endif()
 
 # openssl
 if(WITH_SSL)

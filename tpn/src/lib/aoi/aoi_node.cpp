@@ -188,7 +188,7 @@ namespace {
 #define FUNC_DEBUG_XYZ(cap) Debug##cap
 #define DEBUG_XYZ(low, cap)                                         \
   do {                                                              \
-    AOI_DEBUG(DebugStr());                                          \
+    AOI_DEBUG("{}", DebugStr());                                    \
     if (GET_NEXT_XYZ_PTR(low)) {                                    \
       GET_NEXT_XYZ_PTR(low)->FUNC_DEBUG_XYZ(cap)();                 \
       if (GET_NEXT_XYZ_PTR(low)->GET_XYZ(cap)() < GET_XYZ(cap)()) { \
