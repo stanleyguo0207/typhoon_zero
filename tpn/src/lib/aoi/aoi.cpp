@@ -388,9 +388,165 @@ void AOIMgr::MoveNodeX(AOINode *node_ptr, float x, AOINode *curr_node_ptr) {
   }
 }
 
-void AOIMgr::MoveNodeY(AOINode *node_ptr, float y, AOINode *curr_node_ptr) {}
+void AOIMgr::MoveNodeY(AOINode *node_ptr, float y, AOINode *curr_node_ptr) {
+  if (nullptr != curr_node_ptr) {
+    node_ptr->SetY(curr_node_ptr->GetY());
 
-void AOIMgr::MoveNodeZ(AOINode *node_ptr, float z, AOINode *curr_node_ptr) {}
+    AOI_DEBUG("Move Start: [{}Y] ({}), currnode=>({})",
+              node_ptr->GetPrevYPtr() == curr_node_ptr ? "-" : "+",
+              node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+
+    if (node_ptr->GetPrevYPtr() == curr_node_ptr) {
+      TPN_ASSERT(curr_node_ptr->GetY() >= y, "move y error, {}", y);
+
+      AOINode *prev_node_ptr = curr_node_ptr->GetPrevYPtr();
+      curr_node_ptr->SetPrevYPtr(node_ptr);
+      if (prev_node_ptr) {
+        prev_node_ptr->SetNextYPtr(node_ptr);
+        if (node_ptr == first_y_node_ptr_ && node_ptr->GetNextYPtr()) {
+          first_y_node_ptr_ = node_ptr->GetNextYPtr();
+        }
+      } else {
+        first_y_node_ptr_ = node_ptr;
+      }
+
+      if (node_ptr->GetPrevYPtr()) {
+        node_ptr->GetPrevYPtr()->SetNextYPtr(node_ptr->GetNextYPtr());
+      }
+
+      if (node_ptr->GetNextYPtr()) {
+        node_ptr->GetNextYPtr()->SetPrevYPtr(node_ptr->GetPrevYPtr());
+      }
+
+      node_ptr->SetPrevYPtr(prev_node_ptr);
+      node_ptr->SetNextYPtr(curr_node_ptr);
+    } else {
+      TPN_ASSERT(curr_node_ptr->GetY() <= y, "move y error, {}", y);
+
+      AOINode *next_node_ptr = curr_node_ptr->GetNextYPtr();
+      if (next_node_ptr != node_ptr) {
+        curr_node_ptr->SetNextYPtr(node_ptr);
+        if (next_node_ptr) {
+          next_node_ptr->SetPrevYPtr(node_ptr);
+        }
+
+        if (node_ptr->GetPrevYPtr()) {
+          node_ptr->GetPrevYPtr()->SetNextYPtr(node_ptr->GetNextYPtr());
+        }
+
+        if (node_ptr->GetNextYPtr()) {
+          node_ptr->GetNextYPtr()->SetPrevYPtr(node_ptr->GetPrevYPtr());
+          if (node_ptr == first_y_node_ptr_) {
+            first_y_node_ptr_ = node_ptr->GetNextYPtr();
+          }
+        }
+
+        node_ptr->SetPrevYPtr(curr_node_ptr);
+        node_ptr->SetNextYPtr(next_node_ptr);
+      }
+    }
+
+    if (!node_ptr->HasFlag(AOINodeFlag::kAOINodeFlagHideOrRemoved)) {
+      AOI_DEBUG("Move pass1: [{}Y] ({}), passnode=>({})",
+                node_ptr->GetPrevYPtr() == curr_node_ptr ? "-" : "+",
+                node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+
+      curr_node_ptr->OnNodePassY(node_ptr, true);
+    }
+
+    if (!curr_node_ptr->HasFlag(AOINodeFlag::kAOINodeFlagHideOrRemoved)) {
+      AOI_DEBUG("Move pass2: [{}Y] ({}), passnode=>({})",
+                node_ptr->GetPrevYPtr() == curr_node_ptr ? "-" : "+",
+                node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+
+      node_ptr->OnNodePassY(curr_node_ptr, false);
+    }
+
+    AOI_DEBUG("Move end: [{}Y] ({}), currnode=>({})",
+              node_ptr->GetPrevYPtr() == curr_node_ptr ? "-" : "+",
+              node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+  }
+}
+
+void AOIMgr::MoveNodeZ(AOINode *node_ptr, float z, AOINode *curr_node_ptr) {
+  if (nullptr != curr_node_ptr) {
+    node_ptr->SetZ(curr_node_ptr->GetZ());
+
+    AOI_DEBUG("Move Start: [{}Z] ({}), currnode=>({})",
+              node_ptr->GetPrevZPtr() == curr_node_ptr ? "-" : "+",
+              node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+
+    if (node_ptr->GetPrevZPtr() == curr_node_ptr) {
+      TPN_ASSERT(curr_node_ptr->GetZ() >= z, "move z error, {}", z);
+
+      AOINode *prev_node_ptr = curr_node_ptr->GetPrevZPtr();
+      curr_node_ptr->SetPrevZPtr(node_ptr);
+      if (prev_node_ptr) {
+        prev_node_ptr->SetNextZPtr(node_ptr);
+        if (node_ptr == first_z_node_ptr_ && node_ptr->GetNextZPtr()) {
+          first_z_node_ptr_ = node_ptr->GetNextZPtr();
+        }
+      } else {
+        first_z_node_ptr_ = node_ptr;
+      }
+
+      if (node_ptr->GetPrevZPtr()) {
+        node_ptr->GetPrevZPtr()->SetNextZPtr(node_ptr->GetNextZPtr());
+      }
+
+      if (node_ptr->GetNextZPtr()) {
+        node_ptr->GetNextZPtr()->SetPrevZPtr(node_ptr->GetPrevZPtr());
+      }
+
+      node_ptr->SetPrevZPtr(prev_node_ptr);
+      node_ptr->SetNextZPtr(curr_node_ptr);
+    } else {
+      TPN_ASSERT(curr_node_ptr->GetZ() <= z, "move z error, {}", z);
+
+      AOINode *next_node_ptr = curr_node_ptr->GetNextZPtr();
+      if (next_node_ptr != node_ptr) {
+        curr_node_ptr->SetNextZPtr(node_ptr);
+        if (next_node_ptr) {
+          next_node_ptr->SetPrevZPtr(node_ptr);
+        }
+
+        if (node_ptr->GetPrevZPtr()) {
+          node_ptr->GetPrevZPtr()->SetNextZPtr(node_ptr->GetNextZPtr());
+        }
+
+        if (node_ptr->GetNextZPtr()) {
+          node_ptr->GetNextZPtr()->SetPrevZPtr(node_ptr->GetPrevZPtr());
+          if (node_ptr == first_z_node_ptr_) {
+            first_z_node_ptr_ = node_ptr->GetNextZPtr();
+          }
+        }
+
+        node_ptr->SetPrevZPtr(curr_node_ptr);
+        node_ptr->SetNextZPtr(next_node_ptr);
+      }
+    }
+
+    if (!node_ptr->HasFlag(AOINodeFlag::kAOINodeFlagHideOrRemoved)) {
+      AOI_DEBUG("Move pass1: [{}Z] ({}), passnode=>({})",
+                node_ptr->GetPrevZPtr() == curr_node_ptr ? "-" : "+",
+                node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+
+      curr_node_ptr->OnNodePassZ(node_ptr, true);
+    }
+
+    if (!curr_node_ptr->HasFlag(AOINodeFlag::kAOINodeFlagHideOrRemoved)) {
+      AOI_DEBUG("Move pass2: [{}Z] ({}), passnode=>({})",
+                node_ptr->GetPrevZPtr() == curr_node_ptr ? "-" : "+",
+                node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+
+      node_ptr->OnNodePassZ(curr_node_ptr, false);
+    }
+
+    AOI_DEBUG("Move end: [{}Z] ({}), currnode=>({})",
+              node_ptr->GetPrevZPtr() == curr_node_ptr ? "-" : "+",
+              node_ptr->GetDescCStr(), curr_node_ptr->GetDescCStr());
+  }
+}
 
 AOINode *AOIMgr::GetFirstXNodePtr() const { return first_x_node_ptr_; }
 
