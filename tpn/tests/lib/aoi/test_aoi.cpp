@@ -31,6 +31,27 @@
 #  define _TPN_AOI_CONFIG_TEST_FILE "config_aoi_test.json"
 #endif
 
+class AOINode1 : public tpn::aoi::AOINode {
+ public:
+  AOINode1() {}
+  ~AOINode1() {}
+
+  void SetExtXYZ(float x, float y, float z) {
+    ext_x_ = x;
+    ext_y_ = y;
+    ext_z_ = z;
+  }
+
+  float GetExtX() const override { return ext_x_; }
+  float GetExtY() const override { return ext_y_; }
+  float GetExtZ() const override { return ext_z_; }
+
+ private:
+  float ext_x_{0.f};
+  float ext_y_{0.f};
+  float ext_z_{0.f};
+};
+
 TEST_CASE("data1", "data") {
   std::string config_error;
   if (!g_config->Load(_TPN_AOI_CONFIG_TEST_FILE, {}, config_error)) {
@@ -46,21 +67,13 @@ TEST_CASE("data1", "data") {
   std::unique_ptr<tpn::aoi::AOIMgr> aoi_mgr =
       std::make_unique<tpn::aoi::AOIMgr>();
 
-  tpn::aoi::AOINode *node1 = new tpn::aoi::AOINode(aoi_mgr.get());
-  tpn::aoi::AOINode *node2 = new tpn::aoi::AOINode(aoi_mgr.get());
-  tpn::aoi::AOINode *node3 = new tpn::aoi::AOINode(aoi_mgr.get());
+  AOINode1 *node1 = new AOINode1();
+  AOINode1 *node2 = new AOINode1();
+  AOINode1 *node3 = new AOINode1();
 
-  node1->SetX(10.0f);
-  node1->SetY(10.0f);
-  node1->SetZ(10.0f);
-
-  node2->SetX(20.0f);
-  node2->SetY(20.0f);
-  node2->SetZ(20.0f);
-
-  node3->SetX(30.0f);
-  node3->SetY(30.0f);
-  node3->SetZ(30.0f);
+  node1->SetExtXYZ(10.f, 10.f, 10.f);
+  node2->SetExtXYZ(20.f, 20.f, 20.f);
+  node3->SetExtXYZ(30.f, 30.f, 30.f);
 
   aoi_mgr->Insert(node1);
   aoi_mgr->Insert(node2);

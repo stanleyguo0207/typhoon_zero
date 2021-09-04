@@ -211,16 +211,16 @@ class AOINode {
   virtual const char *GetDescCStr();
 
  private:
-  float x_{std::numeric_limits<double>::lowest()};  ///< 节点本身坐标系x轴坐标
-  float y_{std::numeric_limits<double>::lowest()};  ///< 节点本身坐标系y轴坐标
-  float z_{std::numeric_limits<double>::lowest()};  ///< 节点本身坐标系z轴坐标
+  float x_{std::numeric_limits<float>::lowest()};  ///< 节点本身坐标系x轴坐标
+  float y_{std::numeric_limits<float>::lowest()};  ///< 节点本身坐标系y轴坐标
+  float z_{std::numeric_limits<float>::lowest()};  ///< 节点本身坐标系z轴坐标
 
   float old_ext_x_{
-      std::numeric_limits<double>::lowest()};  ///< 旧的扩展坐标系x轴坐标
+      std::numeric_limits<float>::lowest()};  ///< 旧的扩展坐标系x轴坐标
   float old_ext_y_{
-      std::numeric_limits<double>::lowest()};  ///< 旧的扩展坐标系y轴坐标
+      std::numeric_limits<float>::lowest()};  ///< 旧的扩展坐标系y轴坐标
   float old_ext_z_{
-      std::numeric_limits<double>::lowest()};  ///< 旧的扩展坐标系z轴坐标
+      std::numeric_limits<float>::lowest()};  ///< 旧的扩展坐标系z轴坐标
 
   EnumFlag<AOINodeFlag> flags_{AOINodeFlag::kAOINodeFlagNone};  ///< 标志
 
