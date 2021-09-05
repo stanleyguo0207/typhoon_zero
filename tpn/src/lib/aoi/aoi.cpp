@@ -303,9 +303,9 @@ void AOIMgr::Update(AOINode *node_ptr) {
   AOI_DEBUG("Start DebugX:[{:p}]", (void *)node_ptr);
   first_x_node_ptr_->DebugX();
   AOI_DEBUG("Start DebugY:[{:p}]", (void *)node_ptr);
-  first_x_node_ptr_->DebugX();
+  first_y_node_ptr_->DebugY();
   AOI_DEBUG("Start DebugZ:[{:p}]", (void *)node_ptr);
-  first_x_node_ptr_->DebugX();
+  first_z_node_ptr_->DebugZ();
 }
 
 void AOIMgr::MoveNodeX(AOINode *node_ptr, float x, AOINode *curr_node_ptr) {
