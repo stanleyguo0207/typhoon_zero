@@ -17,3 +17,7 @@ G3D-v9.0 hotfix4.diff - 2015-07-02 - backport G3D10 fix
 G3D-v9.0 hotfix5.diff - 2015-07-31 - fix MSVC 2015 warning: dep/g3dlite/include/G3D/Quat.h(352): warning C4458: declaration of 'x' hides class member
 G3D-v9.0 hotfix6.diff - 2015-11-04 - fix adding std::shared_ptr, std::weak_ptr, std::dynamic_pointer_cast, std::static_pointer_cast and std::enable_shared_from_this to global namespace
 G3D-v9.0 hotfix7.diff - 2016-10-10 - fix warning on clang 3.8 backported from G3D 10
+
+G3D的库来自 TrinityCore(https://www.trinitycore.org/)。
+因为G3D本身需要包含很多额外的库，TrinityCore已经对之前的版本进行了修改，并提供了diff文件。
+TrinityCore的G3D来自(https://casual-effects.com/g3d/www/index.html)。
