@@ -29,6 +29,7 @@ if(SERVERS OR TOOLS)
 	add_subdirectory(asio)
 	add_subdirectory(zlib)
 	add_subdirectory(valgrind)
+	add_subdirectory(g3dlite)
 endif()
 
 if(SERVERS)
