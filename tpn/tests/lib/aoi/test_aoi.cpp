@@ -72,8 +72,11 @@ TEST_CASE("data1", "data") {
   AOINode1 *node3 = new AOINode1();
 
   node1->SetExtXYZ(10.f, 10.f, 10.f);
+  node1->SetDescStr("node1");
   node2->SetExtXYZ(20.f, 10.f, 20.f);
+  node2->SetDescStr("node2");
   node3->SetExtXYZ(20.f, 30.f, 10.f);
+  node3->SetDescStr("node3");
 
   aoi_mgr->Insert(node1);
   aoi_mgr->Insert(node2);
