@@ -6,6 +6,8 @@
 
 ## 系统架构图
 
+![][p_framework]
+
 # Typhoon Xlsx
 
 作为**Typhoon**数据解析工具。
@@ -16,6 +18,7 @@
 
 <!-- image -->
 [pTouch]:       ./doc/assets/readme/touch.png
+[p_framework]:  ./doc/assets/framework/framework.png
 [p_xlsx2data]:  ./tpn/tools/xlsx2data/doc/xlsx2data.png
 
 <!-- url -->
