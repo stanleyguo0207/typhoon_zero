@@ -20,4 +20,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-add_subdirectory(test)
+# add_subdirectory(balance)
+# add_subdirectory(base)
+# add_subdirectory(cell)
+# add_subdirectory(cellmgr)
+# add_subdirectory(daemon)
+# add_subdirectory(datebase)
+# add_subdirectory(gate)
+# add_subdirectory(login)
+# add_subdirectory(recharge)
+# add_subdirectory(remote)
