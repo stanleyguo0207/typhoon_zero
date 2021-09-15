@@ -181,48 +181,39 @@ std::string AOINode::DebugStr() {
       flags_.AsUnderlyingType(), GetDescCStr());
 }
 
-namespace {
-
-#define GET_XYZ(cap) Get##cap
-#define GET_NEXT_XYZ_PTR(low) this->next_##low##_ptr_
-#define FUNC_DEBUG_XYZ(cap) Debug##cap
-#define DEBUG_XYZ(low, cap)                                         \
-  do {                                                              \
-    AOI_DEBUG("{}", DebugStr());                                    \
-    if (GET_NEXT_XYZ_PTR(low)) {                                    \
-      GET_NEXT_XYZ_PTR(low)->FUNC_DEBUG_XYZ(cap)();                 \
-      if (GET_NEXT_XYZ_PTR(low)->GET_XYZ(cap)() < GET_XYZ(cap)()) { \
-        AOI_ERROR("{:p} > {:p}", (void *)this,                      \
-                  (void *)(GET_NEXT_XYZ_PTR(low)));                 \
-      }                                                             \
-    }                                                               \
-  } while (0)
-
-}  // namespace
-
-// AOI_DEBUG(DebugStr());
-// if (next_x_ptr_) {
-//   this->next_x_ptr_->DebugX();
-//   if (this->next_x_ptr_->GetX() < GetX()) {
-//     AOI_ERROR("{:p} > {:p}", (void *)this, (void *)next_x_ptr_);
-//   }
-// }
 void AOINode::DebugX() {
-  DEBUG_XYZ(x, X);
 #if defined(TPN_AOIDEBUG)
-  DEBUG_XYZ(x, X);
+  AOI_DEBUG("{}", DebugStr());
+  if (next_x_ptr_) {
+    this->next_x_ptr_->DebugX();
+    if (this->next_x_ptr_->GetX() < GetX()) {
+      AOI_ERROR("{:p} > {:p}", (void *)this, (void *)next_x_ptr_);
+    }
+  }
 #endif
 }
 
 void AOINode::DebugY() {
 #if defined(TPN_AOIDEBUG)
-  DEBUG_XYZ(y, Y);
+  AOI_DEBUG("{}", DebugStr());
+  if (next_y_ptr_) {
+    this->next_y_ptr_->DebugY();
+    if (this->next_y_ptr_->GetY() < GetY()) {
+      AOI_ERROR("{:p} > {:p}", (void *)this, (void *)next_y_ptr_);
+    }
+  }
 #endif
 }
 
 void AOINode::DebugZ() {
 #if defined(TPN_AOIDEBUG)
-  DEBUG_XYZ(z, Z);
+  AOI_DEBUG("{}", DebugStr());
+  if (next_z_ptr_) {
+    this->next_z_ptr_->DebugZ();
+    if (this->next_z_ptr_->GetZ() < GetZ()) {
+      AOI_ERROR("{:p} > {:p}", (void *)this, (void *)next_z_ptr_);
+    }
+  }
 #endif
 }
 
