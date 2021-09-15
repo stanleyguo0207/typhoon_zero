@@ -22,7 +22,7 @@
 
 # add_subdirectory(balance)
 # add_subdirectory(base)
-# add_subdirectory(cell)
+add_subdirectory(cell)
 # add_subdirectory(cellmgr)
 # add_subdirectory(daemon)
 # add_subdirectory(datebase)

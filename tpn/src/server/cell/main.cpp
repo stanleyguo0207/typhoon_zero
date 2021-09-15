@@ -20,10 +20,33 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#ifndef _TPN_SVR_BALANCE_CONFIG
-#  define _TPN_SVR_BALANCE_CONFIG "balance_config.json"
+#include <vector>
+#include <memory>
+#include <thread>
+
+#include "fmt_wrap.h"
+#include "config.h"
+#include "log.h"
+
+#ifndef _TPN_SVR_CELL_CONFIG
+#  define _TPN_SVR_CELL_CONFIG "cell_config.json"
 #endif
 
 int main(int argc, char *argv[]) {
+  if (auto error_opt = g_config->Load(
+          _TPN_SVR_CELL_CONFIG, std::vector<std::string>(argv, argv + argc))) {
+    fmt::print("Error in config file : {}\n", error_opt.value());
+    return 1;
+  }
+
+  tpn::log::Init();
+  std::shared_ptr<void> log_handle(nullptr,
+                                   [](void *) { tpn::log::Shutdown(); });
+
+  LOG_INFO("Cell server start...");
+  LOG_INFO("Cell server shutdown in 3s...");
+
+  std::this_thread::sleep_for(3s);
+
   return 0;
 }

@@ -39,13 +39,13 @@ CollectIncludeDirectories(
 # source tree
 GroupSources(${CMAKE_CURRENT_SOURCE_DIR})
 
-# executable balance
-add_executable(balance
+# executable cell
+add_executable(cell
 	${PRIVATE_SOURCES}
 	)
 
 # include
-target_include_directories(balance
+target_include_directories(cell
 	PRIVATE
 		${CMAKE_CURRENT_BINARY_DIR}
 	PUBLIC
@@ -53,7 +53,7 @@ target_include_directories(balance
 	)
 
 # link
-target_link_libraries(balance
+target_link_libraries(cell
   PRIVATE
     typhoon-core-interface
 	PUBLIC
@@ -61,7 +61,7 @@ target_link_libraries(balance
 	)
   
 # ide folder
-set_target_properties(balance
+set_target_properties(cell
 	PROPERTIES
 		FOLDER
 			"server"
@@ -69,47 +69,47 @@ set_target_properties(balance
 
 # install
 install(TARGETS
-  balance
+  cell
     DESTINATION
-      ${BIN_DIR}/balance
+      ${BIN_DIR}
   )
 
 # config
 if(NOT WIN32)
   set_property(TARGET
-	  balance
+	  cell
 	  APPEND
 	  PROPERTY
 		  COMPILE_DEFINITIONS
-		  _TPN_SVR_BALANCE_CONFIG="${CONF_DIR}/balance_config.json"
+      _TPN_SVR_CELL_CONFIG="${CONF_DIR}/cell_config.json"
 	  )
 
   install(FILES
-    balance_config.json 
+    cell_config.json 
       DESTINATION
         ${CONF_DIR}
     )
 elseif(WIN32)
   add_custom_command(TARGET
-    balance
+    cell
     POST_BUILD
       COMMAND
       ${CMAKE_COMMAND} -E copy
-		  ${CMAKE_CURRENT_SOURCE_DIR}/balance_config.json
+		  ${CMAKE_CURRENT_SOURCE_DIR}/cell_config.json
 		  ${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}/
     )
 
   install(FILES
-    balance_config.json 
+    cell_config.json 
       DESTINATION
-        ${BIN_DIR}/tools
+        ${BIN_DIR}
     )
 endif()
 
 # pch
 if(USE_COREPCH)
-	target_precompile_headers(balance
+	target_precompile_headers(cell
 		PRIVATE
-			${CMAKE_CURRENT_SOURCE_DIR}/pch/pch_balance.h
+			${CMAKE_CURRENT_SOURCE_DIR}/pch/pch_cell.h
 		)
 endif()

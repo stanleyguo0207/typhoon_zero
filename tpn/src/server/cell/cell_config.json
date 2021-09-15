@@ -45,7 +45,7 @@
   /// 每日日志基础名称
   /// 每个进程一定要单独配置此选项
   // @type	string	默认值 "log/daily/daily.log"
-  "log_daily_file_base_path": "log/daily/daily.log",
+  "log_daily_file_base_path": "log/server/cell.log",
   /// 每日日志轮转小时
   // @type	int			默认值 0
   "log_daily_file_rotation_hour": 0,
