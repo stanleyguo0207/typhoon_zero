@@ -32,8 +32,9 @@ namespace fs = std::filesystem;
 
 namespace tpn {
 
-bool ConfigMgr::Load(std::string_view path, std::vector<std::string> args,
-                     std::string &error, bool reload /*  = false */) {
+std::optional<std::string> ConfigMgr::Load(std::string_view path,
+                                           std::vector<std::string> args,
+                                           bool reload /*  = false */) {
   std::lock_guard<std::mutex> lock(load_mutex_);
 
   if (!reload) {
@@ -60,21 +61,20 @@ bool ConfigMgr::Load(std::string_view path, std::vector<std::string> args,
     delete[] buf;
 
     if (document_.HasParseError()) {
-      error = std::string("parse error") + " (" + path_ + ") ";
-      return false;
+      return std::optional<std::string>("parse error (" + path_ + ") ");
     }
   } catch (fs::filesystem_error &e) {
-    error = std::string{e.what()} + " (" + path_ + ") ";
-    return false;
+    return std::optional<std::string>(std::string{e.what()} + " (" + path_ +
+                                      ") ");
   } catch (const std::exception &ex) {
-    error = std::string{ex.what()} + " (" + path_ + ") ";
-    return false;
+    return std::optional<std::string>(std::string{ex.what()} + " (" + path_ +
+                                      ") ");
   }
 
-  return true;
+  return std::nullopt;
 }
 
-bool ConfigMgr::Reload(std::string &error) { return Load({}, {}, error, true); }
+std::optional<std::string> ConfigMgr::Reload() { return Load({}, {}, true); }
 
 std::string_view ConfigMgr::GetPath() const { return path_; }
 

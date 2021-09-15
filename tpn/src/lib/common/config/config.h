@@ -27,6 +27,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include <optional>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
@@ -41,16 +42,15 @@ class TPN_COMMON_API ConfigMgr {
   /// 加载配置文件
   ///  @param[in]		path		配置文件全路径
   ///  @param[in]		args		读取配置文件时参数
-  ///  @param[out]	error		读取配置错误信息
   ///  @param[in]		reload	重新加载标志 默认false
-  ///  @return 是否加载配置成功
-  bool Load(std::string_view path, std::vector<std::string> args,
-            std::string &error, bool reload = false);
+  ///  @return 如果加载失败，返回错误信息
+  std::optional<std::string> Load(std::string_view path,
+                                  std::vector<std::string> args,
+                                  bool reload = false);
 
   /// 重新加载配置文件
-  ///  @param[out]	error		读取配置错误信息
-  ///  @return 是否加载配置成功
-  bool Reload(std::string &error);
+  ///  @return 如果加载失败，返回错误信息
+  std::optional<std::string> Reload();
 
   /// 获取配置文件全路径
   ///  @return 配置文件全局路径
