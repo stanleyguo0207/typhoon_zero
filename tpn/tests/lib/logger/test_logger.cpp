@@ -166,10 +166,9 @@ TEST_CASE("daily", "[logger]") {
 #include "log.h"
 
 TEST_CASE("log", "[logger]") {
-  string config_error;
-  if (!g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {}, config_error)) {
+  if (auto error = g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {})) {
     fmt::print(stderr, "Error in config file {}, error {}\n",
-               _TPN_LOGGER_CONFIG_TEST_FILE, config_error);
+               _TPN_LOGGER_CONFIG_TEST_FILE, *error);
     return;
   }
 

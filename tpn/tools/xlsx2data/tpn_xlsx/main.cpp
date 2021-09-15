@@ -35,12 +35,11 @@
 
 int main(int argc, char *argv[]) {
   do {
-    std::string config_error;
-    if (!g_config->Load(_TPN_XLSX2DATA_CONFIG,
-                        std::vector<std::string>(argv, argv + argc),
-                        config_error)) {
+    if (auto error =
+            g_config->Load(_TPN_XLSX2DATA_CONFIG,
+                           std::vector<std::string>(argv, argv + argc))) {
       printf("Error in config file:%s, error:%s\n ", _TPN_XLSX2DATA_CONFIG,
-             config_error.c_str());
+             (*error).c_str());
       break;
     }
 

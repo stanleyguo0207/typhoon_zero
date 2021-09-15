@@ -106,12 +106,9 @@ int main(int argc, char *argv[]) {
 #if (TPN_PLATFORM == TPN_PLATFORM_WIN)
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-  std::string config_error;
-  if (!g_config->Load(_TPN_NET_CHAT_CLIENT_CONFIG_TEST_FILE,
-                      std::vector<std::string>(argv, argv + argc),
-                      config_error)) {
-    printf("Error in config file: %s\n", config_error.c_str());
+  
+  if (auto error = g_config->Load(_TPN_NET_CHAT_CLIENT_CONFIG_TEST_FILE, {})) {
+    printf("Error in config file: %s\n", (*error).c_str());
     return 1;
   }
 

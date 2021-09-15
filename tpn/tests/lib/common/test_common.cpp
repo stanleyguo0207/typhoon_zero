@@ -46,10 +46,8 @@ TEST_CASE("config", "[common]") {
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
 
-  std::string error;
-  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
-  if (!error.empty()) {
-    cout << error.c_str() << endl;
+  if (auto error = g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {})) {
+    cout << *error << endl;
     return;
   }
 
@@ -240,11 +238,9 @@ TEST_CASE("file_helper", "[common]") {
 #ifndef _TPN_COMMON_CONFIG_TEST_FILE
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
-
-  std::string error;
-  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
-  if (!error.empty()) {
-    cout << error.c_str() << endl;
+  
+  if (auto error = g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {})) {
+    cout << *error << endl;
     return;
   }
 
@@ -339,11 +335,9 @@ TEST_CASE("banner", "[common]") {
 #ifndef _TPN_COMMON_CONFIG_TEST_FILE
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
-
-  std::string error;
-  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
-  if (!error.empty()) {
-    cout << error.c_str() << endl;
+  
+  if (auto error = g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {})) {
+    cout << *error << endl;
     return;
   }
 
@@ -360,10 +354,8 @@ TEST_CASE("skiplist", "[common]") {
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
 
-  std::string error;
-  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
-  if (!error.empty()) {
-    cout << error.c_str() << endl;
+  if (auto error = g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {})) {
+    cout << *error << endl;
     return;
   }
 
@@ -445,10 +437,8 @@ TEST_CASE("rank", "[common]") {
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
 
-  std::string error;
-  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
-  if (!error.empty()) {
-    cout << error.c_str() << endl;
+  if (auto error = g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {})) {
+    cout << *error << endl;
     return;
   }
 
@@ -526,10 +516,8 @@ TEST_CASE("rank_bench", "[common]") {
 #  define _TPN_COMMON_CONFIG_TEST_FILE "config_common_test.json"
 #endif
 
-  std::string error;
-  g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {}, error);
-  if (!error.empty()) {
-    cout << error.c_str() << endl;
+  if (auto error = g_config->Load(_TPN_COMMON_CONFIG_TEST_FILE, {})) {
+    cout << *error << endl;
     return;
   }
 

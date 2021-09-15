@@ -33,10 +33,9 @@
 #endif
 
 TEST_CASE("data1", "data") {
-  std::string config_error;
-  if (!g_config->Load(_TPN_DATA_CONFIG_TEST_FILE, {}, config_error)) {
+  if (auto error = g_config->Load(_TPN_DATA_CONFIG_TEST_FILE, {})) {
     fmt::print(stderr, "Error in config file {}, error {}\n",
-               _TPN_DATA_CONFIG_TEST_FILE, config_error);
+               _TPN_DATA_CONFIG_TEST_FILE, *error);
     return;
   }
 

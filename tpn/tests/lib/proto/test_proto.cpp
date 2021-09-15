@@ -54,11 +54,9 @@ class CatchProtoTestService2 : public protocol::TestService1 {
 };
 
 TEST_CASE("test1", "[proto]") {
-  string config_error;
-  if (!g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {}, config_error)) {
-    fmt::print(stderr, "Error in config file {}, error {}\n",
-               _TPN_LOGGER_CONFIG_TEST_FILE, config_error);
-    return;
+  if (auto error = g_config->Load(_TPN_LOGGER_CONFIG_TEST_FILE, {})) {
+    printf("Error in config file: %s\n", *error.c_str());
+    return 1;
   }
 
   tpn::log::Init();

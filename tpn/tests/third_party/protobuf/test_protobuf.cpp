@@ -281,10 +281,9 @@ TEST_CASE("data write", "[protobuf]") {
   std::shared_ptr<void> protobuf_handle(
       nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
 
-  string config_error;
-  if (!g_config->Load(_TPN_PROTOBUF_CONFIG_TEST_FILE, {}, config_error)) {
+  if (auto error = g_config->Load(_TPN_PROTOBUF_CONFIG_TEST_FILE, {})) {
     fmt::print(stderr, "Error in config file {}, error {}\n",
-               _TPN_PROTOBUF_CONFIG_TEST_FILE, config_error);
+               _TPN_PROTOBUF_CONFIG_TEST_FILE, *error);
     return;
   }
 
@@ -400,10 +399,9 @@ TEST_CASE("data read", "[protobuf]") {
   std::shared_ptr<void> protobuf_handle(
       nullptr, [](void *) { google::protobuf::ShutdownProtobufLibrary(); });
 
-  string config_error;
-  if (!g_config->Load(_TPN_PROTOBUF_CONFIG_TEST_FILE, {}, config_error)) {
+  if (auto error = g_config->Load(_TPN_PROTOBUF_CONFIG_TEST_FILE, {})) {
     fmt::print(stderr, "Error in config file {}, error {}\n",
-               _TPN_PROTOBUF_CONFIG_TEST_FILE, config_error);
+               _TPN_PROTOBUF_CONFIG_TEST_FILE, *error);
     return;
   }
 
