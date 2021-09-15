@@ -1,0 +1,96 @@
+{
+  ///文件模块--------------------------------------------------------------------
+  /// 文件打开尝试次数
+  // @type	int			默认值 5
+  "file_open_try_times": 5,
+  /// 文件打开尝试间隔(单位:毫秒)
+  // @type	int		默认值 10
+  "file_open_interval_milliseconds": 100,
+  ///---------------------------------------------------------------------------
+  ///日志模块--------------------------------------------------------------------
+  /// 日志模块级别支持
+  /// log_level
+  /// ["OFF", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"]
+  /// log_short_level
+  /// [  "O",     "T",     "D",    "I",    "W",     "E",     "F"]	
+  /// 日志是否自动注册
+  // @type	bool		默认值 true
+  "log_automatic_registration": true,
+  /// 日志全局志记级别
+  // @type	string	默认值 "DEBUG"
+  "log_global_level": "DEBUG",
+  /// 日志全局刷新级别
+  // @type	string	默认值 "DEBUG"
+  "log_global_flush_level": "INFO",
+  /// 日志全局时间格式 ["local", "utc"]
+  /// 这里的只有 "utc" 与非 "utc"的区别，非"utc"均处理为"local"
+  // @type	string	默认值 "local"
+  "log_pattern_type_type": "local",
+  /// 日志记录器默认志记级别 模式 "日志名称-日志级别;..."
+  /// 使用 ; 分隔组。使用 - 分隔组内级别。
+  // @type	string	默认值 ""
+  // @example	"default-DEBUG;game_server-INFO"
+  //   解释为 名为default的记录器志记级别为DEBUG,名为game_server的记录器志记级别为INFO
+  "log_logger_levels": "default-DEBUG",
+  /// 日志记录器格式类型
+  /// 使用 & 分隔。
+  /// 支持类型
+  /// 0 默认格式 默认格式 [时间] [级别(简)] [线程id] [源文件定位信息] 日志内容
+  /// 1 时间使用缓冲
+  /// 2 日志级别显示全称
+  /// 4 不打印线程id
+  /// 8 不打印源文件定位信息
+  // @type  string  默认值 "0"
+  "log_format_types": "0",
+  /// 每日日志基础名称
+  /// 每个进程一定要单独配置此选项
+  // @type	string	默认值 "log/daily/daily.log"
+  "log_daily_file_base_path": "log/daily/daily.log",
+  /// 每日日志轮转小时
+  // @type	int			默认值 0
+  "log_daily_file_rotation_hour": 0,
+  /// 每日日志轮转分钟
+  // @type	int			默认值 0
+  "log_daily_file_rotation_minute": 0,
+  /// 每日日志是否截断
+  // @type	bool		默认值 false
+  "log_daily_file_truncate": false,
+  /// 每日日志保留最大文件数 默认保留一周的日志
+  // @type	int			默认值 7
+  "log_daily_file_max": 7,
+  /// 默认日志记录器名称
+  // @type	string	默认值 "default"
+  "log_default_logger_name": "default",
+  /// 日志异步线程池大小
+  // @type  int     默认值 1
+  "log_thread_pool_size": 2,
+  /// 日志刷新间隔 毫秒
+  // @type  int     默认值 1000
+  "log_flush_interval": 1000,
+  ///---------------------------------------------------------------------------
+  ///xlsx2data------------------------------------------------------------------
+  /// xlsx文件目录路径
+  // @type  string  默认值 "xlsx2data/data"
+  "xlsx_data_dir": "xlsx2data/data",
+  /// json文件输出目录路径
+  // @type  string  默认值 "xlsx2data/json"
+  "xlsx_json_dir": "xlsx2data/json",
+  /// proto文件输出目录路径
+  // @type  string  默认值 "xlsx2data/proto"
+  "xlsx_proto_dir": "xlsx2data/proto",
+  /// cpp文件目录路径
+  // @type  string  默认值 "xlsx2data/cpp"
+  "xlsx_cpp_dir": "xlsx2data/cpp",
+  /// bin文件目录路径
+  // @type  string  默认值 "xlsx2data/bin"
+  "xlsx_bin_dir": "xlsx2data/bin",
+  /// generator目录路径
+  // @type  string  默认值 "xlsx2data/generator"
+  "xlsx_generator_dir": "xlsx2data/generator",
+  /// file prefix
+  // @type  string  默认值 "data_hub"
+  "xlsx_file_prefix": "data_hub",
+  ///---------------------------------------------------------------------------
+  "config_all_support_end": 1
+}
+// vim: ft=jsonc
