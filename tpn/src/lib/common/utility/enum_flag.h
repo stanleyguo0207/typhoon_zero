@@ -113,18 +113,15 @@ class EnumFlag {
   /// 设置标志
   /// 这个借口会直接影响标志，除非你知道怎么为什么设置
   ///  @param[in]   flag      要设置的标志
-  constexpr void SetFlag(EnumFlag flag) {
-    value_ = flag.value_;
-    ;
-  }
+  constexpr void SetFlag(T flag) { value_ = flag; }
 
   /// 添加标志
   ///  @param[in]   flag      要添加的标志
-  constexpr void AddFlag(EnumFlag flag) { value_ |= flag.value_; }
+  constexpr void AddFlag(T flag) { value_ |= flag; }
 
   /// 移除标志
   ///  @param[in]   flag      要移除的标志
-  constexpr void RemoveFlag(EnumFlag flag) { value_ &= ~flag.value_; }
+  constexpr void RemoveFlag(T flag) { value_ &= ~flag; }
 
   /// 检查是否有指定标志
   ///  @param[in]   flag      要检查的标志
