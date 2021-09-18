@@ -20,12 +20,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-#include "entity.h"
+#ifndef TYPHOON_ZERO_TPN_SRC_SERVER_CELL_CELL_FWD_H_
+#define TYPHOON_ZERO_TPN_SRC_SERVER_CELL_CELL_FWD_H_
+
+#include "define.h"
 
 namespace tpn {
 
-Entity::Entity() {}
-
-Entity::~Entity() {}
+class CoordinateNode;
+class CoordinateSystem;
 
 }  // namespace tpn
+
+#endif  // TYPHOON_ZERO_TPN_SRC_SERVER_CELL_CELL_FWD_H_
