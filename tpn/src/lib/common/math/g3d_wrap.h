@@ -58,17 +58,17 @@ struct Direction3D {
   }
 
   /// 获取 X轴旋转值
-  float GetRoll const { return dir.x; }
+  float GetRoll() const { return dir.x; }
   /// 设置 X轴旋转值
   void SetRoll(float r) { dir.x = r; }
 
   /// 获取 Y轴旋转值
-  float GetPitch const { return dir.y; }
+  float GetPitch() const { return dir.y; }
   /// 设置 Y轴旋转值
   void SetPitch(float p) { dir.y = p; }
 
   /// 获取 Z轴旋转值
-  float GetYaw const { return dir.z; }
+  float GetYaw() const { return dir.z; }
   /// 设置 Z轴旋转值
   void SetYaw(float y) { dir.z = y; }
 
