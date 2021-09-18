@@ -65,6 +65,7 @@ target_link_libraries(common
     utfcpp
     asio
     valgrind
+    g3dlib
 	)
 
 # export
