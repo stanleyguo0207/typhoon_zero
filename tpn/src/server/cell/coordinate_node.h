@@ -46,7 +46,7 @@ enum class CoordinateNodeFlag : uint16_t {
   kCoordinateNodeFlagInstalling       = (0x1 << 7),  ///< 安装中的节点
   kCoordinateNodeFlagPositiveBoundary = (0x1 << 8),  ///< 处于正边界的节点
   kCoordinateNodeFlagNagativeBoundary = (0x1 << 9),  ///< 处于负边界的节点
-  kCoordinateNodeFlagHideOrRemoved    = kAOINodeFlagHide | kAOINodeFlagRemoved,
+  kCoordinateNodeFlagHideOrRemoved    = kCoordinateNodeFlagHide | kCoordinateNodeFlagRemoved,
 };
 
 /// 坐标系节点

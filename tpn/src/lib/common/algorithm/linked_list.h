@@ -284,6 +284,17 @@ class LinkedListHead {
   TPN_NO_MOVEABLE(LinkedListHead)
 };
 
+/// 来自linux内核，去掉了检查的部分
+/// cast a member of a structure out to the containing structure
+///  @param[out]  ptr         this指针
+///  @param[in]   Typename    类名
+///  @param]in]   MemberName  类成员名
+#define TPN_CONTAINER_OF(ptr, TypeName, MemberName)          \
+  ({                                                         \
+    void *__mptr = (void *)(ptr);                            \
+    ((TypeName *)(__mptr - offsetof(TypeName, MemberName))); \
+  })
+
 }  // namespace tpn
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_ALGORITHM_LINKED_LIST_H_
