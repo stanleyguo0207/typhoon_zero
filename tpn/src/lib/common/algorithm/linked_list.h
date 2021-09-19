@@ -58,7 +58,7 @@ class LinkedListElement {
   /// 是否在链上
   ///  @return 在链上返回true
   bool IsInList() const {
-    return (nullptr != prev_ptr_ && nullptr != next_ptr_;);
+    return (nullptr != prev_ptr_ && nullptr != next_ptr_);
   }
 
   /// 获取后置节点
@@ -110,7 +110,7 @@ class LinkedListElement {
   ///  @param[in]   elem_ptr    要插入元素节点
   void InsertAfter(LinkedListElement *elem_ptr) {
     elem_ptr->prev_ptr_  = this;
-    elem_ptr->prev_ptr_  = next_ptr_;
+    elem_ptr->next_ptr_  = next_ptr_;
     next_ptr_->prev_ptr_ = elem_ptr;
     next_ptr_            = elem_ptr;
   }
@@ -256,7 +256,7 @@ class LinkedListHead {
     }
 
     bool operator==(const Iterator &other) const {
-      return (ptr_ == other->ptr_);
+      return (ptr_ == other.ptr_);
     }
 
     bool operator!=(const Iterator &other) const { return (!(*this == other)); }
@@ -289,11 +289,8 @@ class LinkedListHead {
 ///  @param[out]  ptr         this指针
 ///  @param[in]   Typename    类名
 ///  @param]in]   MemberName  类成员名
-#define TPN_CONTAINER_OF(ptr, TypeName, MemberName)          \
-  ({                                                         \
-    void *__mptr = (void *)(ptr);                            \
-    ((TypeName *)(__mptr - offsetof(TypeName, MemberName))); \
-  })
+#define TPN_CONTAINER_OF(ptr, type, member) \
+  ((type *)((uintptr_t)(ptr)-offsetof(type, member)))
 
 }  // namespace tpn
 

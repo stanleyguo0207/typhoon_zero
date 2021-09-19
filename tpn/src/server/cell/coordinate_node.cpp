@@ -38,7 +38,7 @@ CoordinateNode::~CoordinateNode() {
                  nullptr == prev_y_ptr_ && nullptr == next_y_ptr_ &&
                  nullptr == prev_z_ptr_ && nullptr == next_z_ptr_ &&
                  nullptr == coordinate_system_ptr_,
-             "AOINode memory leak);
+             "AOINode memory leak");
 }
 
 float CoordinateNode::GetX() const { return position_.x; }
@@ -91,7 +91,7 @@ void CoordinateNode::ResetOldRealXYZ() {
   old_real_position_ = GetRealPosition();
 }
 
-uint32_t CoordinateNode::GetFlags() const {}
+uint32_t CoordinateNode::GetFlags() const { return 0; }
 
 void CoordinateNode::SetFlag(CoordinateNodeFlag flag) {}
 
@@ -99,35 +99,37 @@ void CoordinateNode::AddFlag(CoordinateNodeFlag flag) {}
 
 void CoordinateNode::RemoveFlag(CoordinateNodeFlag flag) {}
 
-bool CoordinateNode::HasFlag(CoordinateNodeFlag flag) const {}
+bool CoordinateNode::HasFlag(CoordinateNodeFlag flag) const { return true; }
 
-bool CoordinateNode::HasAllFlag(CoordinateNodeFlag flag) const {}
+bool CoordinateNode::HasAllFlag(CoordinateNodeFlag flag) const { return true; }
 
-CoordinateNode *CoordinateNode::GetPrevXPtr() const {}
+CoordinateNode *CoordinateNode::GetPrevXPtr() const { return nullptr; }
 
 void CoordinateNode::SetPrevXPtr(CoordinateNode *node_ptr) {}
 
-CoordinateNode *CoordinateNode::GetNextXPtr() const {}
+CoordinateNode *CoordinateNode::GetNextXPtr() const { return nullptr; }
 
 void CoordinateNode::SetNextXPtr(CoordinateNode *node_ptr) {}
 
-CoordinateNode *CoordinateNode::GetPrevYPtr() const {}
+CoordinateNode *CoordinateNode::GetPrevYPtr() const { return nullptr; }
 
 void CoordinateNode::SetPrevYPtr(CoordinateNode *node_ptr) {}
 
-CoordinateNode *CoordinateNode::GetNextYPtr() const {}
+CoordinateNode *CoordinateNode::GetNextYPtr() const { return nullptr; }
 
 void CoordinateNode::SetNextYPtr(CoordinateNode *node_ptr) {}
 
-CoordinateNode *CoordinateNode::GetPrevZPtr() const {}
+CoordinateNode *CoordinateNode::GetPrevZPtr() const { return nullptr; }
 
 void CoordinateNode::SetPrevZPtr(CoordinateNode *node_ptr) {}
 
-CoordinateNode *CoordinateNode::GetNextZPtr() const {}
+CoordinateNode *CoordinateNode::GetNextZPtr() const { return nullptr; }
 
 void CoordinateNode::SetNextZPtr(CoordinateNode *node_ptr) {}
 
-CoordinateSystem *CoordinateNode::GetCoordinateSystemPtr() const {}
+CoordinateSystem *CoordinateNode::GetCoordinateSystemPtr() const {
+  return nullptr;
+}
 
 void CoordinateNode::SetCoordinateSystemPtr(
     CoordinateSystem *coordinate_system_ptr) {}
@@ -144,7 +146,7 @@ void CoordinateNode::OnParentRemove(CoordinateNode *parent_node_ptr) {}
 
 void CoordinateNode::Update() {}
 
-std::string CoordinateNode::DebugStr() {}
+std::string CoordinateNode::DebugStr() { return ""; }
 
 void CoordinateNode::DebugX() {}
 
@@ -152,7 +154,7 @@ void CoordinateNode::DebugY() {}
 
 void CoordinateNode::DebugZ() {}
 
-const char *CoordinateNode::GetDescCStr() {}
+const char *CoordinateNode::GetDescCStr() { return ""; }
 
 void CoordinateNode::SetDescStr(std::string_view strv) {}
 
