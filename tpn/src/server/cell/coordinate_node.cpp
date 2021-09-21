@@ -53,7 +53,7 @@ float CoordinateNode::GetZ() const { return position_.z; }
 
 void CoordinateNode::SetZ(float v) { position_.z = v; }
 
-Position3D CoordinateNode::GetPosition() const { return position_; }
+Position3D &CoordinateNode::GetPosition() { return position_; }
 
 void CoordinateNode::SetPosition(const Position3D &v) { position_ = v; }
 
@@ -62,10 +62,6 @@ float CoordinateNode::GetRealX() const { return 0.f; }
 float CoordinateNode::GetRealY() const { return 0.f; }
 
 float CoordinateNode::GetRealZ() const { return 0.f; }
-
-Position3D CoordinateNode::GetRealPosition() const {
-  return Position3D(0.f, 0.f, 0.f);
-}
 
 float CoordinateNode::GetOldRealX() const { return old_real_position_.x; }
 
@@ -79,60 +75,98 @@ float CoordinateNode::GetOldRealZ() const { return old_real_position_.z; }
 
 void CoordinateNode::SetOldRealZ(float v) { old_real_position_.z = v; }
 
-Position3D CoordinateNode::GetOldRealPosition() const {
-  return old_real_position_;
-}
+Position3D &CoordinateNode::GetOldRealPosition() { return old_real_position_; }
 
 void CoordinateNode::SetOldRealPosition(const Position3D &v) {
   old_real_position_ = v;
 }
 
-void CoordinateNode::ResetOldRealXYZ() {
-  old_real_position_ = GetRealPosition();
+void CoordinateNode::SetOldRealPosition(float x, float y, float z) {
+  old_real_position_.x = x;
+  old_real_position_.y = y;
+  old_real_position_.z = z;
 }
 
-uint32_t CoordinateNode::GetFlags() const { return 0; }
+void CoordinateNode::ResetOldRealXYZ() {
+  old_real_position_.x = GetOldRealX();
+  old_real_position_.y = GetOldRealY();
+  old_real_position_.z = GetOldRealZ();
+}
 
-void CoordinateNode::SetFlag(CoordinateNodeFlag flag) {}
+uint32_t CoordinateNode::GetFlags() const { return flags_.AsUnderlyingType(); }
 
-void CoordinateNode::AddFlag(CoordinateNodeFlag flag) {}
+void CoordinateNode::SetFlag(CoordinateNodeFlag flag) { flags_.SetFlag(flag); }
 
-void CoordinateNode::RemoveFlag(CoordinateNodeFlag flag) {}
+void CoordinateNode::AddFlag(CoordinateNodeFlag flag) { flags_.AddFlag(flag); }
 
-bool CoordinateNode::HasFlag(CoordinateNodeFlag flag) const { return true; }
+void CoordinateNode::RemoveFlag(CoordinateNodeFlag flag) {
+  flags_.RemoveFlag(flag);
+}
 
-bool CoordinateNode::HasAllFlag(CoordinateNodeFlag flag) const { return true; }
+bool CoordinateNode::HasFlag(CoordinateNodeFlag flag) const {
+  return flags_.HasFlag(flag);
+}
 
-CoordinateNode *CoordinateNode::GetPrevXPtr() const { return nullptr; }
+bool CoordinateNode::HasAllFlag(CoordinateNodeFlag flag) const {
+  return flags_.HasAllFlag(flag);
+}
 
-void CoordinateNode::SetPrevXPtr(CoordinateNode *node_ptr) {}
+CoordinateNode *CoordinateNode::GetPrevXPtr() const { return prev_x_ptr_; }
 
-CoordinateNode *CoordinateNode::GetNextXPtr() const { return nullptr; }
+void CoordinateNode::SetPrevXPtr(CoordinateNode *node_ptr) {
+  if (this != node_ptr) {
+    prev_x_ptr_ = node_ptr;
+  }
+}
 
-void CoordinateNode::SetNextXPtr(CoordinateNode *node_ptr) {}
+CoordinateNode *CoordinateNode::GetNextXPtr() const { return next_x_ptr_; }
 
-CoordinateNode *CoordinateNode::GetPrevYPtr() const { return nullptr; }
+void CoordinateNode::SetNextXPtr(CoordinateNode *node_ptr) {
+  if (this != node_ptr) {
+    next_x_ptr_ = node_ptr;
+  }
+}
 
-void CoordinateNode::SetPrevYPtr(CoordinateNode *node_ptr) {}
+CoordinateNode *CoordinateNode::GetPrevYPtr() const { return prev_y_ptr_; }
 
-CoordinateNode *CoordinateNode::GetNextYPtr() const { return nullptr; }
+void CoordinateNode::SetPrevYPtr(CoordinateNode *node_ptr) {
+  if (this != node_ptr) {
+    prev_y_ptr_ = node_ptr;
+  }
+}
 
-void CoordinateNode::SetNextYPtr(CoordinateNode *node_ptr) {}
+CoordinateNode *CoordinateNode::GetNextYPtr() const { return next_y_ptr_; }
 
-CoordinateNode *CoordinateNode::GetPrevZPtr() const { return nullptr; }
+void CoordinateNode::SetNextYPtr(CoordinateNode *node_ptr) {
+  if (this != node_ptr) {
+    next_y_ptr_ = node_ptr;
+  }
+}
 
-void CoordinateNode::SetPrevZPtr(CoordinateNode *node_ptr) {}
+CoordinateNode *CoordinateNode::GetPrevZPtr() const { return prev_z_ptr_; }
 
-CoordinateNode *CoordinateNode::GetNextZPtr() const { return nullptr; }
+void CoordinateNode::SetPrevZPtr(CoordinateNode *node_ptr) {
+  if (this != node_ptr) {
+    prev_z_ptr_ = node_ptr;
+  }
+}
 
-void CoordinateNode::SetNextZPtr(CoordinateNode *node_ptr) {}
+CoordinateNode *CoordinateNode::GetNextZPtr() const { return next_z_ptr_; }
+
+void CoordinateNode::SetNextZPtr(CoordinateNode *node_ptr) {
+  if (this != node_ptr) {
+    next_z_ptr_ = node_ptr;
+  }
+}
 
 CoordinateSystem *CoordinateNode::GetCoordinateSystemPtr() const {
-  return nullptr;
+  return coordinate_system_ptr_;
 }
 
 void CoordinateNode::SetCoordinateSystemPtr(
-    CoordinateSystem *coordinate_system_ptr) {}
+    CoordinateSystem *coordinate_system_ptr) {
+  coordinate_system_ptr_ = coordinate_system_ptr;
+}
 
 void CoordinateNode::OnNodePassX(CoordinateNode *node_ptr, bool is_front) {}
 
@@ -140,22 +174,84 @@ void CoordinateNode::OnNodePassY(CoordinateNode *node_ptr, bool is_front) {}
 
 void CoordinateNode::OnNodePassZ(CoordinateNode *node_ptr, bool is_front) {}
 
-void CoordinateNode::OnRemove() {}
+void CoordinateNode::OnRemove() { SetOldRealPosition(x_, y_, z_); }
 
 void CoordinateNode::OnParentRemove(CoordinateNode *parent_node_ptr) {}
 
-void CoordinateNode::Update() {}
+void CoordinateNode::Update() {
+  if (coordinate_system_ptr_) {
+    coordinate_system_ptr_->Update(this);
+  }
+}
 
-std::string CoordinateNode::DebugStr() { return ""; }
+std::string CoordinateNode::DebugStr() {
+  return fmt::format(
+      "CoordinateNode::DebugStr(): {:p} curr({}, {}, {}), {}, X(prev:{:p}, "
+      "next:{:p}) Y(prev:{:p}, next:{:p}) Z(prev:{:p}, next:{:p}) flags:{} "
+      "desc:{}\n",
+      (void *)this, GetX(), GetY(), GetZ(),
+      fmt::format("Real({}, {}, {}) OldReal({}, {}, {})\n", GetRealX(),
+                  GetRealY(), GetRealZ(), GetOldRealX(), GetOldRealY(),
+                  GetOldRealZ()),
+      (void *)GetPrevXPtr(), (void *)GetNextXPtr(), (void *)GetPrevYPtr(),
+      (void *)GetNextYPtr(), (void *)GetPrevZPtr(), (void *)GetNextZPtr(),
+      GetFlags(), GetDescCStr());
+}
 
-void CoordinateNode::DebugX() {}
+void CoordinateNode::DebugX() {
+#if defined(TPN_DEBUG)
+  LOG_DEBUG("{}", DebugStr());
 
-void CoordinateNode::DebugY() {}
+  if (next_x_ptr_) {
+    this->next_x_ptr_->DebugX();
 
-void CoordinateNode::DebugZ() {}
+    if (this->next_x_ptr_->GetX() < GetX()) {
+      LOG_ERROR("{:p} > {:p}", (void *)this, (void *)next_x_ptr_);
+    }
+  }
+#endif
+}
 
-const char *CoordinateNode::GetDescCStr() { return ""; }
+void CoordinateNode::DebugY() {
+#if defined(TPN_DEBUG)
+  LOG_DEBUG("{}", DebugStr());
 
-void CoordinateNode::SetDescStr(std::string_view strv) {}
+  if (next_y_ptr_) {
+    this->next_y_ptr_->DebugY();
+
+    if (this->next_y_ptr_->GetY() < GetY()) {
+      LOG_ERROR("{:p} > {:p}", (void *)this, (void *)next_y_ptr_);
+    }
+  }
+#endif
+}
+
+void CoordinateNode::DebugZ() {
+#if defined(TPN_DEBUG)
+  LOG_DEBUG("{}", DebugStr());
+
+  if (next_z_ptr_) {
+    this->next_z_ptr_->DebugZ();
+
+    if (this->next_z_ptr_->GetZ() < GetZ()) {
+      LOG_ERROR("{:p} > {:p}", (void *)this, (void *)next_z_ptr_);
+    }
+  }
+#endif
+}
+
+const char *CoordinateNode::GetDescCStr() {
+#if defined(TPN_DEBUG)
+  return desc_.c_str();
+#else
+  return "";
+#endif
+}
+
+void CoordinateNode::SetDescStr(std::string_view strv) {
+#if defined(TPN_DEBUG)
+  desc_.assign(strv.data(), strv.size());
+#endif
+}
 
 }  // namespace tpn

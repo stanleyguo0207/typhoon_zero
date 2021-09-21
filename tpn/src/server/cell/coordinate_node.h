@@ -46,7 +46,8 @@ enum class CoordinateNodeFlag : uint16_t {
   kCoordinateNodeFlagInstalling       = (0x1 << 7),  ///< 安装中的节点
   kCoordinateNodeFlagPositiveBoundary = (0x1 << 8),  ///< 处于正边界的节点
   kCoordinateNodeFlagNagativeBoundary = (0x1 << 9),  ///< 处于负边界的节点
-  kCoordinateNodeFlagHideOrRemoved    = kCoordinateNodeFlagHide | kCoordinateNodeFlagRemoved,
+  kCoordinateNodeFlagHideOrRemoved =
+      kCoordinateNodeFlagHide | kCoordinateNodeFlagRemoved,  ///< 隐藏或者移除
 };
 
 /// 坐标系节点
@@ -82,7 +83,7 @@ class CoordinateNode {
 
   /// 获取节点本身坐标系向量
   ///  @return 节点本身坐标系向量
-  virtual Position3D GetPosition() const;
+  virtual Position3D &GetPosition();
   /// 设置节点本身坐标系向量
   ///  @param[in]   v     坐标系向量
   virtual void SetPosition(const Position3D &v);
@@ -96,9 +97,6 @@ class CoordinateNode {
   /// 获取节点实时坐标系当前z坐标
   ///  @return 节点实时坐标系当前z坐标
   virtual float GetRealZ() const;
-  /// 获取节点实时坐标系向量
-  ///  @return 节点实时坐标系向量
-  virtual Position3D GetRealPosition() const;
 
   /// 获取节点实时坐标系缓存x坐标
   ///  @return 节点实时坐标系缓存x坐标
@@ -123,7 +121,12 @@ class CoordinateNode {
 
   /// 获取节点缓存实时坐标系向量
   ///  @return 节点缓存实时坐标系向量
-  virtual Position3D GetOldRealPosition() const;
+  virtual Position3D &GetOldRealPosition();
+  /// 设置节点本身坐标系向量
+  ///  @param[in]   x     坐标系向量x坐标
+  ///  @param[in]   y     坐标系向量y坐标
+  ///  @param[in]   z     坐标系向量z坐标
+  virtual void SetOldRealPosition(float x, float y, float z);
   /// 设置节点本身坐标系向量
   ///  @param[in]   v     坐标系向量
   virtual void SetOldRealPosition(const Position3D &v);
