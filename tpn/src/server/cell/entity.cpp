@@ -22,9 +22,14 @@
 
 #include "entity.h"
 
+#include "entity_coordinate_node.h"
+
 namespace tpn {
 
-Entity::Entity() {}
+Entity::Entity() {
+  entity_coordinate_node_sptr_ =
+      std::make_shared<EntityCoordinateNode>(shared_from_this());
+}
 
 Entity::~Entity() {}
 
@@ -42,6 +47,10 @@ void Entity::SetDirection(const Direction3D &dir) {
   // TODO Check
   direction_ = dir;
   OnDirectionChanged();
+}
+
+EntityCoordinateNodeSptr Entity::GetEntityCoordinateNodeSptr() const {
+  return entity_coordinate_node_sptr_;
 }
 
 void Entity::SetPositionAndDirection(const Position3D &pos,

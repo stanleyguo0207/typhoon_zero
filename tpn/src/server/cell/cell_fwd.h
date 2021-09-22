@@ -23,6 +23,8 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_SERVER_CELL_CELL_FWD_H_
 #define TYPHOON_ZERO_TPN_SRC_SERVER_CELL_CELL_FWD_H_
 
+#include <memory>
+
 #include "define.h"
 
 namespace tpn {
@@ -30,6 +32,12 @@ namespace tpn {
 class CoordinateNode;
 class CoordinateSystem;
 class Entity;
+class EntityCoordinateNode;
+
+DECL_SHARED_AND_WEAK_PTR(CoordinateNode)
+DECL_SHARED_AND_WEAK_PTR(CoordinateSystem)
+DECL_SHARED_AND_WEAK_PTR(Entity)
+DECL_SHARED_AND_WEAK_PTR(EntityCoordinateNode)
 
 }  // namespace tpn
 

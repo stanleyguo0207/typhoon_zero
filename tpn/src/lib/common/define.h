@@ -27,6 +27,8 @@
 #include <cstddef>
 #include <cinttypes>
 
+#include <memory>
+
 // only windows or linux
 #define TPN_PLATFORM_WIN 0
 #define TPN_PLATFORM_UNIX 1
@@ -283,5 +285,17 @@
 
 // uint64_t low
 #define GET_UINT64_T_L(n) ((uint32_t)(((uint64_t)n) & 0xFFFFFFFF))
+
+// shared_ptr
+#define DECL_SHARED_PTR(TypeName) \
+  using TypeName##Sptr = std::shared_ptr<TypeName>;
+
+// weak_ptr
+#define DECL_WEAK_PTR(TypeName) using TypeName##Wptr = std::weak_ptr<TypeName>;
+
+// shared_ptr and weak_ptr
+#define DECL_SHARED_AND_WEAK_PTR(TypeName) \
+  DECL_SHARED_PTR(TypeName)                \
+  DECL_WEAK_PTR(TypeName)
 
 #endif  // TYPHOON_ZERO_TPN_SRC_LIB_COMMON_DEFINE_H_

@@ -55,8 +55,8 @@ enum class CoordinateNodeFlag : uint16_t {
 class CoordinateNode {
  public:
   /// 构造函数
-  ///  @param[in]   coordinate_system_ptr   坐标系系统
-  CoordinateNode(CoordinateSystem *coordinate_system_ptr = nullptr);
+  ///  @param[in]   coordinate_system_sptr    坐标系系统
+  CoordinateNode(CoordinateSystemSptr coordinate_system_sptr = nullptr);
   virtual ~CoordinateNode();
 
   /// 获取节点本身坐标系x坐标

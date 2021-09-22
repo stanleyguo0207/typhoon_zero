@@ -188,9 +188,9 @@ std::string CoordinateNode::DebugStr() {
   return fmt::format(
       "CoordinateNode::DebugStr(): {:p} curr({}, {}, {}), {}, X(prev:{:p}, "
       "next:{:p}) Y(prev:{:p}, next:{:p}) Z(prev:{:p}, next:{:p}) flags:{} "
-      "desc:{}\n",
+      "desc:{}",
       (void *)this, GetX(), GetY(), GetZ(),
-      fmt::format("Real({}, {}, {}) OldReal({}, {}, {})\n", GetRealX(),
+      fmt::format("Real({}, {}, {}) OldReal({}, {}, {})", GetRealX(),
                   GetRealY(), GetRealZ(), GetOldRealX(), GetOldRealY(),
                   GetOldRealZ()),
       (void *)GetPrevXPtr(), (void *)GetNextXPtr(), (void *)GetPrevYPtr(),

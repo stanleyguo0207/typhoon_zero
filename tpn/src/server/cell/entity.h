@@ -29,7 +29,7 @@
 namespace tpn {
 
 /// 实体基类
-class Entity {
+class Entity : std::enable_shared_from_this<Entity> {
  public:
   Entity();
   virtual ~Entity();
@@ -39,6 +39,8 @@ class Entity {
 
   TPN_INLINE Direction3D &GetDirection();
   TPN_INLINE void SetDirection(const Direction3D &dir);
+
+  TPN_INLINE EntityCoordinateNodeSptr GetEntityCoordinateNodeSptr() const;
 
   void SetPositionAndDirection(const Position3D &pos, const Direction3D &dir);
 
@@ -51,6 +53,8 @@ class Entity {
   Position3D position_;       ///< 空间坐标向量
   Position3D last_position_;  ///< 上一个空间坐标向量
   Direction3D direction_;     ///< 空间方向向量
+  EntityCoordinateNodeSptr entity_coordinate_node_sptr_{
+      nullptr};  ///< 坐标系节点
 };
 
 }  // namespace tpn
