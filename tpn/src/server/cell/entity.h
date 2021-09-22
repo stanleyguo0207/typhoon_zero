@@ -34,6 +34,19 @@ class Entity {
   Entity();
   virtual ~Entity();
 
+  TPN_INLINE Position3D &GetPosition();
+  TPN_INLINE void SetPosition(const Position3D &pos);
+
+  TPN_INLINE Direction3D &GetDirection();
+  TPN_INLINE void SetDirection(const Direction3D &dir);
+
+  void SetPositionAndDirection(const Position3D &pos, const Direction3D &dir);
+
+  void OnPositionChanged();
+  void OnDirectionChanged();
+
+  void UpdateLastPosition();
+
  protected:
   Position3D position_;       ///< 空间坐标向量
   Position3D last_position_;  ///< 上一个空间坐标向量

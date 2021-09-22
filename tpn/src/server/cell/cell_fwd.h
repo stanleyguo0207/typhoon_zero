@@ -29,6 +29,7 @@ namespace tpn {
 
 class CoordinateNode;
 class CoordinateSystem;
+class Entity;
 
 }  // namespace tpn
 

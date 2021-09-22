@@ -55,7 +55,7 @@ void CoordinateNode::SetZ(float v) { position_.z = v; }
 
 Position3D &CoordinateNode::GetPosition() { return position_; }
 
-void CoordinateNode::SetPosition(const Position3D &v) { position_ = v; }
+void CoordinateNode::SetPosition(const Position3D &pos) { position_ = pos; }
 
 float CoordinateNode::GetRealX() const { return 0.f; }
 
@@ -77,8 +77,8 @@ void CoordinateNode::SetOldRealZ(float v) { old_real_position_.z = v; }
 
 Position3D &CoordinateNode::GetOldRealPosition() { return old_real_position_; }
 
-void CoordinateNode::SetOldRealPosition(const Position3D &v) {
-  old_real_position_ = v;
+void CoordinateNode::SetOldRealPosition(const Position3D &pos) {
+  old_real_position_ = pos;
 }
 
 void CoordinateNode::SetOldRealPosition(float x, float y, float z) {
@@ -174,7 +174,7 @@ void CoordinateNode::OnNodePassY(CoordinateNode *node_ptr, bool is_front) {}
 
 void CoordinateNode::OnNodePassZ(CoordinateNode *node_ptr, bool is_front) {}
 
-void CoordinateNode::OnRemove() { SetOldRealPosition(x_, y_, z_); }
+void CoordinateNode::OnRemove() { old_real_position_ = position_; }
 
 void CoordinateNode::OnParentRemove(CoordinateNode *parent_node_ptr) {}
 

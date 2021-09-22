@@ -28,6 +28,10 @@
 #include "config.h"
 #include "log.h"
 
+#include "entity.h"
+#include "entity_coordinate_node.h"
+#include "coordinate_system.h"
+
 #ifndef _TPN_SVR_CELL_CONFIG
 #  define _TPN_SVR_CELL_CONFIG "cell_config.json"
 #endif
@@ -44,6 +48,32 @@ int main(int argc, char *argv[]) {
                                    [](void *) { tpn::log::Shutdown(); });
 
   LOG_INFO("Cell server start...");
+
+  auto coordinate_sys_sptr = std::make_shared<tpn::CoordinateSystem>();
+
+  auto entity1_sptr = std::make_shared<tpn::Entity>();
+  auto entity2_sptr = std::make_shared<tpn::Entity>();
+  auto entity3_sptr = std::make_shared<tpn::Entity>();
+
+  entity1_sptr->SetPosition({10.f, 10.f, 10.f});
+  entity2_sptr->SetPosition({20.f, 10.f, 20.f});
+  entity2_sptr->SetPosition({20.f, 30.f, 10.f});
+
+  auto entity1_coordinate_sptr =
+      std::make_shared<tpn::EntityCoordinateNode>(entity1_sptr.get());
+  auto entity2_coordinate_sptr =
+      std::make_shared<tpn::EntityCoordinateNode>(entity2_sptr.get());
+  auto entity3_coordinate_sptr =
+      std::make_shared<tpn::EntityCoordinateNode>(entity3_sptr.get());
+
+  entity1_coordinate_sptr->SetDescStr("node1");
+  entity2_coordinate_sptr->SetDescStr("node2");
+  entity3_coordinate_sptr->SetDescStr("node3");
+
+  coordinate_sys_sptr->Insert(entity1_coordinate_sptr.get());
+  coordinate_sys_sptr->Insert(entity2_coordinate_sptr.get());
+  coordinate_sys_sptr->Insert(entity3_coordinate_sptr.get());
+
   LOG_INFO("Cell server shutdown in 3s...");
 
   std::this_thread::sleep_for(3s);

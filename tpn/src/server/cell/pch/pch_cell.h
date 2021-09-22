@@ -23,12 +23,22 @@
 #ifndef TYPHOON_ZERO_TPN_SRC_SERVER_CELL_PCH_PCH_CELL_H_
 #define TYPHOON_ZERO_TPN_SRC_SERVER_CELL_PCH_PCH_CELL_H_
 
+#include <list>
 #include <vector>
 #include <memory>
 #include <thread>
+#include <limits>
+#include <string>
+#include <string_view>
+#include <algorithm>
 
 #include "fmt_wrap.h"
 #include "config.h"
 #include "log.h"
+#include "enum_flag.h"
+#include "debug_hub.h"
+
+// G3D
+#include "g3d_wrap.h"
 
 #endif  // TYPHOON_ZERO_TPN_SRC_SERVER_CELL_PCH_PCH_CELL_H_
