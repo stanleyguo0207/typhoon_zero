@@ -31,13 +31,12 @@ namespace tpn {
 
 class CoordinateNode;
 class CoordinateSystem;
-class Entity;
-class EntityCoordinateNode;
 
-DECL_SHARED_AND_WEAK_PTR(CoordinateNode)
-DECL_SHARED_AND_WEAK_PTR(CoordinateSystem)
+class Entity;
 DECL_SHARED_AND_WEAK_PTR(Entity)
-DECL_SHARED_AND_WEAK_PTR(EntityCoordinateNode)
+
+class EntityCoordinateNode;
+using EntityCoordinateNodeUptr = std::unique_ptr<EntityCoordinateNode>;
 
 }  // namespace tpn
 

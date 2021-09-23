@@ -34,7 +34,7 @@ namespace tpn {
 class EntityCoordinateNode : public CoordinateNode {
  public:
   /// 构造函数
-  ///  @param   entity_ptr    实体对象
+  ///  @param[in]   entity_ptr    实体对象
   EntityCoordinateNode(Entity *entity_ptr);
   virtual ~EntityCoordinateNode();
 
@@ -59,18 +59,20 @@ class EntityCoordinateNode : public CoordinateNode {
   Entity *GetEntity() const;
 
   /// 设置节点所属的实体
-  ///  @param[in]   entity_ptr    节点所属的实体
+  ///  @param[in]   entity_ptr    实体对象
   void SetEntity(Entity *entity_ptr);
 
   /// 添加观察者节点
-  ///  @param[in]   node_ptr      要添加的观察的节点
+  ///  @param[in]   node_ptr    要添加的观察的节点
   ///  @return 添加成功返回true
   bool AddWatcherNode(CoordinateNode *node_ptr);
 
+  /// 监听添加观察点
+  ///  @param[in]   node_ptr    添加的观察节点
   void OnAddWatcherNode(CoordinateNode *node_ptr);
 
   /// 移除观察者节点
-  ///  @param[in]   node_ptr      要移除的观察的节点
+  ///  @param[in]   node_ptr    要移除的观察的节点
   ///  @return 移除成功返回true
   bool DelWatcherNode(CoordinateNode *node_ptr);
 

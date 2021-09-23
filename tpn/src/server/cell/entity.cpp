@@ -22,13 +22,14 @@
 
 #include "entity.h"
 
+#include "debug_hub.h"
 #include "entity_coordinate_node.h"
+#include "coordinate_system.h"
 
 namespace tpn {
 
 Entity::Entity() {
-  entity_coordinate_node_sptr_ =
-      std::make_shared<EntityCoordinateNode>(shared_from_this());
+  entity_coordinate_node_uptr_ = std::make_unique<EntityCoordinateNode>(this);
 }
 
 Entity::~Entity() {}
@@ -49,8 +50,8 @@ void Entity::SetDirection(const Direction3D &dir) {
   OnDirectionChanged();
 }
 
-EntityCoordinateNodeSptr Entity::GetEntityCoordinateNodeSptr() const {
-  return entity_coordinate_node_sptr_;
+EntityCoordinateNode *Entity::GetEntityCoordinateNodePtr() const {
+  return entity_coordinate_node_uptr_.get();
 }
 
 void Entity::SetPositionAndDirection(const Position3D &pos,
@@ -70,5 +71,20 @@ void Entity::OnDirectionChanged() {
 }
 
 void Entity::UpdateLastPosition() { last_position_ = this->GetPosition(); }
+
+void Entity::RemoveCoordinateNodeFromCoordinateSystem() {
+  if (entity_coordinate_node_uptr_ &&
+      entity_coordinate_node_uptr_->GetCoordinateSystemPtr()) {
+    entity_coordinate_node_uptr_->GetCoordinateSystemPtr()->RemoveImmediately(
+        entity_coordinate_node_uptr_.get());
+  }
+}
+
+void Entity::OnCoordinateNodeDestory(
+    EntityCoordinateNode *entity_coordinate_node_ptr) {
+  if (entity_coordinate_node_ptr == entity_coordinate_node_uptr_.get()) {
+    RemoveCoordinateNodeFromCoordinateSystem();
+  }
+}
 
 }  // namespace tpn

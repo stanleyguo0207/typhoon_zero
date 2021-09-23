@@ -32,11 +32,11 @@ namespace tpn {
 CoordinateSystem::CoordinateSystem() {}
 
 CoordinateSystem::~CoordinateSystem() {
-  unlinks_.clear();
-  unlink_count_ = 0;
+  dels_.clear();
+  dels_count_ = 0;
 
-  if (x_head_ptr_) {
-    CoordinateNode *node_ptr = x_head_ptr_;
+  if (x_first_node_ptr_) {
+    CoordinateNode *node_ptr = x_first_node_ptr_;
     while (nullptr != node_ptr) {
       CoordinateNode *next_node_ptr = node_ptr->GetNextXPtr();
 
@@ -44,67 +44,60 @@ CoordinateSystem::~CoordinateSystem() {
         next_node_ptr->SetPrevXPtr(nullptr);
       }
 
+      node_ptr->ResetXYZPtr();
       node_ptr->SetCoordinateSystemPtr(nullptr);
-      node_ptr->SetPrevXPtr(nullptr);
-      node_ptr->SetNextXPtr(nullptr);
-      node_ptr->SetPrevYPtr(nullptr);
-      node_ptr->SetNextYPtr(nullptr);
-      node_ptr->SetPrevZPtr(nullptr);
-      node_ptr->SetNextZPtr(nullptr);
 
-      delete node_ptr;
+      // 这里只处理断链操作，析构放到节点实体的地方析构的时候处理
+      //delete node_ptr;
 
       node_ptr = next_node_ptr;
     }
 
-    x_head_ptr_ = nullptr;
-    y_head_ptr_ = nullptr;
-    z_head_ptr_ = nullptr;
+    x_first_node_ptr_ = nullptr;
+    y_first_node_ptr_ = nullptr;
+    z_first_node_ptr_ = nullptr;
   }
 
-  ReleaseNodes();
+  RemoveDelNodes();
 }
 
 bool CoordinateSystem::Insert(CoordinateNode *node_ptr) {
   if (IsEmpty()) {
-    x_head_ptr_ = node_ptr;
-    y_head_ptr_ = node_ptr;
-    z_head_ptr_ = node_ptr;
+    x_first_node_ptr_ = node_ptr;
+    y_first_node_ptr_ = node_ptr;
+    z_first_node_ptr_ = node_ptr;
 
-    size_ = 1;
-
-    node_ptr->SetPrevXPtr(nullptr);
-    node_ptr->SetNextXPtr(nullptr);
-    node_ptr->SetPrevYPtr(nullptr);
-    node_ptr->SetNextYPtr(nullptr);
-    node_ptr->SetPrevZPtr(nullptr);
-    node_ptr->SetNextZPtr(nullptr);
-
+    node_ptr->ResetXYZPtr();
     node_ptr->SetCoordinateSystemPtr(this);
 
     node_ptr->SetX(node_ptr->GetRealX());
     node_ptr->SetY(node_ptr->GetRealY());
     node_ptr->SetZ(node_ptr->GetRealZ());
     node_ptr->ResetOldRealXYZ();
-  } else {
+
+    size_ = 1;
+  } else {  // 将节点放到首节点前，然后使用底层更新处理
     node_ptr->SetOldRealX(std::numeric_limits<float>::lowest());
     node_ptr->SetOldRealY(std::numeric_limits<float>::lowest());
     node_ptr->SetOldRealZ(std::numeric_limits<float>::lowest());
 
-    node_ptr->SetX(x_head_ptr_->GetX());
-    x_head_ptr_->SetPrevXPtr(node_ptr);
-    node_ptr->SetNextXPtr(x_head_ptr_);
-    x_head_ptr_ = node_ptr;
+    // x轴放到第一个
+    node_ptr->SetX(x_first_node_ptr_->GetX());
+    x_first_node_ptr_->SetPrevXPtr(node_ptr);
+    node_ptr->SetNextXPtr(x_first_node_ptr_);
+    x_first_node_ptr_ = node_ptr;
 
-    node_ptr->SetY(y_head_ptr_->GetY());
-    y_head_ptr_->SetPrevYPtr(node_ptr);
-    node_ptr->SetNextYPtr(y_head_ptr_);
-    y_head_ptr_ = node_ptr;
+    // y轴放到第一个
+    node_ptr->SetY(y_first_node_ptr_->GetY());
+    y_first_node_ptr_->SetPrevYPtr(node_ptr);
+    node_ptr->SetNextYPtr(y_first_node_ptr_);
+    y_first_node_ptr_ = node_ptr;
 
-    node_ptr->SetZ(z_head_ptr_->GetZ());
-    z_head_ptr_->SetPrevZPtr(node_ptr);
-    node_ptr->SetNextZPtr(z_head_ptr_);
-    z_head_ptr_ = node_ptr;
+    // z轴放到第一个
+    node_ptr->SetZ(z_first_node_ptr_->GetZ());
+    z_first_node_ptr_->SetPrevZPtr(node_ptr);
+    node_ptr->SetNextZPtr(z_first_node_ptr_);
+    z_first_node_ptr_ = node_ptr;
 
     node_ptr->SetCoordinateSystemPtr(this);
 
@@ -122,13 +115,34 @@ bool CoordinateSystem::Remove(CoordinateNode *node_ptr) {
   Update(node_ptr);
   node_ptr->AddFlag(CoordinateNodeFlag::kCoordinateNodeFlagRemoved);
 
-  auto iter = std::find(unlinks_.begin(), unlinks_.end(), node_ptr);
-  if (unlinks_.end() == iter) {
-    unlinks_.emplace_back(node_ptr);
-    ++unlink_count_;
+  auto iter = std::find(dels_.begin(), dels_.end(), node_ptr);
+  if (dels_.end() == iter) {
+    dels_.emplace_back(node_ptr);
+    ++dels_count_;
   }
 
   return true;
+}
+
+void CoordinateSystem::RemoveImmediately(CoordinateNode *node_ptr) {
+  node_ptr->AddFlag(CoordinateNodeFlag::kCoordinateNodeFlagRemoving);
+  node_ptr->OnRemove();
+  Update(node_ptr);
+  node_ptr->AddFlag(CoordinateNodeFlag::kCoordinateNodeFlagRemoved);
+  RemoveReal(node_ptr);
+}
+
+void CoordinateSystem::RemoveDelNodes() {
+  if (0 == dels_count_) {
+    return;
+  }
+
+  for (auto &node_ptr : dels_) {
+    RemoveReal(node_ptr);
+  }
+
+  dels_.clear();
+  dels_count_ = 0;
 }
 
 void CoordinateSystem::Update(CoordinateNode *node_ptr) {
@@ -215,11 +229,11 @@ void CoordinateSystem::Update(CoordinateNode *node_ptr) {
 
 #if defined(TPN_DEBUG)
   LOG_DEBUG("Debug X:[{:p}]", (void *)node_ptr);
-  x_head_ptr_->DebugX();
+  x_first_node_ptr_->DebugX();
   LOG_DEBUG("Debug Y:[{:p}]", (void *)node_ptr);
-  x_head_ptr_->DebugY();
+  x_first_node_ptr_->DebugY();
   LOG_DEBUG("Debug Z:[{:p}]", (void *)node_ptr);
-  x_head_ptr_->DebugZ();
+  x_first_node_ptr_->DebugZ();
 #endif
 }
 
@@ -242,11 +256,11 @@ void CoordinateSystem::MoveNodeX(CoordinateNode *node_ptr, float x,
       curr_node_ptr->SetPrevXPtr(node_ptr);
       if (prev_node_ptr) {
         prev_node_ptr->SetNextXPtr(node_ptr);
-        if (node_ptr == x_head_ptr_ && node_ptr->GetNextXPtr()) {
-          x_head_ptr_ = node_ptr->GetNextXPtr();
+        if (node_ptr == x_first_node_ptr_ && node_ptr->GetNextXPtr()) {
+          x_first_node_ptr_ = node_ptr->GetNextXPtr();
         }
       } else {
-        x_head_ptr_ = node_ptr;
+        x_first_node_ptr_ = node_ptr;
       }
 
       if (node_ptr->GetPrevXPtr()) {
@@ -277,8 +291,8 @@ void CoordinateSystem::MoveNodeX(CoordinateNode *node_ptr, float x,
         if (node_ptr->GetNextXPtr()) {
           node_ptr->GetNextXPtr()->SetPrevXPtr(node_ptr->GetPrevXPtr());
 
-          if (node_ptr == x_head_ptr_) {
-            x_head_ptr_ = node_ptr->GetNextXPtr();
+          if (node_ptr == x_first_node_ptr_) {
+            x_first_node_ptr_ = node_ptr->GetNextXPtr();
           }
         }
 
@@ -334,11 +348,11 @@ void CoordinateSystem::MoveNodeY(CoordinateNode *node_ptr, float y,
       curr_node_ptr->SetPrevYPtr(node_ptr);
       if (prev_node_ptr) {
         prev_node_ptr->SetNextYPtr(node_ptr);
-        if (node_ptr == y_head_ptr_ && node_ptr->GetNextYPtr()) {
-          y_head_ptr_ = node_ptr->GetNextYPtr();
+        if (node_ptr == y_first_node_ptr_ && node_ptr->GetNextYPtr()) {
+          y_first_node_ptr_ = node_ptr->GetNextYPtr();
         }
       } else {
-        y_head_ptr_ = node_ptr;
+        y_first_node_ptr_ = node_ptr;
       }
 
       if (node_ptr->GetPrevYPtr()) {
@@ -369,8 +383,8 @@ void CoordinateSystem::MoveNodeY(CoordinateNode *node_ptr, float y,
         if (node_ptr->GetNextYPtr()) {
           node_ptr->GetNextYPtr()->SetPrevYPtr(node_ptr->GetPrevYPtr());
 
-          if (node_ptr == y_head_ptr_) {
-            y_head_ptr_ = node_ptr->GetNextYPtr();
+          if (node_ptr == y_first_node_ptr_) {
+            y_first_node_ptr_ = node_ptr->GetNextYPtr();
           }
         }
 
@@ -426,11 +440,11 @@ void CoordinateSystem::MoveNodeZ(CoordinateNode *node_ptr, float z,
       curr_node_ptr->SetPrevZPtr(node_ptr);
       if (prev_node_ptr) {
         prev_node_ptr->SetNextZPtr(node_ptr);
-        if (node_ptr == z_head_ptr_ && node_ptr->GetNextZPtr()) {
-          z_head_ptr_ = node_ptr->GetNextZPtr();
+        if (node_ptr == z_first_node_ptr_ && node_ptr->GetNextZPtr()) {
+          z_first_node_ptr_ = node_ptr->GetNextZPtr();
         }
       } else {
-        z_head_ptr_ = node_ptr;
+        z_first_node_ptr_ = node_ptr;
       }
 
       if (node_ptr->GetPrevZPtr()) {
@@ -461,8 +475,8 @@ void CoordinateSystem::MoveNodeZ(CoordinateNode *node_ptr, float z,
         if (node_ptr->GetNextZPtr()) {
           node_ptr->GetNextZPtr()->SetPrevZPtr(node_ptr->GetPrevZPtr());
 
-          if (node_ptr == z_head_ptr_) {
-            z_head_ptr_ = node_ptr->GetNextZPtr();
+          if (node_ptr == z_first_node_ptr_) {
+            z_first_node_ptr_ = node_ptr->GetNextZPtr();
           }
         }
 
@@ -499,21 +513,21 @@ void CoordinateSystem::MoveNodeZ(CoordinateNode *node_ptr, float z,
   }
 }
 
-CoordinateNode *CoordinateSystem::GetXHeadNodePtr() const {
-  return x_head_ptr_;
+CoordinateNode *CoordinateSystem::GetFirstXNodePtr() const {
+  return x_first_node_ptr_;
 }
 
-CoordinateNode *CoordinateSystem::GetYHeadNodePtr() const {
-  return y_head_ptr_;
+CoordinateNode *CoordinateSystem::GetFirstYNodePtr() const {
+  return y_first_node_ptr_;
 }
 
-CoordinateNode *CoordinateSystem::GetZHeadNodePtr() const {
-  return z_head_ptr_;
+CoordinateNode *CoordinateSystem::GetFirstZNodePtr() const {
+  return z_first_node_ptr_;
 }
 
 bool CoordinateSystem::IsEmpty() const {
-  return nullptr == x_head_ptr_ && nullptr == y_head_ptr_ &&
-         nullptr == z_head_ptr_;
+  return nullptr == x_first_node_ptr_ && nullptr == y_first_node_ptr_ &&
+         nullptr == z_first_node_ptr_;
 }
 
 uint32_t CoordinateSystem::GetSize() const { return size_; }
@@ -523,10 +537,10 @@ bool CoordinateSystem::RemoveReal(CoordinateNode *node_ptr) {
     return true;
   }
 
-  if (node_ptr == x_head_ptr_) {
-    x_head_ptr_ = x_head_ptr_->GetNextXPtr();
-    if (x_head_ptr_) {
-      x_head_ptr_->SetPrevXPtr(nullptr);
+  if (node_ptr == x_first_node_ptr_) {
+    x_first_node_ptr_ = x_first_node_ptr_->GetNextXPtr();
+    if (x_first_node_ptr_) {
+      x_first_node_ptr_->SetPrevXPtr(nullptr);
     }
   } else {
     node_ptr->GetPrevXPtr()->SetNextXPtr(node_ptr->GetNextXPtr());
@@ -536,10 +550,10 @@ bool CoordinateSystem::RemoveReal(CoordinateNode *node_ptr) {
     }
   }
 
-  if (node_ptr == y_head_ptr_) {
-    y_head_ptr_ = y_head_ptr_->GetNextYPtr();
-    if (y_head_ptr_) {
-      y_head_ptr_->SetPrevYPtr(nullptr);
+  if (node_ptr == y_first_node_ptr_) {
+    y_first_node_ptr_ = y_first_node_ptr_->GetNextYPtr();
+    if (y_first_node_ptr_) {
+      y_first_node_ptr_->SetPrevYPtr(nullptr);
     }
   } else {
     node_ptr->GetPrevYPtr()->SetNextYPtr(node_ptr->GetNextYPtr());
@@ -549,10 +563,10 @@ bool CoordinateSystem::RemoveReal(CoordinateNode *node_ptr) {
     }
   }
 
-  if (node_ptr == z_head_ptr_) {
-    z_head_ptr_ = z_head_ptr_->GetNextZPtr();
-    if (z_head_ptr_) {
-      z_head_ptr_->SetPrevZPtr(nullptr);
+  if (node_ptr == z_first_node_ptr_) {
+    z_first_node_ptr_ = z_first_node_ptr_->GetNextZPtr();
+    if (z_first_node_ptr_) {
+      z_first_node_ptr_->SetPrevZPtr(nullptr);
     }
   } else {
     node_ptr->GetPrevZPtr()->SetNextZPtr(node_ptr->GetNextZPtr());
@@ -562,42 +576,12 @@ bool CoordinateSystem::RemoveReal(CoordinateNode *node_ptr) {
     }
   }
 
+  node_ptr->ResetXYZPtr();
   node_ptr->SetCoordinateSystemPtr(nullptr);
-  node_ptr->SetPrevXPtr(nullptr);
-  node_ptr->SetNextXPtr(nullptr);
-  node_ptr->SetPrevYPtr(nullptr);
-  node_ptr->SetNextYPtr(nullptr);
-  node_ptr->SetPrevZPtr(nullptr);
-  node_ptr->SetNextZPtr(nullptr);
-
-  releases_.emplace_back(node_ptr);
 
   --size_;
 
   return true;
-}
-
-void CoordinateSystem::RemoveUnlinkNodes() {
-  if (0 == unlink_count_) {
-    return;
-  }
-
-  for (auto &node_ptr : unlinks_) {
-    RemoveReal(node_ptr);
-  }
-
-  unlinks_.clear();
-  unlink_count_ = 0;
-}
-
-void CoordinateSystem::ReleaseNodes() {
-  RemoveUnlinkNodes();
-
-  for (auto &node_ptr : releases_) {
-    delete node_ptr;
-  }
-
-  releases_.clear();
 }
 
 }  // namespace tpn

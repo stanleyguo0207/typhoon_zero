@@ -59,20 +59,13 @@ int main(int argc, char *argv[]) {
   entity2_sptr->SetPosition({20.f, 10.f, 20.f});
   entity3_sptr->SetPosition({20.f, 30.f, 10.f});
 
-  auto entity1_coordinate_sptr =
-      new tpn::EntityCoordinateNode(entity1_sptr.get());
-  auto entity2_coordinate_sptr =
-      new tpn::EntityCoordinateNode(entity2_sptr.get());
-  auto entity3_coordinate_sptr =
-      new tpn::EntityCoordinateNode(entity3_sptr.get());
+  entity1_sptr->GetEntityCoordinateNodePtr()->SetDescStr("node1");
+  entity2_sptr->GetEntityCoordinateNodePtr()->SetDescStr("node2");
+  entity3_sptr->GetEntityCoordinateNodePtr()->SetDescStr("node3");
 
-  entity1_coordinate_sptr->SetDescStr("node1");
-  entity2_coordinate_sptr->SetDescStr("node2");
-  entity3_coordinate_sptr->SetDescStr("node3");
-
-  coordinate_sys_sptr->Insert(entity1_coordinate_sptr);
-  coordinate_sys_sptr->Insert(entity2_coordinate_sptr);
-  coordinate_sys_sptr->Insert(entity3_coordinate_sptr);
+  coordinate_sys_sptr->Insert(entity1_sptr->GetEntityCoordinateNodePtr());
+  coordinate_sys_sptr->Insert(entity2_sptr->GetEntityCoordinateNodePtr());
+  coordinate_sys_sptr->Insert(entity3_sptr->GetEntityCoordinateNodePtr());
 
   LOG_INFO("Cell server shutdown in 3s...");
 

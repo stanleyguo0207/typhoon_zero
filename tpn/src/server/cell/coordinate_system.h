@@ -47,6 +47,13 @@ class CoordinateSystem {
   ///  @return 删除成功返回true
   bool Remove(CoordinateNode *node_ptr);
 
+  /// 移除断链节点
+  ///  @param[out]  node_ptr    坐标节点
+  void RemoveImmediately(CoordinateNode *node_ptr);
+
+  /// 移除所有断链节点
+  void RemoveDelNodes();
+
   /// 更新坐标系中的坐标节点
   ///  @param[out]  node_ptr    要更新的节点
   void Update(CoordinateNode *node_ptr);
@@ -70,17 +77,17 @@ class CoordinateSystem {
   void MoveNodeZ(CoordinateNode *node_ptr, float z,
                  CoordinateNode *curr_node_ptr);
 
-  /// 获取坐标系中x轴的头节点
-  ///  @return 坐标系中x轴的头节点
-  TPN_INLINE CoordinateNode *GetXHeadNodePtr() const;
+  /// 获取坐标系中x轴的第一个节点
+  ///  @return 坐标系中x轴的第一个节点
+  TPN_INLINE CoordinateNode *GetFirstXNodePtr() const;
 
-  /// 获取坐标系中y轴的头节点
-  ///  @return 坐标系中y轴的头节点
-  TPN_INLINE CoordinateNode *GetYHeadNodePtr() const;
+  /// 获取坐标系中y轴的第一个节点
+  ///  @return 坐标系中y轴的第一个节点
+  TPN_INLINE CoordinateNode *GetFirstYNodePtr() const;
 
-  /// 获取坐标系中z轴的头节点
-  ///  @return 坐标系中z轴的头节点
-  TPN_INLINE CoordinateNode *GetZHeadNodePtr() const;
+  /// 获取坐标系中z轴的第一个节点
+  ///  @return 坐标系中z轴的第一个节点
+  TPN_INLINE CoordinateNode *GetFirstZNodePtr() const;
 
   /// 坐标系是否为空
   /// @return 坐标系中的没有节点返回true
@@ -97,22 +104,15 @@ class CoordinateSystem {
   ///  @return 删除成功返回true
   bool RemoveReal(CoordinateNode *node_ptr);
 
-  /// 移除所有断链节点
-  void RemoveUnlinkNodes();
-
-  /// 释放所有要释放的节点
-  void ReleaseNodes();
-
  private:
   uint32_t size_{0};  ///< 坐标系系统中节点数量
 
-  CoordinateNode *x_head_ptr_{nullptr};  ///< 坐标系x轴
-  CoordinateNode *y_head_ptr_{nullptr};  ///< 坐标系y轴
-  CoordinateNode *z_head_ptr_{nullptr};  ///< 坐标系z轴
+  CoordinateNode *x_first_node_ptr_{nullptr};  ///< 坐标系x轴
+  CoordinateNode *y_first_node_ptr_{nullptr};  ///< 坐标系y轴
+  CoordinateNode *z_first_node_ptr_{nullptr};  ///< 坐标系z轴
 
-  uint32_t unlink_count_{0};              ///< 要断链的节点个数
-  std::list<CoordinateNode *> unlinks_;   ///< 要断链的节点
-  std::list<CoordinateNode *> releases_;  ///< 要释放的节点
+  uint32_t dels_count_{0};            ///< 要移除的节点个数
+  std::list<CoordinateNode *> dels_;  ///< 要移除的节点
 };
 
 }  // namespace tpn

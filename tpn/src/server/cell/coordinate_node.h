@@ -55,8 +55,8 @@ enum class CoordinateNodeFlag : uint16_t {
 class CoordinateNode {
  public:
   /// 构造函数
-  ///  @param[in]   coordinate_system_sptr    坐标系系统
-  CoordinateNode(CoordinateSystemSptr coordinate_system_sptr = nullptr);
+  ///  @param[in]   coordinate_system_ptr    坐标系系统
+  CoordinateNode(CoordinateSystem *coordinate_system_sptr = nullptr);
   virtual ~CoordinateNode();
 
   /// 获取节点本身坐标系x坐标
@@ -154,6 +154,13 @@ class CoordinateNode {
   ///  @return 含有所有传入的标志返回true
   TPN_INLINE bool HasAllFlag(CoordinateNodeFlag flag) const;
 
+  /// 是否处于销毁中的状态
+  ///  @return 处于销毁中的状态返回true
+  TPN_INLINE bool IsDestroying() const;
+  /// 是否处于已销毁的状态
+  ///  @return 处于已销毁的状态返回true
+  TPN_INLINE bool IsDestroyed() const;
+
   /// 获取坐标系x轴方向前置节点
   ///  @return 坐标系x轴方向前置节点
   TPN_INLINE CoordinateNode *GetPrevXPtr() const;
@@ -195,6 +202,9 @@ class CoordinateNode {
   /// 获取坐标系z轴方向后置节点
   ///  @param[in]   node_ptr    坐标系z轴方向前置节点
   TPN_INLINE void SetNextZPtr(CoordinateNode *node_ptr);
+
+  /// 重置十字链表节点
+  TPN_INLINE void ResetXYZPtr();
 
   /// 获取坐标系节点所在的坐标系系统
   ///  @return 坐标系节点所在的坐标系系统

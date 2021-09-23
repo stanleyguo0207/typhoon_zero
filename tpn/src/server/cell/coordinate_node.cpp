@@ -38,7 +38,7 @@ CoordinateNode::~CoordinateNode() {
                  nullptr == prev_y_ptr_ && nullptr == next_y_ptr_ &&
                  nullptr == prev_z_ptr_ && nullptr == next_z_ptr_ &&
                  nullptr == coordinate_system_ptr_,
-             "AOINode memory leak");
+             "CoordinateNode memory leak");
 }
 
 float CoordinateNode::GetX() const { return position_.x; }
@@ -111,6 +111,14 @@ bool CoordinateNode::HasAllFlag(CoordinateNodeFlag flag) const {
   return flags_.HasAllFlag(flag);
 }
 
+bool CoordinateNode::IsDestroying() const {
+  return HasFlag(CoordinateNodeFlag::kCoordinateNodeFlagRemoving);
+}
+
+bool CoordinateNode::IsDestroyed() const {
+  return HasFlag(CoordinateNodeFlag::kCoordinateNodeFlagRemoved);
+}
+
 CoordinateNode *CoordinateNode::GetPrevXPtr() const { return prev_x_ptr_; }
 
 void CoordinateNode::SetPrevXPtr(CoordinateNode *node_ptr) {
@@ -157,6 +165,15 @@ void CoordinateNode::SetNextZPtr(CoordinateNode *node_ptr) {
   if (this != node_ptr) {
     next_z_ptr_ = node_ptr;
   }
+}
+
+void CoordinateNode::ResetXYZPtr() {
+  prev_x_ptr_ = nullptr;
+  next_x_ptr_ = nullptr;
+  prev_y_ptr_ = nullptr;
+  next_y_ptr_ = nullptr;
+  prev_z_ptr_ = nullptr;
+  next_z_ptr_ = nullptr;
 }
 
 CoordinateSystem *CoordinateNode::GetCoordinateSystemPtr() const {

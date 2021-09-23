@@ -35,7 +35,8 @@ EntityCoordinateNode::EntityCoordinateNode(Entity *entity_ptr)
 }
 
 EntityCoordinateNode::~EntityCoordinateNode() {
-  // TODO unlink
+  entity_ptr_->OnCoordinateNodeDestory(this);
+  watcher_nodes_.clear();
 }
 
 float EntityCoordinateNode::GetRealX() const {
